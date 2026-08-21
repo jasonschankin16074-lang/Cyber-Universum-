@@ -3,243 +3,550 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cyber Universe v13.0 - Interactive Hacker Terminal & Portal</title>
+  <title>Hacker Terminal Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
   <style>
     :root {
-      --bg: #030508;
-      --card-bg: #090d14;
-      --border: #1a2333;
-      --text: #e2e8f0;
-      --text-muted: #64748b;
-      --accent-main: #e0e901;
-      --accent-hover: #f4f444;
-      --accent-yellow: #f59e0b;
-      --accent-red: #ef4444;
-      --accent-blue: #2563eb;
-      --dash-bg: #202087;
+      --custom-text-color: #00ff66;
+      --custom-font-size: 16px;
     }
 
-    /* Dynamisches Licht im Hintergrund */
-    body::before {
-      content: '';
-      position: fixed;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(168, 85, 247, 0.25) 0%, rgba(0, 0, 0, 0) 60%);
-      animation: pulseGlow 8s ease-in-out infinite alternate;
-      pointer-events: none;
-      z-index: -1;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Courier New', Courier, monospace;
     }
 
-    @keyframes pulseGlow {
-      0% { transform: scale(0.8) translate(0, 0); opacity: 0.5; }
-      50% { transform: scale(1.1) translate(3%, 5%); opacity: 0.8; }
-      100% { transform: scale(0.9) translate(-3%, -2%); opacity: 0.6; }
+    body {
+      display: flex;
+      background-color: #050805;
+      color: var(--custom-text-color);
+      font-size: var(--custom-font-size);
+      min-height: 100vh;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: monospace, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); padding: 15px; transition: 0.3s; }
-
-    .start-dashboard {
-      max-width: 1100px; margin: 0 auto; background: var(--card-bg);
-      border: 2px solid var(--accent-main); border-radius: 12px; padding: 20px;
+    /* Sidebar Navigation */
+    .sidebar {
+      width: 280px;
+      background-color: #0a0f0d;
+      border-right: 1px solid #00ff6644;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
 
-    .dash-header { border-bottom: 1px dashed var(--border); padding-bottom: 15px; margin-bottom: 15px; }
-    .status-badge { font-size: 11px; padding: 4px 8px; border-radius: 4px; background: rgba(16, 185, 129, 0.1); color: #10b981; }
-
-    .section-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
-    .card { background: #0d131f; border: 1px solid var(--border); padding: 15px; border-radius: 8px; }
-
-    button {
-      background: var(--accent-blue); color: white; border: none; padding: 10px 15px;
-      border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 10px; width: 100%;
+    .nav-btn {
+      width: 100%;
+      padding: 12px 14px;
+      background-color: #0d1410;
+      border: 1px solid #00ff6644;
+      border-radius: 4px;
+      color: var(--custom-text-color);
+      font-size: var(--custom-font-size);
+      font-weight: bold;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.2s;
     }
-    button:hover { opacity: 0.9; }
-    button:disabled { background: #334155; cursor: not-allowed; opacity: 0.6; }
 
-    /* Key-Sequence Minigame Styling */
-    .key-display { font-size: 20px; letter-spacing: 5px; color: var(--accent-yellow); margin: 10px 0; text-align: center; }
-    .key-btn-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 10px; }
-    .key-btn { background: #1e293b; color: #fff; font-size: 18px; padding: 12px; border: 1px solid var(--border); }
-    .key-btn:hover { background: var(--accent-blue); }
+    .nav-btn:hover {
+      background-color: #00ff6622;
+      border-color: #00ff66;
+      box-shadow: 0 0 10px #00ff66aa;
+    }
 
-    .progress-bar { width: 100%; background: #1e293b; height: 12px; border-radius: 6px; overflow: hidden; margin-top: 10px; }
-    .progress-fill { height: 100%; background: var(--accent-main); width: 0%; transition: width 0.3s; }
+    .nav-btn div {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
 
-    .cooldown-text { color: var(--accent-red); font-size: 12px; margin-top: 5px; }
+    /* Stats Box in Sidebar */
+    .stats-box {
+      background-color: #050805;
+      border: 1px solid #00ff6644;
+      border-radius: 4px;
+      padding: 12px;
+      margin-bottom: 8px;
+    }
+
+    .stats-item {
+      font-size: 1.1em;
+      font-weight: bold;
+      color: #00ff66;
+    }
+
+    /* Dropdown Menü */
+    .dropdown-content {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      background-color: #050805;
+      border: 1px solid #00ff6644;
+      border-radius: 4px;
+      padding: 8px 0;
+      margin-top: 4px;
+    }
+
+    .dropdown-content.hidden {
+      display: none;
+    }
+
+    .sub-category-title {
+      font-size: 0.75em;
+      text-transform: uppercase;
+      color: #00ff6688;
+      padding: 8px 16px 2px 16px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    .sub-nav-btn {
+      width: 100%;
+      text-align: left;
+      padding: 8px 16px 8px 24px;
+      background: transparent;
+      border: none;
+      color: var(--custom-text-color);
+      font-size: var(--custom-font-size);
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .sub-nav-btn:hover {
+      background-color: #00ff6622;
+      color: #ffffff;
+    }
+
+    /* Main Content Area */
+    .main-content {
+      flex: 1;
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .category-header {
+      margin-bottom: 24px;
+      border-bottom: 1px solid #00ff6644;
+      padding-bottom: 16px;
+    }
+
+    .category-title {
+      font-size: 1.8em;
+      text-shadow: 0 0 8px #00ff6688;
+    }
+
+    /* Rainbow Text Effekt */
+    .rainbow-text, 
+    .rainbow-text .nav-btn,
+    .rainbow-text .sub-nav-btn,
+    .rainbow-text h2,
+    .rainbow-text h3,
+    .rainbow-text label,
+    .rainbow-text span,
+    .rainbow-text .console-output,
+    .rainbow-text .stats-item {
+      background: linear-gradient(90deg, #ff0000, #ff7f00, #ffff00, #00ff00, #00ffff, #0000ff, #8b00ff);
+      background-size: 400% 400%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: rainbow 5s ease infinite;
+    }
+
+    @keyframes rainbow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Terminal Console Panel */
+    .terminal-panel {
+      background-color: #0a0f0d;
+      border: 1px solid #00ff6644;
+      border-radius: 6px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      box-shadow: inset 0 0 15px #000000;
+    }
+
+    .console-output {
+      background-color: #000000;
+      border: 1px solid #00ff6633;
+      padding: 16px;
+      border-radius: 4px;
+      height: 250px;
+      overflow-y: auto;
+      font-family: 'Courier New', Courier, monospace;
+      line-height: 1.4;
+      box-shadow: 0 0 10px #000000;
+    }
+
+    .timer-display {
+      font-size: 1.5em;
+      color: #ffcc00;
+      font-weight: bold;
+      text-shadow: 0 0 10px #ffcc0088;
+    }
+
+    .action-btn {
+      padding: 12px 20px;
+      background-color: #00ff6611;
+      border: 1px solid #00ff66;
+      border-radius: 4px;
+      color: #00ff66 !important;
+      -webkit-text-fill-color: #00ff66 !important;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 1em;
+      transition: all 0.2s;
+    }
+
+    .action-btn:hover {
+      background-color: #00ff66;
+      color: #000000 !important;
+      -webkit-text-fill-color: #000000 !important;
+      box-shadow: 0 0 15px #00ff66;
+    }
+
+    .action-btn:disabled {
+      border-color: #555555;
+      color: #555555 !important;
+      -webkit-text-fill-color: #555555 !important;
+      cursor: not-allowed;
+      box-shadow: none;
+      background: transparent;
+    }
+
+    /* Shop Layout */
+    .shop-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 16px;
+    }
+
+    .shop-card {
+      background-color: #0a0f0d;
+      border: 1px solid #00ff6644;
+      border-radius: 6px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .shop-card h4 {
+      color: #00ff66;
+    }
+
+    .shop-card .price {
+      color: #ffcc00;
+      font-weight: bold;
+    }
+
+    /* Einstellungen UI */
+    .settings-panel {
+      background-color: #0a0f0d;
+      border: 1px solid #00ff6644;
+      border-radius: 6px;
+      padding: 24px;
+      max-width: 500px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .setting-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .setting-group label {
+      font-weight: bold;
+    }
+
+    .setting-group input[type="color"] {
+      width: 40px;
+      height: 40px;
+      border: 1px solid #00ff66;
+      border-radius: 50%;
+      cursor: pointer;
+      background: transparent;
+    }
+
+    .setting-group input[type="range"] {
+      width: 100%;
+      cursor: pointer;
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
   </style>
 </head>
-<body>
+<body id="app-body">
 
-<div class="start-dashboard">
-  <div class="dash-header">
-    <h1>Cyber Universe - Control Panel</h1>
-    <span class="status-badge">System Online</span>
-    <p style="margin-top: 10px;">Guthaben: <strong id="balance-display" style="color: var(--accent-main);">0 $</strong></p>
-  </div>
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar">
+    <div class="stats-box">
+      <div class="stats-item">Guthaben: <span id="money-display">0</span> $</div>
+    </div>
 
-  <div class="section-grid">
-    <!-- Schutz-System / Virus-Abwehr -->
-    <div class="card">
-      <h3>Krankenhaus-Schutzsystem</h3>
-      <p style="font-size: 12px; color: var(--text-muted); margin-top: 5px;">
-        Schütze das System vor Viren. Löse den 20-Tasten-Sicherheitscode und installiere das Antivirus.
-      </p>
+    <button class="nav-btn" onclick="showDashboard()">
+      <div><i class="fas fa-terminal"></i> Terminal Console</div>
+    </button>
 
-      <div id="protect-start-zone">
-        <button id="btn-start-protect" onclick="startProtectSequence()">Schutz-Sequenz starten</button>
-        <div id="cooldown-msg" class="cooldown-text"></div>
+    <!-- Hacker Tools Menü -->
+    <div class="nav-dropdown">
+      <button class="nav-btn" onclick="toggleDropdown('toolsMenu')">
+        <div><i class="fas fa-user-secret"></i> Hacker Tools</div>
+        <i class="fas fa-chevron-down"></i>
+      </button>
+      
+      <div id="toolsMenu" class="dropdown-content hidden">
+        <div class="sub-category-title">Aktionen (3 Min. Timer)</div>
+        <button class="sub-nav-btn" onclick="runTask('Cyber Hack')">💻 Cyber Hack (+5 $)</button>
+        <button class="sub-nav-btn" onclick="runTask('Data Mining')">⛏️ Data Mining (+5 $)</button>
       </div>
+    </div>
 
-      <div id="minigame-zone" style="display: none;">
-        <p style="font-size: 12px; margin-top: 10px;">Eingabe erforderlich:</p>
-        <div class="key-display" id="target-keys">---</div>
-        <p style="font-size: 11px; color: var(--text-muted);">Fortschritt: <span id="key-progress">0</span>/20</p>
-        
-        <div class="key-btn-grid">
-          <button class="key-btn" onclick="pressKey('A')">A</button>
-          <button class="key-btn" onclick="pressKey('B')">B</button>
-          <button class="key-btn" onclick="pressKey('C')">C</button>
-          <button class="key-btn" onclick="pressKey('D')">D</button>
+    <button class="nav-btn" onclick="showShop()">
+      <div><i class="fas fa-store"></i> Shop (Engel)</div>
+    </button>
+
+    <button class="nav-btn" onclick="showEinstellungen()">
+      <div><i class="fas fa-cog"></i> Einstellungen</div>
+    </button>
+  </aside>
+
+  <!-- Hauptfenster -->
+  <main class="main-content">
+    <div class="category-header">
+      <h2 id="category-title" class="category-title">Terminal Console</h2>
+    </div>
+
+    <div id="main-area">
+      <!-- Inhalt wird per JS geladen -->
+    </div>
+  </main>
+
+  <script>
+    let userMoney = 0;
+    let angelPrice = 10; // Startpreis für den Engel im Shop
+    let angelLevel = 0;
+
+    let timerInterval = null;
+    let isTaskRunning = false;
+    const TASK_DURATION = 180; // 3 Minuten in Sekunden
+
+    function updateMoneyDisplay() {
+      document.getElementById('money-display').innerText = userMoney;
+    }
+
+    function toggleDropdown(id) {
+      document.getElementById(id).classList.toggle('hidden');
+    }
+
+    function showDashboard() {
+      document.getElementById('category-title').innerText = 'Terminal Console';
+      const area = document.getElementById('main-area');
+      area.innerHTML = `
+        <div class="terminal-panel">
+          <h3>System Status: ONLINE</h3>
+          <div class="console-output" id="console">
+            [SYSTEM] Initialize Kernel...<br>
+            [SYSTEM] Connected to Localhost.<br>
+            [READY] Choose a tool from the menu to start execution...
+          </div>
+          <button class="action-btn" onclick="clearConsole()">Console leeren</button>
         </div>
-      </div>
-
-      <div id="antivirus-zone" style="display: none;">
-        <p style="font-size: 12px; color: var(--accent-yellow); margin-top: 10px;">Antivirus wird installiert...</p>
-        <div class="progress-bar"><div id="anti-progress" class="progress-fill"></div></div>
-      </div>
-    </div>
-
-    <!-- Engel Shop -->
-    <div class="card">
-      <h3>Engel Shop</h3>
-      <p style="font-size: 12px; color: var(--text-muted); margin-top: 5px;">Exklusive Ausrüstung & Upgrades.</p>
-      
-      <div style="margin-top: 15px;">
-        <p><strong>Schutz-Engel Lvl 1</strong> - <span style="color: var(--accent-main);">150 $</span></p>
-        <button onclick="buyItem(150)">Kaufen</button>
-      </div>
-
-      <div style="margin-top: 15px;">
-        <p><strong>Erzengel-Schild (Max)</strong> - <span style="color: var(--accent-main);">500 $</span></p>
-        <button onclick="buyItem(500)">Kaufen</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script>
-  let balance = 0;
-  let targetSequence = [];
-  let currentStep = 0;
-  let cooldownTimer = null;
-  const COOLDOWN_TIME = 10 * 60; // 10 Minuten in Sekunden
-
-  function updateBalanceDisplay() {
-    document.getElementById('balance-display').innerText = balance + " $";
-  }
-
-  function buyItem(price) {
-    if (balance >= price) {
-      balance -= price;
-      updateBalanceDisplay();
-      alert("Item erfolgreich gekauft!");
-    } else {
-      alert("Nicht genug Geld!");
+      `;
     }
-  }
 
-  function startProtectSequence() {
-    document.getElementById('protect-start-zone').style.display = 'none';
-    document.getElementById('minigame-zone').style.display = 'block';
-    
-    // Erstelle 20 zufällige Tasten (A, B, C, D)
-    const keys = ['A', 'B', 'C', 'D'];
-    targetSequence = [];
-    for (let i = 0; i < 20; i++) {
-      targetSequence.push(keys[Math.floor(Math.random() * keys.length)]);
+    function runTask(taskName) {
+      document.getElementById('category-title').innerText = taskName;
+      const area = document.getElementById('main-area');
+
+      if (isTaskRunning) {
+        area.innerHTML = `
+          <div class="terminal-panel">
+            <h3>Prozess läuft bereits...</h3>
+            <div class="timer-display" id="timer-box">Wird berechnet...</div>
+            <div class="console-output" id="console">
+              [BUSY] Ein anderer Vorgang läuft derzeit. Bitte warten...
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      area.innerHTML = `
+        <div class="terminal-panel">
+          <h3>Tool Execution: ${taskName}</h3>
+          <div class="timer-display" id="timer-box">Zeit verbleibend: 03:00</div>
+          <div class="console-output" id="console">
+            [READY] Klicke auf 'Prozess starten', um den 3-Minuten-Hack zu beginnen.<br>
+          </div>
+          <button class="action-btn" id="start-btn" onclick="start3MinTimer('${taskName}')">Prozess starten</button>
+        </div>
+      `;
     }
-    
-    currentStep = 0;
-    updateKeyDisplay();
-  }
 
-  function updateKeyDisplay() {
-    document.getElementById('key-progress').innerText = currentStep;
-    if (currentStep < targetSequence.length) {
-      document.getElementById('target-keys').innerText = targetSequence[currentStep];
+    function start3MinTimer(taskName) {
+      if (isTaskRunning) return;
+
+      isTaskRunning = true;
+      const startBtn = document.getElementById('start-btn');
+      if (startBtn) startBtn.disabled = true;
+
+      const consoleBox = document.getElementById('console');
+      const timerBox = document.getElementById('timer-box');
+
+      consoleBox.innerHTML += `<br>[START] 3-Minuten-Prozess für ${taskName} gestartet...`;
+
+      let timeRemaining = TASK_DURATION;
+
+      timerInterval = setInterval(() => {
+        timeRemaining--;
+
+        const minutes = Math.floor(timeRemaining / 60);
+        const seconds = timeRemaining % 60;
+        const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+        const formattedSeconds = seconds < 10 ? '0' + seconds : seconds;
+
+        if (timerBox) {
+          timerBox.innerText = `Zeit verbleibend: ${formattedMinutes}:${formattedSeconds}`;
+        }
+
+        if (timeRemaining <= 0) {
+          clearInterval(timerInterval);
+          isTaskRunning = false;
+
+          // Belohnung & Preiserhöhung im Shop
+          userMoney += 5;
+          angelPrice += 15; // Engel wird im Shop teurer
+          updateMoneyDisplay();
+
+          if (consoleBox) {
+            consoleBox.innerHTML += `<br>[SUCCESS] Prozess abgeschlossen! Du hast +5 $ erhalten.`;
+            consoleBox.innerHTML += `<br>[INFLATION] Engel-Preise im Shop sind gestiegen! Neuer Preis: ${angelPrice} $`;
+            consoleBox.scrollTop = consoleBox.scrollHeight;
+          }
+
+          if (timerBox) {
+            timerBox.innerText = `Fertig! +5 $ gutgeschrieben.`;
+          }
+        }
+      }, 1000);
     }
-  }
 
-  function pressKey(key) {
-    if (key === targetSequence[currentStep]) {
-      currentStep++;
-      if (currentStep >= targetSequence.length) {
-        // Tasten-Code erfolgreich gelöst
-        document.getElementById('minigame-zone').style.display = 'none';
-        startAntivirusInstallation();
+    function showShop() {
+      document.getElementById('category-title').innerText = 'Engel Shop';
+      const area = document.getElementById('main-area');
+
+      area.innerHTML = `
+        <div class="shop-grid">
+          <div class="shop-card">
+            <h4>👼 Schutzengel (Level ${angelLevel})</h4>
+            <p style="color: #8b949e; font-size: 0.9em;">Erhöht deine Sicherheit im Netzwerk.</p>
+            <div class="price">Preis: ${angelPrice} $</div>
+            <button class="action-btn" onclick="buyAngel()">Engel kaufen</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function buyAngel() {
+      if (userMoney >= angelPrice) {
+        userMoney -= angelPrice;
+        angelLevel++;
+        angelPrice += 20; // Wird bei Kauf nochmals teurer
+        updateMoneyDisplay();
+        showShop();
+        alert('Du hast erfolgreich einen Schutzengel gekauft!');
       } else {
-        updateKeyDisplay();
+        alert(`Nicht genug Geld! Du benötigst ${angelPrice} $.`);
       }
-    } else {
-      alert("Falsche Taste! Sequenz zurückgesetzt.");
-      currentStep = 0;
-      updateKeyDisplay();
     }
-  }
 
-  function startAntivirusInstallation() {
-    document.getElementById('antivirus-zone').style.display = 'block';
-    let progressBar = document.getElementById('anti-progress');
-    let width = 0;
-    
-    let interval = setInterval(() => {
-      if (width >= 100) {
-        clearInterval(interval);
-        document.getElementById('antivirus-zone').style.display = 'none';
-        
-        // Belohnung auszahlen
-        balance += 5;
-        updateBalanceDisplay();
-        alert("Virus zerstört & Krankenhaus gerettet! +5 $ erhalten.");
-        
-        // Cooldown starten
-        startCooldown(COOLDOWN_TIME);
+    function clearConsole() {
+      const consoleBox = document.getElementById('console');
+      if (consoleBox) {
+        consoleBox.innerHTML = '[SYSTEM] Console cleared.<br>';
+      }
+    }
+
+    function showEinstellungen() {
+      document.getElementById('category-title').innerText = 'Einstellungen';
+
+      const isRainbow = document.getElementById('app-body').classList.contains('rainbow-text');
+      const currentSize = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--custom-font-size')) || 16;
+
+      const area = document.getElementById('main-area');
+      area.innerHTML = `
+        <div class="settings-panel">
+          <h3>Text-Anpassung</h3>
+          
+          <div class="setting-group">
+            <label for="textSize">Textgröße (<span id="textSizeVal">${currentSize}</span>px)</label>
+            <input type="range" id="textSize" min="12" max="24" value="${currentSize}" oninput="changeTextSize(this.value)">
+          </div>
+
+          <div class="setting-group">
+            <label for="textColor">Textfarbe wählen</label>
+            <input type="color" id="textColor" value="#00ff66" onchange="changeTextColor(this.value)">
+          </div>
+
+          <div class="setting-group checkbox-group">
+            <input type="checkbox" id="rainbowMode" ${isRainbow ? 'checked' : ''} onchange="toggleRainbow(this.checked)">
+            <label for="rainbowMode">🌈 Rainbow-Text aktivieren</label>
+          </div>
+        </div>
+      `;
+    }
+
+    function changeTextSize(val) {
+      document.getElementById('textSizeVal').innerText = val;
+      document.documentElement.style.setProperty('--custom-font-size', val + 'px');
+    }
+
+    function changeTextColor(color) {
+      const rainbowBox = document.getElementById('rainbowMode');
+      if (rainbowBox && rainbowBox.checked) {
+        rainbowBox.checked = false;
+        toggleRainbow(false);
+      }
+      document.documentElement.style.setProperty('--custom-text-color', color);
+    }
+
+    function toggleRainbow(enabled) {
+      const body = document.getElementById('app-body');
+      if (enabled) {
+        body.classList.add('rainbow-text');
       } else {
-        width += 10;
-        progressBar.style.width = width + '%';
+        body.classList.remove('rainbow-text');
       }
-    }, 300);
-  }
+    }
 
-  function startCooldown(seconds) {
-    let startZone = document.getElementById('protect-start-zone');
-    let btn = document.getElementById('btn-start-protect');
-    let msg = document.getElementById('cooldown-msg');
-    
-    startZone.style.display = 'block';
-    btn.disabled = true;
-
-    let remaining = seconds;
-    
-    clearInterval(cooldownTimer);
-    cooldownTimer = setInterval(() => {
-      let mins = Math.floor(remaining / 60);
-      let secs = remaining % 60;
-      msg.innerText = `System überhitzt. Cooldown: ${mins}m ${secs < 10 ? '0' : ''}${secs}s`;
-      
-      remaining--;
-      if (remaining < 0) {
-        clearInterval(cooldownTimer);
-        btn.disabled = false;
-        msg.innerText = '';
-      }
-    }, 1000);
-  }
-</script>
-
+    // Startansicht
+    showDashboard();
+  </script>
 </body>
 </html>
