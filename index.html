@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cyber Universe v28.0 - 15-Phasen Heist mit Klaren Hinweisen</title>
+  <title>Cyber Universe v29.0 - 15-Phasen Heist mit Admin Panel</title>
   <style>
     :root {
       --bg: #030508;
@@ -92,17 +92,39 @@
     }
 
     .close-btn { background: transparent; border: 1px solid var(--accent-red); color: var(--accent-red); padding: 2px 8px; cursor: pointer; border-radius: 4px; }
+    
+    /* SECRET ADMIN PANEL STYLES */
+    .admin-burger-btn {
+      background: transparent; border: 1px solid var(--text-muted); color: var(--text-muted);
+      padding: 2px 8px; cursor: pointer; border-radius: 4px; font-size: 14px; margin-right: 8px; transition: 0.2s;
+    }
+    .admin-burger-btn:hover { color: var(--accent-yellow); border-color: var(--accent-yellow); }
+
+    .admin-modal {
+      display: none; position: absolute; top: 40px; right: 10px; z-index: 10000;
+      background: var(--card-bg); border: 2px solid var(--accent-yellow);
+      border-radius: 8px; padding: 15px; width: 280px; box-shadow: 0 0 15px rgba(0,0,0,0.8);
+    }
+    .admin-modal h4 { color: var(--accent-yellow); margin-bottom: 10px; font-size: 12px; text-align: center; }
+    .admin-modal select, .admin-modal input {
+      width: 100%; padding: 6px; margin-bottom: 10px; background: rgba(0,0,0,0.5);
+      border: 1px solid var(--border); color: var(--text); border-radius: 4px; font-size: 12px;
+    }
+    .admin-modal button {
+      width: 100%; background: var(--accent-yellow); color: #000; border: none;
+      padding: 6px; font-weight: bold; border-radius: 4px; cursor: pointer; font-size: 12px;
+    }
   </style>
 </head>
 <body id="bodyTag">
 
   <div class="start-dashboard">
-    <h2 class="rainbow-text">// CYBER UNIVERSE v28.0 - 15 PHASEN HEIST</h2>
+    <h2 class="rainbow-text">// CYBER UNIVERSE v29.0 - 15 PHASEN HEIST</h2>
 
     <div class="faction-selector">
       <div class="faction-card active-evil" id="cardEvil" onclick="selectStartFaction('evil')">
         <h3 style="color: var(--accent-red);">💻 BÖSE SEITE (15 PHASEN HEIST)</h3>
-        <p style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">Phase 11 & Phase 12 mit exakten Hinweisen!</p>
+        <p style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">Inklusive Geheimem Admin-Panel (☰)!</p>
       </div>
 
       <div class="faction-card" id="cardGood" onclick="selectStartFaction('good')">
@@ -118,10 +140,44 @@
     <canvas id="matrixCanvas"></canvas>
     <div class="dash-window">
       <div class="dash-header">
-        <span id="terminalTitle" class="rainbow-text">CYBER_UNIVERSE [SYSTEM v28.0]</span>
-        <button class="close-btn" onclick="closeTerminal()">[X] SCHLIESSEN</button>
+        <span id="terminalTitle" class="rainbow-text">CYBER_UNIVERSE [SYSTEM v29.0]</span>
+        <div>
+          <!-- Der 3-Striche Button für das Admin-Panel -->
+          <button class="admin-burger-btn" onclick="toggleAdminPanel()" title="Geheim-Menü">☰</button>
+          <button class="close-btn" onclick="closeTerminal()">[X] SCHLIESSEN</button>
+        </div>
       </div>
       
+      <!-- Admin Panel Modal -->
+      <div class="admin-modal" id="adminModal">
+        <h4>🔐 GEHEIMES ADMIN PANEL</h4>
+        <div id="adminAuthBox">
+          <input type="password" id="adminPasswordInput" placeholder="Passwort eingeben..." onkeydown="if(event.key==='Enter') verifyAdminPassword()">
+          <button onclick="verifyAdminPassword()">FREISCHALTEN</button>
+        </div>
+        <div id="adminControlsBox" style="display:none;">
+          <label style="font-size: 10px; color: var(--text-muted); display:block; margin-bottom: 4px;">WÄHLE ZIEL-PHASE:</label>
+          <select id="phaseSelect">
+            <option value="1">Phase 1: Zahlen-Stream (Bypass)</option>
+            <option value="2">Phase 2: Brute-Force Cracker</option>
+            <option value="3">Phase 3: Pin-Pad (2 Zahlen)</option>
+            <option value="4">Phase 4: Laser-Schutzschild</option>
+            <option value="5">Phase 5: DNA-Biometrie</option>
+            <option value="6">Phase 6: Master-Tresor (1-50)</option>
+            <option value="7">Phase 7: WLAN Jammer (E-A-S)</option>
+            <option value="8">Phase 8: Security Override (D-F-E)</option>
+            <option value="9">Phase 9: Anti-Standort (E-S-D-F)</option>
+            <option value="10">Phase 10: KI-Feuerwall</option>
+            <option value="11">Phase 11: Satellit (1-360°)</option>
+            <option value="12">Phase 12: Quanten-Code (1-100)</option>
+            <option value="13">Phase 13: Augenscanner (A-W-S-D)</option>
+            <option value="14">Phase 14: Stromnetz (E-R-T-Z)</option>
+            <option value="15">Phase 15: Finaler Kern-Hack</option>
+          </select>
+          <button onclick="jumpToSelectedPhase()">TELEPORTIEREN</button>
+        </div>
+      </div>
+
       <div class="dash-body">
         <div class="content-area">
           <div style="font-size: 11px; color: var(--text-muted); display:flex; justify-content:space-between; background: rgba(0,0,0,0.2); padding: 8px 12px; border-radius:4px; border:1px solid var(--border);">
@@ -166,6 +222,55 @@
     var qteInterval = null;
     var requiredKeys = [];
     var currentKeyIndex = 0;
+    
+    // Das Geheim-Passwort für das Admin Panel
+    var adminPassword = "123"; 
+    var isAdminUnlocked = false;
+
+    function toggleAdminPanel() {
+      var modal = document.getElementById("adminModal");
+      modal.style.display = (modal.style.display === "block") ? "none" : "block";
+    }
+
+    function verifyAdminPassword() {
+      var input = document.getElementById("adminPasswordInput").value;
+      if (input === adminPassword) {
+        isAdminUnlocked = true;
+        document.getElementById("adminAuthBox").style.display = "none";
+        document.getElementById("adminControlsBox").style.display = "block";
+        printChat('<span style="color:var(--accent-yellow); font-weight:bold;">[ADMIN]: ZUGRIFF GEWÄHRT! Wähle eine Phase.</span>');
+      } else {
+        alert("FALSCHES PASSWORT!");
+      }
+    }
+
+    function jumpToSelectedPhase() {
+      var targetPhase = parseInt(document.getElementById("phaseSelect").value);
+      if (qteInterval) clearInterval(qteInterval);
+      hideInputField();
+
+      printChat('<span style="color:var(--accent-yellow); font-weight:bold;">\n[ADMIN TELEPORT]: Springe zu Phase ' + targetPhase + '...</span>');
+      
+      switch(targetPhase) {
+        case 1: currentPhase = 1; isProcessingHack = false; startPhase1Stream(); break;
+        case 2: startPhase2VaultPasswordCrack(); break;
+        case 3: startPhase3ManualGuessing(); break;
+        case 4: startPhase4LaserBypass(); break;
+        case 5: startPhase5DnaBypass(); break;
+        case 6: startPhase6MasterVault(); break;
+        case 7: startPhase7WlanJammer(); break;
+        case 8: startPhase8SecurityOverride(); break;
+        case 9: startPhase9AntiLocationVirus(); break;
+        case 10: startPhase10AiFirewall(); break;
+        case 11: startPhase11SatelliteLink(); break;
+        case 12: startPhase12QuantumDecryption(); break;
+        case 13: startPhase13EyeBiometrics(); break;
+        case 14: startPhase14PowerGridShutdown(); break;
+        case 15: startPhase15FinalCoreHack(); break;
+      }
+
+      toggleAdminPanel();
+    }
 
     function saveData() {
       localStorage.setItem('cyber_balance', userBalance);
@@ -583,7 +688,6 @@
           printChat('<span style="color:#ef4444;">[KI-FEUERWALL]: ZU HOCH!</span>');
         }
 
-      // PHASE 11: SATELLITEN-AUSRICHTUNG (KLARE HINWEISE)
       } else if (currentPhase === 11) {
         var satAngle = parseInt(val);
         if (isNaN(satAngle)) {
@@ -592,12 +696,11 @@
           printChat('<span style="color:var(--accent-main); font-weight:bold;">[SATELLIT]: PERFEKT! VERBINDUNG HERGESTELLT (' + satAngle + '°)!</span>');
           hideInputField(); startPhase12QuantumDecryption();
         } else if (satAngle < targetLaserAngle) {
-          printChat('<span style="color:#f59e0b; font-weight:bold;">[SATELLIT]: ZU NIEDRIG! (' + satAngle + '°) -> Richte nach OBEN aus! (Versuche eine GRÖSSERE Zahl)</span>');
+          printChat('<span style="color:#f59e0b; font-weight:bold;">[SATELLIT]: ZU NIEDRIG! (' + satAngle + '°) -> Richte nach OBEN aus!</span>');
         } else {
-          printChat('<span style="color:#f59e0b; font-weight:bold;">[SATELLIT]: ZU HOCH! (' + satAngle + '°) -> Richte nach UNTEN aus! (Versuche eine KLEINERE Zahl)</span>');
+          printChat('<span style="color:#f59e0b; font-weight:bold;">[SATELLIT]: ZU HOCH! (' + satAngle + '°) -> Richte nach UNTEN aus!</span>');
         }
 
-      // PHASE 12: QUANTEN-VERSCHLÜSSELUNG (KLARE HINWEISE)
       } else if (currentPhase === 12) {
         var qGuess = parseInt(val);
         if (isNaN(qGuess)) {
@@ -654,16 +757,16 @@
 
       if (startFaction === 'good') {
         body.className = 'theme-good';
-        title.innerText = 'CYBER_UNIVERSE [POLIZEI 15-PHASEN SYSTEM v28.0]';
+        title.innerText = 'CYBER_UNIVERSE [POLIZEI 15-PHASEN SYSTEM v29.0]';
       } else {
         body.className = '';
-        title.innerText = 'CYBER_UNIVERSE [HACKER 15-PHASEN HEIST v28.0]';
+        title.innerText = 'CYBER_UNIVERSE [HACKER 15-PHASEN HEIST v29.0]';
       }
 
       document.getElementById('hackerOverlay').style.display = 'flex';
       startMatrix();
       updateBalance();
-      printChat('[SYSTEM]: Terminal v28.0 gestartet! Tippe beliebige Tasten...');
+      printChat('[SYSTEM]: Terminal v29.0 gestartet! Tippe beliebige Tasten...');
     }
 
     function closeTerminal() {
