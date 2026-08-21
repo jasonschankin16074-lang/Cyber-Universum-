@@ -61,13 +61,13 @@
       padding: 14px; font-size: 16px; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 10px;
     }
 
-    /* NEWS & DISCORD FOOTER STYLES */
+    /* NEWS (LINKS) & DISCORD (RECHTS) NEBENEINANDER */
     .news-discord-container {
-      margin-top: 25px;
+      margin-top: 20px;
       padding-top: 15px;
-      border-top: 2px dashed var(--border);
-      display: flex;
-      flex-direction: column;
+      border-top: 1px dashed var(--border);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       gap: 15px;
     }
 
@@ -101,6 +101,10 @@
       border-radius: 8px;
       padding: 12px;
       text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
     }
 
     .discord-box h3 {
@@ -213,22 +217,22 @@
     <div class="level-selector">
       <div class="select-card active" id="levelCard1" onclick="selectLevel(1)">
         <h3 style="color: var(--accent-main); font-size:12px;">🏢 LEVEL 1: TRESOR</h3>
-        <p style="font-size: 9px; color: var(--text-muted); margin-top: 3px;">Normal (Kein Angriff)</p>
+        <p style="font-size: 9px; color: var(--text-muted); margin-top: 3px;">Normal (15 Phasen)</p>
       </div>
 
       <div class="select-card" id="levelCard2" onclick="selectLevel(2)">
         <h3 style="color: #06b6d4; font-size:12px;">🏥 LEVEL 2: KLINIK</h3>
-        <p style="font-size: 9px; color: var(--text-muted); margin-top: 3px;">Schwer (Kein Angriff)</p>
+        <p style="font-size: 9px; color: var(--text-muted); margin-top: 3px;">Schwer (15 Phasen)</p>
       </div>
 
       <div class="select-card" id="levelCard3" onclick="selectLevel(3)">
         <h3 style="color: var(--accent-orange); font-size:12px;">🚒 LEVEL 3: FEUERWEHR</h3>
-        <p style="font-size: 9px; color: var(--text-muted); margin-top: 3px;">Einfach (Kein Angriff)</p>
+        <p style="font-size: 9px; color: var(--text-muted); margin-top: 3px;">Einfach (15 Phasen)</p>
       </div>
 
       <div class="select-card" id="levelCard4" onclick="selectLevel(4)">
         <h3 style="color: var(--accent-purple); font-size:12px;">👑 LEVEL 4: ENDBOSS</h3>
-        <p style="font-size: 9px; color: var(--text-muted); margin-top: 3px;">Extrem (Mit Angriff!)</p>
+        <p style="font-size: 9px; color: var(--text-muted); margin-top: 3px;">Extrem (15 Phasen)</p>
       </div>
     </div>
 
@@ -247,21 +251,21 @@
 
     <button class="launch-btn" onclick="launchTerminal()">>_ OVERRIDE TERMINAL STARTEN</button>
 
-    <!-- NEWS & DISCORD FOOTER BEREICH -->
+    <!-- NEWS (LINKS) UND DISCORD LINK (RECHTS) -->
     <div class="news-discord-container">
       <div class="news-box">
         <h3>📰 NEWS & UPDATES</h3>
         <ul>
-          <li><strong>Update:</strong> Angriffe nach dem Hacken in Level 1, 2 und 3 wurden vollständig entfernt!</li>
-          <li><strong>Level 4 Boss:</strong> Nur in Level 4 wartet nach dem Hacken weiterhin der epische Live-Angriff auf dich.</li>
-          <li><strong>System:</strong> Performance optimiert und Admin-Panel erweitert.</li>
+          <li><strong>Update:</strong> Level 1 bis 3 ohne Endangriff.</li>
+          <li><strong>Level 4 Boss:</strong> Live-Angriff nach Hacken aktiv!</li>
         </ul>
       </div>
 
       <div class="discord-box">
-        <h3>💬 TRITT UNSEREM DISCORD BEI!</h3>
-        <p>Bleibe auf dem Laufenden, erhalte Support und tausche dich mit der Community aus:</p>
-        <a href="https://discord.gg/DEIN_DISCORD_LINK" target="_blank" class="discord-btn">👉 DISCORD SERVER BEITRETEN</a>
+        <h3>💬 DISCORD COMMUNITY</h3>
+        <p>Tritt unserem Server bei:</p>
+        <!-- Passe den Link zu deinem Discord-Einladungslink an -->
+        <a href="https://discord.gg/DEIN_DISCORD_LINK" target="_blank" class="discord-btn">👉 DISCORD BEITRETEN</a>
       </div>
     </div>
   </div>
@@ -456,7 +460,7 @@
           case 14: startFire14Power(); break;
           case 15: startPhase15FinalCoreHack(); break;
         }
-      } else { // LEVEL 4 ENDBOSS
+      } else {
         switch(phaseNum) {
           case 1: isProcessingHack = false; startBoss1Stream(); break;
           case 2: startBoss2BruteForce(); break;
@@ -702,11 +706,9 @@
         printChat('<span style="color:var(--accent-purple);">[KERN BYPASS]: Überlastung ' + (phase15Count * 20) + '%</span>');
         
         if (phase15Count >= 5) {
-          // ANGRIFF NUR BEI LEVEL 4 (ENDBOSS)
           if (selectedLevel === 4) {
             triggerBlackscreenCutscene();
           } else {
-            // LEVEL 1, 2 UND 3 SCHLIESSEN NORMAL SONDER-GEWINN AB (KEIN ANGRIFF)
             userBalance += (selectedLevel === 1 ? 5000 : (selectedLevel === 2 ? 8000 : 4000));
             updateBalance();
             printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:14px;">\n🏆 HEIST VOLLSTÄNDIG ERFOLGREICH! DAS SYSTEM IST SICHER UND DU WURDEST NICHT ENTDECKT!</span>');
@@ -735,7 +737,6 @@
       }, 1000);
     }
 
-    // CUTSCENE & ENDGAME NUR FÜR LEVEL 4
     function triggerBlackscreenCutscene() {
       var bs = document.getElementById("blackscreenOverlay");
       var txt = document.getElementById("blackscreenText");
@@ -835,7 +836,6 @@
       }
     }
 
-    // HELPER FUNCTIONS
     function runStreamAnimation(seconds, callback) {
       var count = 0;
       var max = seconds * 2;
