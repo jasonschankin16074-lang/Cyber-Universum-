@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Cyber Universe v34.0</title>
+  <title>Cyber Universe v35.0 - Endgame Edition</title>
   <style>
     :root {
       --bg: #030508;
@@ -14,6 +14,7 @@
       --accent-main: #10b981;
       --accent-red: #ef4444;
       --accent-yellow: #f59e0b;
+      --accent-orange: #f97316;
       --dash-bg: #020407;
     }
 
@@ -41,13 +42,15 @@
       border: 2px solid var(--accent-main); border-radius: 12px; padding: 15px;
     }
 
-    .level-selector, .faction-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; }
+    .level-selector { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin: 10px 0; }
+    .faction-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; }
     
     .select-card {
-      border: 2px solid var(--border); border-radius: 8px; padding: 12px;
+      border: 2px solid var(--border); border-radius: 8px; padding: 10px;
       text-align: center; cursor: pointer; transition: 0.2s; background: rgba(0,0,0,0.2);
     }
     .select-card.active { border-color: var(--accent-main); background: rgba(16, 185, 129, 0.15); }
+    .select-card.active-fire { border-color: var(--accent-orange); background: rgba(249, 115, 22, 0.15); }
     .select-card.active-evil { border-color: var(--accent-red); background: rgba(239, 68, 68, 0.15); }
     .select-card.active-good { border-color: #2563eb; background: rgba(37, 99, 235, 0.15); }
 
@@ -132,30 +135,35 @@
 <body id="bodyTag">
 
   <div class="start-dashboard">
-    <h2 class="rainbow-text">// CYBER UNIVERSE v34.0</h2>
+    <h2 class="rainbow-text">// CYBER UNIVERSE v35.0</h2>
 
     <label style="font-size: 11px; font-weight: bold; color: var(--text-muted); margin-top:8px; display:block;">1. SZENARIO WÄHLEN:</label>
     <div class="level-selector">
       <div class="select-card active" id="levelCard1" onclick="selectLevel(1)">
-        <h3 style="color: var(--accent-main); font-size:14px;">🏢 LEVEL 1: TRESOR</h3>
-        <p style="font-size: 10px; color: var(--text-muted); margin-top: 3px;">Banken & Datentresore (15 Phasen)</p>
+        <h3 style="color: var(--accent-main); font-size:12px;">🏢 LEVEL 1: TRESOR</h3>
+        <p style="font-size: 9px; color: var(--text-muted); margin-top: 3px;">Normal (15 Phasen)</p>
       </div>
 
       <div class="select-card" id="levelCard2" onclick="selectLevel(2)">
-        <h3 style="color: #06b6d4; font-size:14px;">🏥 LEVEL 2: KRANKENHAUS</h3>
-        <p style="font-size: 10px; color: var(--text-muted); margin-top: 3px;">Klinik & Medizin-Netz (15 Phasen)</p>
+        <h3 style="color: #06b6d4; font-size:12px;">🏥 LEVEL 2: KLINIK</h3>
+        <p style="font-size: 9px; color: var(--text-muted); margin-top: 3px;">Schwer (15 Phasen)</p>
+      </div>
+
+      <div class="select-card" id="levelCard3" onclick="selectLevel(3)">
+        <h3 style="color: var(--accent-orange); font-size:12px;">🚒 LEVEL 3: FEUERWEHR</h3>
+        <p style="font-size: 9px; color: var(--text-muted); margin-top: 3px;">Einfach (15 Phasen)</p>
       </div>
     </div>
 
     <label style="font-size: 11px; font-weight: bold; color: var(--text-muted); display:block;">2. SEITE WÄHLEN:</label>
     <div class="faction-selector">
       <div class="select-card active-evil" id="cardEvil" onclick="selectStartFaction('evil')">
-        <h3 style="color: var(--accent-red); font-size:14px;">💻 ANGRIFF</h3>
+        <h3 style="color: var(--accent-red); font-size:13px;">💻 ANGRIFF</h3>
         <p style="font-size: 10px; color: var(--text-muted); margin-top: 3px;">15 Phasen Heist</p>
       </div>
 
       <div class="select-card" id="cardGood" onclick="selectStartFaction('good')">
-        <h3 style="color: #2563eb; font-size:14px;">🛡️ ABWEHR</h3>
+        <h3 style="color: #2563eb; font-size:13px;">🛡️ ABWEHR</h3>
         <p style="font-size: 10px; color: var(--text-muted); margin-top: 3px;">Systeme sichern</p>
       </div>
     </div>
@@ -172,7 +180,7 @@
       </div>
 
       <div class="dash-header">
-        <span id="terminalTitle" class="rainbow-text">CYBER_UNIVERSE v34.0</span>
+        <span id="terminalTitle" class="rainbow-text">CYBER_UNIVERSE v35.0</span>
         <div class="header-controls">
           <button class="admin-burger-btn" onclick="toggleAdminPanel()">☰</button>
           <button class="close-btn" onclick="closeTerminal()">[X]</button>
@@ -239,10 +247,17 @@
     var currentKeyIndex = 0;
     var adminPassword = "123";
 
+    // ENDGAME VARIABLES
+    var isEndgameActive = false;
+    var endgameAttackTimer = null;
+    var currentDefenseCommand = "";
+    var systemHealth = 100;
+
     function selectLevel(lvl) {
       selectedLevel = lvl;
       document.getElementById('levelCard1').className = 'select-card' + (lvl === 1 ? ' active' : '');
       document.getElementById('levelCard2').className = 'select-card' + (lvl === 2 ? ' active' : '');
+      document.getElementById('levelCard3').className = 'select-card' + (lvl === 3 ? ' active-fire' : '');
       updateAdminSelectOptions();
     }
 
@@ -255,9 +270,14 @@
     function updateAdminSelectOptions() {
       var select = document.getElementById("phaseSelect");
       select.innerHTML = "";
-      var names = selectedLevel === 1 
-        ? ["Zahlen-Stream", "Brute-Force", "Pin-Pad", "Laser-Schutz", "DNA-Scan", "Master-Tresor", "WLAN-Jammer", "Kamera-Bypass", "Anti-Standort", "KI-Feuerwall", "Satellit", "Quanten-Code", "Augenscan", "Stromnetz", "Finaler Kern-Hack"]
-        : ["Klinik-Stream", "Brute-Force Meds", "Intensiv PIN", "OP-Laser", "Blutgruppen-Scan", "Gift-Schrank", "Defibrillator-Jammer", "Akten-Override", "Krankenwagen GPS", "Klinik KI", "Satellit", "Labor-Code", "Chirurgen-Scan", "Generator Off", "Krankenhaus Kern-Hack"];
+      var names = [];
+      if (selectedLevel === 1) {
+        names = ["Zahlen-Stream", "Brute-Force", "Pin-Pad", "Laser-Schutz", "DNA-Scan", "Master-Tresor", "WLAN-Jammer", "Kamera-Bypass", "Anti-Standort", "KI-Feuerwall", "Satellit", "Quanten-Code", "Augenscan", "Stromnetz", "Finaler Kern-Hack"];
+      } else if (selectedLevel === 2) {
+        names = ["Klinik-Stream", "Brute-Force Meds", "Intensiv PIN", "OP-Laser", "Blutgruppen-Scan", "Gift-Schrank", "Defibrillator-Jammer", "Akten-Override", "Krankenwagen GPS", "Klinik KI", "Satellit", "Labor-Code", "Chirurgen-Scan", "Generator Off", "Krankenhaus Kern-Hack"];
+      } else {
+        names = ["Funk-Stream", "Notruf-Code", "Siren-Pin", "Wasser-Druck", "Leitstellen-Scan", "Einsatz-Vault", "Funk-Jammer", "Tor-Override", "GPS-Tracker", "Feuerwehr KI", "Satellit", "Hydranten-Code", "Chief-Scan", "Strom-Aus", "Feuerwehr Kern-Hack"];
+      }
       
       for(var i=0; i<15; i++) select.innerHTML += '<option value="' + (i+1) + '">Phase ' + (i+1) + ': ' + names[i] + '</option>';
     }
@@ -304,7 +324,7 @@
           case 14: startPhase14PowerGridShutdown(); break;
           case 15: startPhase15FinalCoreHack(); break;
         }
-      } else {
+      } else if (selectedLevel === 2) {
         switch(phaseNum) {
           case 1: isProcessingHack = false; startHosp1Stream(); break;
           case 2: startHosp2MedsCrack(); break;
@@ -322,11 +342,29 @@
           case 14: startHosp14GeneratorShutdown(); break;
           case 15: startPhase15FinalCoreHack(); break;
         }
+      } else { // LEVEL 3 FEUERWEHR
+        switch(phaseNum) {
+          case 1: isProcessingHack = false; startFire1Stream(); break;
+          case 2: startFire2EasyCrack(); break;
+          case 3: startFire3EasyPin(); break;
+          case 4: startFire4EasyPressure(); break;
+          case 5: startFire5EasyScan(); break;
+          case 6: startFire6EasyVault(); break;
+          case 7: startFire7EasyJammer(); break;
+          case 8: startFire8EasyGate(); break;
+          case 9: startFire9EasyGps(); break;
+          case 10: promptContinueFire(); break;
+          case 11: startFire11Sat(); break;
+          case 12: startFire12Hydrant(); break;
+          case 13: startFire13ChiefScan(); break;
+          case 14: startFire14Power(); break;
+          case 15: startPhase15FinalCoreHack(); break;
+        }
       }
     }
 
     function generateNumberBlock() {
-      var chars = selectedLevel === 2 ? "MED0123456789HOSP" : "0123456789ABCDEF";
+      var chars = selectedLevel === 3 ? "FEUER112SOS" : (selectedLevel === 2 ? "MED0123456789HOSP" : "0123456789ABCDEF");
       var b = "";
       for (var i = 0; i < 12; i++) b += chars[Math.floor(Math.random() * chars.length)];
       return b;
@@ -339,7 +377,7 @@
           if (currentBlockCount > 60) currentBlockCount = 60;
           document.getElementById("wordCounter").innerText = currentBlockCount + " / 60";
           
-          printChat('<span style="color:' + (selectedLevel === 2 ? '#06b6d4' : 'var(--accent-main)') + ';">' + generateNumberBlock() + ' ' + generateNumberBlock() + ' ' + generateNumberBlock() + '</span>');
+          printChat('<span style="color:' + (selectedLevel === 3 ? 'var(--accent-orange)' : (selectedLevel === 2 ? '#06b6d4' : 'var(--accent-main)')) + ';">' + generateNumberBlock() + ' ' + generateNumberBlock() + ' ' + generateNumberBlock() + '</span>');
           
           if (currentBlockCount >= 60) {
             isAwaitingEnter = true;
@@ -347,7 +385,8 @@
           }
         } else {
           if (selectedLevel === 1) startPhase1Stream();
-          else startHosp1Stream();
+          else if (selectedLevel === 2) startHosp1Stream();
+          else startFire1Stream();
         }
       }
     }
@@ -356,6 +395,12 @@
       var inputEl = document.getElementById("actionInput");
       var val = inputEl.value.trim();
       
+      if (isEndgameActive) {
+        handleEndgameInput(val);
+        inputEl.value = "";
+        return;
+      }
+
       if (currentPhase === 1) {
         doTapHack();
         inputEl.value = "";
@@ -384,6 +429,7 @@
       }
     });
 
+    // LEVEL 1 FUNCTIONS
     function startPhase1Stream() {
       isAwaitingEnter = false; isProcessingHack = true;
       printChat('<span style="color:var(--accent-yellow); font-weight:bold;">>>> LEVEL 1 - PHASE 1/15: TRESOR-NETZWERK <<<</span>');
@@ -435,6 +481,7 @@
       setPlaceholder("JA oder NEIN...");
     }
 
+    // LEVEL 2 FUNCTIONS
     function startHosp1Stream() {
       isAwaitingEnter = false; isProcessingHack = true;
       printChat('<span style="color:#06b6d4; font-weight:bold;">>>> LEVEL 2 - PHASE 1/15: KLINIK-NETZWERK BYPASS <<<</span>');
@@ -485,52 +532,89 @@
       printChat('<span style="color:#06b6d4; font-weight:bold; font-size:13px;">\n>>> PHASE 10/15 ERREICHT! +3.500$ BELOHNUNG! <<<\nCHIEF MEDICAL KI GEWARNT! WEITERMACHEN BIS PHASE 15? (JA / NEIN)</span>');
       setPlaceholder("Tippe JA oder NEIN...");
     }
-    function startHosp11SatLink() {
-      currentPhase = 11; targetLaserAngle = Math.floor(Math.random() * 360) + 1;
-      printChat('<span style="color:#f59e0b; font-weight:bold;">\n>>> PHASE 11/15: SATELLIT (1-360°) <<<</span>');
-      setPlaceholder("Ausrichtung (1-360)...");
+
+    // LEVEL 3 FEUERWEHR FUNCTIONS (EINFACHER)
+    function startFire1Stream() {
+      isAwaitingEnter = false; isProcessingHack = true;
+      printChat('<span style="color:var(--accent-orange); font-weight:bold;">>>> LEVEL 3 - PHASE 1/15: FEUERWEHR LEITSTELLE (EINFACH) <<<</span>');
+      runStreamAnimation(5, startFire2EasyCrack);
     }
-    function startHosp12LabCode() {
-      currentPhase = 12; masterVaultCode = Math.floor(Math.random() * 100) + 1;
-      printChat('<span style="color:#06b6d4; font-weight:bold;">\n>>> PHASE 12/15: LABOR SCHLÜSSEL (1-100) <<<</span>');
-      setPlaceholder("Code (1-100)...");
+    function startFire2EasyCrack() {
+      currentPhase = 2;
+      printChat('<span style="color:var(--accent-orange); font-weight:bold;">\n>>> PHASE 2/15: NOTRUF-SERVER (EINFACHER BRUTE-FORCE) <<<</span>');
+      runBruteForceAnimation(4, startFire3EasyPin);
     }
-    function startHosp13SurgeonBiometrics() {
-      currentPhase = 13; requiredKeys = ['O', 'P', '1']; currentKeyIndex = 0;
-      printChat('<span style="color:#ef4444; font-weight:bold;">\n>>> PHASE 13/15: AUGENSCAN (Combo: O - P - 1) <<<</span>');
-      runMultiKeyPhase("Scan OK!", startHosp14GeneratorShutdown, startHosp13SurgeonBiometrics);
+    function startFire3EasyPin() {
+      currentPhase = 3; secretCode = [1, 2]; currentDigitIndex = 0;
+      printChat('<span style="color:var(--accent-orange); font-weight:bold;">\n>>> PHASE 3/15: SIRENEN PIN (Einfach: Zahl 1 & 2) <<<</span>');
+      setPlaceholder("Tippe 1...");
     }
-    function startHosp14GeneratorShutdown() {
+    function startFire4EasyPressure() {
+      currentPhase = 4; targetLaserAngle = 100;
+      printChat('<span style="color:var(--accent-orange); font-weight:bold;">\n>>> PHASE 4/15: WASSERDRUCK (Ziel: 100 Bar) <<<</span>');
+      setPlaceholder("Tippe 100...");
+    }
+    function startFire5EasyScan() {
+      currentPhase = 5;
+      printChat('<span style="color:var(--accent-orange); font-weight:bold;">\n>>> PHASE 5/15: LEITSTELLEN SCAN (Code: 112) <<<</span>');
+      setPlaceholder("Tippe 112...");
+    }
+    function startFire6EasyVault() {
+      currentPhase = 6; masterVaultCode = 10;
+      printChat('<span style="color:var(--accent-orange); font-weight:bold;">\n>>> PHASE 6/15: EINSATZ-TRESOR (Code: 10) <<<</span>');
+      setPlaceholder("Tippe 10...");
+    }
+    function startFire7EasyJammer() {
+      currentPhase = 7; requiredKeys = ['F', 'U', 'N']; currentKeyIndex = 0;
+      printChat('<span style="color:var(--accent-orange); font-weight:bold;">\n>>> PHASE 7/15: FUNK JAMMER (Combo: F - U - N) <<<</span>');
+      runMultiKeyPhase("Funk Gehackt!", startFire8EasyGate, startFire7EasyJammer);
+    }
+    function startFire8EasyGate() {
+      currentPhase = 8; requiredKeys = ['T', 'O', 'R']; currentKeyIndex = 0;
+      printChat('<span style="color:var(--accent-orange); font-weight:bold;">\n>>> PHASE 8/15: HALLENTOR OVERRIDE (Combo: T - O - R) <<<</span>');
+      runMultiKeyPhase("Tore offen!", startFire9EasyGps, startFire8EasyGate);
+    }
+    function startFire9EasyGps() {
+      currentPhase = 9; requiredKeys = ['G', 'P', 'S']; currentKeyIndex = 0;
+      printChat('<span style="color:var(--accent-orange); font-weight:bold;">\n>>> PHASE 9/15: WAGEN TRACKER (Combo: G - P - S) <<<</span>');
+      runMultiKeyPhase("Gps umgeleitet!", promptContinueFire, startFire9EasyGps);
+    }
+    function promptContinueFire() {
+      userBalance += 2000; updateBalance();
+      printChat('<span style="color:var(--accent-orange); font-weight:bold; font-size:13px;">\n>>> PHASE 9 ERFOLGREICH! +2.000$! <<<\nWEITERMACHEN BIS PHASE 15? (JA / NEIN)</span>');
+      setPlaceholder("JA oder NEIN...");
+    }
+    function startFire11Sat() {
+      currentPhase = 11; targetLaserAngle = 50;
+      printChat('<span style="color:var(--accent-orange); font-weight:bold;">\n>>> PHASE 11/15: WETTER SATELLIT (Winkel: 50) <<<</span>');
+      setPlaceholder("Tippe 50...");
+    }
+    function startFire12Hydrant() {
+      currentPhase = 12; masterVaultCode = 22;
+      printChat('<span style="color:var(--accent-orange); font-weight:bold;">\n>>> PHASE 12/15: HYDRANTEN NETZ (Code: 22) <<<</span>');
+      setPlaceholder("Tippe 22...");
+    }
+    function startFire13ChiefScan() {
+      currentPhase = 13; requiredKeys = ['S', 'O', 'S']; currentKeyIndex = 0;
+      printChat('<span style="color:var(--accent-orange); font-weight:bold;">\n>>> PHASE 13/15: CHEF SCAN (Combo: S - O - S) <<<</span>');
+      runMultiKeyPhase("Chef Bypass!", startFire14Power, startFire13ChiefScan);
+    }
+    function startFire14Power() {
       currentPhase = 14; requiredKeys = ['A', 'U', 'S']; currentKeyIndex = 0;
-      printChat('<span style="color:#f59e0b; font-weight:bold;">\n>>> PHASE 14/15: GENERATOR OFF (Combo: A - U - S) <<<</span>');
-      runMultiKeyPhase("Strom aus!", startPhase15FinalCoreHack, startHosp14GeneratorShutdown);
+      printChat('<span style="color:var(--accent-orange); font-weight:bold;">\n>>> PHASE 14/15: STROM AUS (Combo: A - U - S) <<<</span>');
+      runMultiKeyPhase("Strom Aus!", startPhase15FinalCoreHack, startFire14Power);
     }
 
-    function startPhase10AiFirewall() {
-      currentPhase = 10; secretCode = [Math.floor(Math.random() * 20) + 1];
-      printChat('<span style="color:#ef4444; font-weight:bold;">\n>>> PHASE 10/15: KI-FEUERWALL (1-20) <<<</span>');
-      setPlaceholder("Pin (1-20)...");
-    }
-    function startPhase11SatelliteLink() {
-      currentPhase = 11; targetLaserAngle = Math.floor(Math.random() * 360) + 1;
-      printChat('<span style="color:#f59e0b; font-weight:bold;">\n>>> PHASE 11/15: SATELLIT (1-360°) <<<</span>');
-      setPlaceholder("Winkel (1-360)...");
-    }
-    function startPhase12QuantumDecryption() {
-      currentPhase = 12; masterVaultCode = Math.floor(Math.random() * 100) + 1;
-      printChat('<span style="color:var(--accent-main); font-weight:bold;">\n>>> PHASE 12/15: QUANTEN-SCHLÜSSEL (1-100) <<<</span>');
-      setPlaceholder("Code (1-100)...");
-    }
-    function startPhase13EyeBiometrics() {
-      currentPhase = 13; requiredKeys = ['A', 'W', 'S', 'D']; currentKeyIndex = 0;
-      printChat('<span style="color:#ef4444; font-weight:bold;">\n>>> PHASE 13/15: AUGENSCAN (Combo: A - W - S - D) <<<</span>');
-      runMultiKeyPhase("Augenscan OK!", startPhase14PowerGridShutdown, startPhase13EyeBiometrics);
-    }
-    function startPhase14PowerGridShutdown() {
-      currentPhase = 14; requiredKeys = ['E', 'R', 'T', 'Z']; currentKeyIndex = 0;
-      printChat('<span style="color:#f59e0b; font-weight:bold;">\n>>> PHASE 14/15: STROMNETZ (Combo: E - R - T - Z) <<<</span>');
-      runMultiKeyPhase("Netz aus!", startPhase15FinalCoreHack, startPhase14PowerGridShutdown);
-    }
+    function startHosp11SatLink() { currentPhase = 11; targetLaserAngle = Math.floor(Math.random() * 360) + 1; printChat('<span style="color:#f59e0b; font-weight:bold;">\n>>> PHASE 11/15: SATELLIT (1-360°) <<<</span>'); setPlaceholder("Ausrichtung (1-360)..."); }
+    function startHosp12LabCode() { currentPhase = 12; masterVaultCode = Math.floor(Math.random() * 100) + 1; printChat('<span style="color:#06b6d4; font-weight:bold;">\n>>> PHASE 12/15: LABOR SCHLÜSSEL (1-100) <<<</span>'); setPlaceholder("Code (1-100)..."); }
+    function startHosp13SurgeonBiometrics() { currentPhase = 13; requiredKeys = ['O', 'P', '1']; currentKeyIndex = 0; printChat('<span style="color:#ef4444; font-weight:bold;">\n>>> PHASE 13/15: AUGENSCAN (Combo: O - P - 1) <<<</span>'); runMultiKeyPhase("Scan OK!", startHosp14GeneratorShutdown, startHosp13SurgeonBiometrics); }
+    function startHosp14GeneratorShutdown() { currentPhase = 14; requiredKeys = ['A', 'U', 'S']; currentKeyIndex = 0; printChat('<span style="color:#f59e0b; font-weight:bold;">\n>>> PHASE 14/15: GENERATOR OFF (Combo: A - U - S) <<<</span>'); runMultiKeyPhase("Strom aus!", startPhase15FinalCoreHack, startHosp14GeneratorShutdown); }
+
+    function startPhase10AiFirewall() { currentPhase = 10; secretCode = [Math.floor(Math.random() * 20) + 1]; printChat('<span style="color:#ef4444; font-weight:bold;">\n>>> PHASE 10/15: KI-FEUERWALL (1-20) <<<</span>'); setPlaceholder("Pin (1-20)..."); }
+    function startPhase11SatelliteLink() { currentPhase = 11; targetLaserAngle = Math.floor(Math.random() * 360) + 1; printChat('<span style="color:#f59e0b; font-weight:bold;">\n>>> PHASE 11/15: SATELLIT (1-360°) <<<</span>'); setPlaceholder("Winkel (1-360)..."); }
+    function startPhase12QuantumDecryption() { currentPhase = 12; masterVaultCode = Math.floor(Math.random() * 100) + 1; printChat('<span style="color:var(--accent-main); font-weight:bold;">\n>>> PHASE 12/15: QUANTEN-SCHLÜSSEL (1-100) <<<</span>'); setPlaceholder("Code (1-100)..."); }
+    function startPhase13EyeBiometrics() { currentPhase = 13; requiredKeys = ['A', 'W', 'S', 'D']; currentKeyIndex = 0; printChat('<span style="color:#ef4444; font-weight:bold;">\n>>> PHASE 13/15: AUGENSCAN (Combo: A - W - S - D) <<<</span>'); runMultiKeyPhase("Augenscan OK!", startPhase14PowerGridShutdown, startPhase13EyeBiometrics); }
+    function startPhase14PowerGridShutdown() { currentPhase = 14; requiredKeys = ['E', 'R', 'T', 'Z']; currentKeyIndex = 0; printChat('<span style="color:#f59e0b; font-weight:bold;">\n>>> PHASE 14/15: STROMNETZ (Combo: E - R - T - Z) <<<</span>'); runMultiKeyPhase("Netz aus!", startPhase15FinalCoreHack, startPhase14PowerGridShutdown); }
 
     function startPhase15FinalCoreHack() {
       currentPhase = 15; phase15Count = 0; awaitingFinalEnter = false;
@@ -576,7 +660,9 @@
           printChat('<span style="color:var(--accent-main); font-weight:bold;">[PIN]: ' + g + ' KORREKT!</span>');
           currentDigitIndex++;
           if (currentDigitIndex >= 2) {
-            if (selectedLevel === 1) startPhase4LaserBypass(); else startHosp4OpLaser();
+            if (selectedLevel === 1) startPhase4LaserBypass(); 
+            else if (selectedLevel === 2) startHosp4OpLaser();
+            else startFire4EasyPressure();
           }
         } else if (g < target) { printChat('<span style="color:#ef4444;">[PIN]: ZU NIEDRIG!</span>'); }
         else { printChat('<span style="color:#ef4444;">[PIN]: ZU HOCH!</span>'); }
@@ -584,26 +670,34 @@
       } else if (currentPhase === 4) {
         var angle = parseInt(val);
         if (angle === targetLaserAngle) {
-          if (selectedLevel === 1) startPhase5DnaBypass(); else startHosp5BloodDna();
-        } else if (angle < targetLaserAngle) { printChat('<span style="color:#f59e0b;">[LASER]: ZU NIEDRIG! Nach RECHTS drehen!</span>'); }
-        else { printChat('<span style="color:#f59e0b;">[LASER]: ZU HOCH! Nach LINKS drehen!</span>'); }
+          if (selectedLevel === 1) startPhase5DnaBypass(); 
+          else if (selectedLevel === 2) startHosp5BloodDna();
+          else startFire5EasyScan();
+        } else if (angle < targetLaserAngle) { printChat('<span style="color:#f59e0b;">[WINKEL]: ZU NIEDRIG!</span>'); }
+        else { printChat('<span style="color:#f59e0b;">[WINKEL]: ZU HOCH!</span>'); }
 
       } else if (currentPhase === 5) {
-        var req = selectedLevel === 2 ? "MED1" : "AAAA";
+        var req = selectedLevel === 3 ? "112" : (selectedLevel === 2 ? "MED1" : "AAAA");
         if (val.toUpperCase() === req) {
-          if (selectedLevel === 1) startPhase6MasterVault(); else startHosp6PharmaVault();
-        } else { printChat('<span style="color:#ef4444;">[DNA]: FALSCH! Tippe ' + req + '!</span>'); }
+          if (selectedLevel === 1) startPhase6MasterVault(); 
+          else if (selectedLevel === 2) startHosp6PharmaVault();
+          else startFire6EasyVault();
+        } else { printChat('<span style="color:#ef4444;">[SCAN]: FALSCH! Tippe ' + req + '!</span>'); }
 
       } else if (currentPhase === 6) {
         var mG = parseInt(val);
         if (mG === masterVaultCode) {
-          if (selectedLevel === 1) startPhase7WlanJammer(); else startHosp7DefibrillatorJammer();
+          if (selectedLevel === 1) startPhase7WlanJammer(); 
+          else if (selectedLevel === 2) startHosp7DefibrillatorJammer();
+          else startFire7EasyJammer();
         } else if (mG < masterVaultCode) { printChat('<span style="color:#ef4444;">[TRESOR]: ZU NIEDRIG!</span>'); }
         else { printChat('<span style="color:#ef4444;">[TRESOR]: ZU HOCH!</span>'); }
 
-      } else if (currentPhase === 9 || (selectedLevel === 2 && currentPhase === 10)) {
+      } else if (currentPhase === 9 || currentPhase === 10) {
         if (val.toLowerCase() === "ja") {
-          if (selectedLevel === 1) startPhase10AiFirewall(); else startHosp11SatLink();
+          if (selectedLevel === 1) startPhase10AiFirewall(); 
+          else if (selectedLevel === 2) startHosp11SatLink();
+          else startFire11Sat();
         } else {
           printChat('<span style="color:#ef4444;">[SYSTEM]: Beendet mit Beute.</span>');
         }
@@ -617,14 +711,18 @@
       } else if (currentPhase === 11) {
         var sA = parseInt(val);
         if (sA === targetLaserAngle) {
-          if (selectedLevel === 1) startPhase12QuantumDecryption(); else startHosp12LabCode();
-        } else if (sA < targetLaserAngle) { printChat('<span style="color:#f59e0b;">[SATELLIT]: ZU NIEDRIG! Höher ausrichten!</span>'); }
-        else { printChat('<span style="color:#f59e0b;">[SATELLIT]: ZU HOCH! Niedriger ausrichten!</span>'); }
+          if (selectedLevel === 1) startPhase12QuantumDecryption(); 
+          else if (selectedLevel === 2) startHosp12LabCode();
+          else startFire12Hydrant();
+        } else if (sA < targetLaserAngle) { printChat('<span style="color:#f59e0b;">[SATELLIT]: ZU NIEDRIG!</span>'); }
+        else { printChat('<span style="color:#f59e0b;">[SATELLIT]: ZU HOCH!</span>'); }
 
       } else if (currentPhase === 12) {
         var qG = parseInt(val);
         if (qG === masterVaultCode) {
-          if (selectedLevel === 1) startPhase13EyeBiometrics(); else startHosp13SurgeonBiometrics();
+          if (selectedLevel === 1) startPhase13EyeBiometrics(); 
+          else if (selectedLevel === 2) startHosp13SurgeonBiometrics();
+          else startFire13ChiefScan();
         } else if (qG < masterVaultCode) { printChat('<span style="color:#ef4444;">[CODE]: ZU NIEDRIG!</span>'); }
         else { printChat('<span style="color:#ef4444;">[CODE]: ZU HOCH!</span>'); }
       }
@@ -669,42 +767,103 @@
       }, 1000);
     }
 
+    // FINALE + ENDGAME LAUNCH
     function triggerSystemDestructionAndReboot() {
-      userBalance += selectedLevel === 2 ? 15000 : 10000;
+      userBalance += selectedLevel === 3 ? 5000 : (selectedLevel === 2 ? 15000 : 10000);
       updateBalance();
-      printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:14px;">\n>>> LEVEL 15 ERFOLGREICH! GROSSE BEUTE GUTGESCHRIEBEN! <<<</span>');
 
-      setTimeout(function() {
-        var blackOverlay = document.getElementById("blackscreenOverlay");
-        var blackText = document.getElementById("blackscreenText");
-        
-        blackOverlay.style.display = "flex";
-        blackText.innerHTML = "CRITICAL SYSTEM OVERRIDE... SHUTTING DOWN...<br>";
+      var blackOverlay = document.getElementById("blackscreenOverlay");
+      var blackText = document.getElementById("blackscreenText");
+      
+      blackOverlay.style.display = "flex";
+      blackText.innerHTML = "SYSTEM DURCHGESPIELT! HAUPTSPIEL GEWONNEN...<br>";
 
-        var lines = ["DELETING LOGS...", "PURGING DATABASE...", "SYSTEM OFFLINE."];
-        var idx = 0;
-        var printInterval = setInterval(function() {
-          if (idx < lines.length) {
-            blackText.innerHTML += lines[idx] + "<br>";
-            idx++;
-          } else {
-            clearInterval(printInterval);
+      var lines = [
+        "DU HAST SYSTEM " + selectedLevel + " VOLLSTÄNDIG GEKNACKT!",
+        "INITIALISIERE PROTOTYPEN ENDGAME MODUS...",
+        "WARNING: ANDERE HACKER VERSUCHEN NUN DICH ZU HACKEN!"
+      ];
+      var idx = 0;
+      var printInterval = setInterval(function() {
+        if (idx < lines.length) {
+          blackText.innerHTML += lines[idx] + "<br>";
+          idx++;
+        } else {
+          clearInterval(printInterval);
+          setTimeout(function() {
+            blackOverlay.classList.add("flash-white");
             setTimeout(function() {
-              blackOverlay.classList.add("flash-white");
-              setTimeout(function() {
-                blackOverlay.classList.remove("flash-white");
-                blackOverlay.style.display = "none";
-                blackText.innerHTML = "";
+              blackOverlay.classList.remove("flash-white");
+              blackOverlay.style.display = "none";
+              blackText.innerHTML = "";
 
-                currentPhase = 1; currentBlockCount = 0; isProcessingHack = false;
-                document.getElementById("wordCounter").innerText = "0 / 60";
-                setPlaceholder("Tippen zum Hacken...");
-                printChat('<span style="color:var(--accent-main); font-weight:bold;">\n[REBOOT]: System bereit! Tippe auf den Button oder in das Feld...</span>');
-              }, 500);
-            }, 800);
-          }
-        }, 600);
+              startEndgameMode();
+            }, 600);
+          }, 1000);
+        }
       }, 800);
+    }
+
+    // ENDGAME ENGINE
+    function startEndgameMode() {
+      isEndgameActive = true;
+      systemHealth = 100;
+      document.getElementById("wordCounter").innerText = "HP: 100%";
+      printChat('<span style="color:#ef4444; font-weight:bold; font-size:14px;">\n=========================================\n🚨 ENDGAME STATUS: VERTEIDIGE DEINE DATING-LOGS! 🚨\nFremde Hacker greifen dein System an!\nVerwende Abwehrbefehle, um Angriffe zu stoppen!\n=========================================</span>');
+      
+      triggerNextEndgameAttack();
+    }
+
+    function triggerNextEndgameAttack() {
+      if (!isEndgameActive) return;
+
+      var commands = ["FIREWALL", "DEFEND", "BLOCK", "SHIELD", "DISCONNECT"];
+      currentDefenseCommand = commands[Math.floor(Math.random() * commands.length)];
+
+      printChat('<span style="color:var(--accent-yellow); font-weight:bold;">\n⚠️ WARNUNG: INC-ANGRIFF DEKODERT! Tippe schnell: "' + currentDefenseCommand + '"</span>');
+      setPlaceholder("Tippe " + currentDefenseCommand + "...");
+
+      var timer = 7;
+      if (endgameAttackTimer) clearInterval(endgameAttackTimer);
+
+      endgameAttackTimer = setInterval(function() {
+        timer--;
+        if (timer <= 0) {
+          clearInterval(endgameAttackTimer);
+          systemHealth -= 25;
+          userBalance = Math.max(0, userBalance - 1000);
+          updateBalance();
+          document.getElementById("wordCounter").innerText = "HP: " + systemHealth + "%";
+
+          printChat('<span style="color:#ef4444; font-weight:bold;">💥 BOOM! DICH HAT EIN HACKER GETROFFEN! (-25% HP | -1000$)</span>');
+
+          if (systemHealth <= 0) {
+            endEndgameMode(false);
+          } else {
+            setTimeout(triggerNextEndgameAttack, 2000);
+          }
+        }
+      }, 1000);
+    }
+
+    function handleEndgameInput(val) {
+      if (val.toUpperCase() === currentDefenseCommand) {
+        clearInterval(endgameAttackTimer);
+        userBalance += 1500;
+        updateBalance();
+        printChat('<span style="color:var(--accent-main); font-weight:bold;">🛡️ ANGRIFF ABGEWEHRT! +1500$ SCHUTZGELD!</span>');
+        
+        setTimeout(triggerNextEndgameAttack, 2500);
+      } else {
+        printChat('<span style="color:#ef4444;">[VERTEIDIGUNG FALSCH]: Tippe genau "' + currentDefenseCommand + '"!</span>');
+      }
+    }
+
+    function endEndgameMode(won) {
+      isEndgameActive = false;
+      if (endgameAttackTimer) clearInterval(endgameAttackTimer);
+      printChat('<span style="color:#ef4444; font-weight:bold; font-size:14px;">\n💀 SYSTEM CRASH! ENDGAME BEENDET!\nDeine Verteidigung ist zusammengebrochen.</span>');
+      setPlaceholder("Tippen zum Hacken...");
     }
 
     function setPlaceholder(txt) {
@@ -712,7 +871,9 @@
     }
 
     function launchTerminal() {
-      document.getElementById('currentLevelName').innerText = selectedLevel === 1 ? "LEVEL 1: TRESOR" : "LEVEL 2: KRANKENHAUS";
+      if (selectedLevel === 1) document.getElementById('currentLevelName').innerText = "LEVEL 1: TRESOR";
+      else if (selectedLevel === 2) document.getElementById('currentLevelName').innerText = "LEVEL 2: KRANKENHAUS";
+      else document.getElementById('currentLevelName').innerText = "LEVEL 3: FEUERWEHR";
 
       if (startFaction === 'good') {
         document.getElementById('bodyTag').className = 'theme-good';
@@ -727,15 +888,16 @@
       updateBalance();
       updateAdminSelectOptions();
       
-      currentPhase = 1; currentBlockCount = 0; isProcessingHack = false; isAwaitingEnter = false;
+      currentPhase = 1; currentBlockCount = 0; isProcessingHack = false; isAwaitingEnter = false; isEndgameActive = false;
       document.getElementById("wordCounter").innerText = "0 / 60";
       setPlaceholder("Tippen zum Hacken...");
       
-      printChat('[SYSTEM v34.0]: Bereit! Tippe auf das Feld oder den Button...');
+      printChat('[SYSTEM v35.0]: Bereit! Tippe auf das Feld oder den Button...');
     }
 
     function closeTerminal() {
       if (qteInterval) clearInterval(qteInterval);
+      if (endgameAttackTimer) clearInterval(endgameAttackTimer);
       document.getElementById('hackerOverlay').style.display = 'none';
       if (matrixInterval) clearInterval(matrixInterval);
     }
@@ -757,14 +919,14 @@
       var canvas = document.getElementById('matrixCanvas');
       var mCtx = canvas.getContext('2d');
       canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-      var chars = selectedLevel === 2 ? 'MEDICINE0123456789' : '0123456789ABCDEF';
+      var chars = selectedLevel === 3 ? 'FEUERWEHR112SOS' : (selectedLevel === 2 ? 'MEDICINE0123456789' : '0123456789ABCDEF');
       var drops = Array(Math.floor(canvas.width / 14)).fill(1);
 
       if (matrixInterval) clearInterval(matrixInterval);
       matrixInterval = setInterval(function() {
         mCtx.fillStyle = startFaction === 'good' ? 'rgba(248, 250, 252, 0.1)' : 'rgba(0, 0, 0, 0.05)';
         mCtx.fillRect(0, 0, canvas.width, canvas.height);
-        mCtx.fillStyle = selectedLevel === 2 ? '#06b6d4' : (startFaction === 'good' ? '#2563eb' : '#10b981');
+        mCtx.fillStyle = selectedLevel === 3 ? '#f97316' : (selectedLevel === 2 ? '#06b6d4' : (startFaction === 'good' ? '#2563eb' : '#10b981'));
         mCtx.font = '14px monospace';
         for (var i = 0; i < drops.length; i++) {
           mCtx.fillText(chars[Math.floor(Math.random() * chars.length)], i * 14, drops[i] * 14);
