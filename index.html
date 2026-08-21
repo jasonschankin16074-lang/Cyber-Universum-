@@ -1,319 +1,357 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cyber Universe - Control Panel & Hacking Core</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Courier New', Courier, monospace;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cyber Universe v10.0 - Full Opposites Edition</title>
+  <style>
+    :root {
+      --bg: #030508;
+      --card-bg: #090d14;
+      --border: #1a2333;
+      --text: #e2e8f0;
+      --text-muted: #64748b;
+      --accent-main: #10b981;
+      --accent-red: #ef4444;
+      --accent-yellow: #f59e0b;
+      --accent-purple: #8b5cf6;
+      --dash-bg: #020407;
+    }
 
-        body {
-            background-color: #0d0a14;
-            color: #fff;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-        }
+    /* WEISSES DESIGN FÜR GUTE SEITE */
+    body.theme-good {
+      --bg: #f1f5f9;
+      --card-bg: #ffffff;
+      --border: #cbd5e1;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --accent-main: #2563eb;
+      --dash-bg: #f8fafc;
+    }
 
-        .main-container {
-            width: 100%;
-            max-width: 1200px;
-            border: 2px solid #a8ff00;
-            border-radius: 12px;
-            padding: 20px;
-            background: #120e1e;
-            box-shadow: 0 0 20px rgba(168, 255, 0, 0.2);
-        }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: monospace, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); padding: 15px; transition: 0.3s; }
 
-        /* HEADER & GUTHABEN */
-        .header {
-            border-bottom: 1px dashed #333;
-            padding-bottom: 15px;
-            margin-bottom: 20px;
-        }
+    .start-dashboard {
+      max-width: 800px; margin: 0 auto; background: var(--card-bg);
+      border: 2px solid var(--accent-main); border-radius: 12px; padding: 20px;
+    }
 
-        .header h1 {
-            font-size: 28px;
-            margin-bottom: 5px;
-        }
+    .faction-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
 
-        .system-status {
-            color: #00ff88;
-            font-size: 12px;
-            margin-bottom: 10px;
-        }
+    .faction-card {
+      border: 2px solid var(--border); border-radius: 8px; padding: 15px;
+      text-align: center; cursor: pointer; transition: 0.2s; background: rgba(0,0,0,0.03);
+    }
+    .faction-card.active-evil { border-color: var(--accent-red); background: rgba(239, 68, 68, 0.1); }
+    .faction-card.active-good { border-color: #2563eb; background: rgba(37, 99, 235, 0.1); }
 
-        .balance-display {
-            font-size: 20px;
-            color: #ffd700;
-            font-weight: bold;
-        }
+    .launch-btn {
+      width: 100%; background: var(--accent-main); color: #fff; border: none;
+      padding: 12px; font-size: 16px; font-weight: bold; border-radius: 6px; cursor: pointer;
+    }
 
-        /* DASHBOARD GRID */
-        .grid-layout {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
+    /* TERMINAL OVERLAY */
+    #hackerOverlay {
+      display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(0, 0, 0, 0.95); z-index: 9999; flex-direction: column; align-items: center; justify-content: center; padding: 10px;
+    }
 
-        @media (max-width: 768px) {
-            .grid-layout { grid-template-columns: 1fr; }
-        }
+    body.theme-good #hackerOverlay { background: rgba(248, 250, 252, 0.96); }
 
-        .card {
-            background: #181328;
-            border: 1px solid #2a2240;
-            border-radius: 8px;
-            padding: 15px;
-        }
+    #matrixCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; opacity: 0.15; }
 
-        .card h2 {
-            font-size: 18px;
-            margin-bottom: 8px;
-            color: #fff;
-        }
+    .dash-window {
+      position: relative; z-index: 2; width: 98vw; height: 96vh;
+      background: var(--dash-bg); border: 2px solid var(--accent-main);
+      border-radius: 8px; display: flex; flex-direction: column; overflow: hidden; color: var(--text);
+    }
 
-        .card p {
-            font-size: 12px;
-            color: #aaa;
-            margin-bottom: 15px;
-        }
+    .dash-header {
+      background: rgba(0, 0, 0, 0.05); padding: 8px 14px; border-bottom: 1px solid var(--accent-main);
+      display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: bold;
+    }
 
-        /* TERMINAL & RAINBOW TEXT */
-        .rainbow-text {
-            animation: rainbowAnimation 3s linear infinite;
-        }
+    .dash-body { flex: 1; display: grid; grid-template-columns: 320px 1fr 280px; overflow: hidden; }
 
-        @keyframes rainbowAnimation {
-            0% { color: #ff0000; }
-            17% { color: #ff8800; }
-            33% { color: #ffff00; }
-            50% { color: #00ff00; }
-            67% { color: #00ffff; }
-            83% { color: #ff00ff; }
-            100% { color: #ff0000; }
-        }
+    .sidebar-left, .sidebar-right {
+      background: rgba(0, 0, 0, 0.02); padding: 10px; display: flex; flex-direction: column; gap: 6px; overflow-y: auto;
+    }
+    .sidebar-left { border-right: 1px solid var(--border); }
+    .sidebar-right { border-left: 1px solid var(--border); }
 
-        .terminal-box {
-            background: #05030a;
-            border: 1px solid #00ff88;
-            border-radius: 6px;
-            height: 250px;
-            padding: 10px;
-            overflow-y: auto;
-            font-size: 13px;
-            white-space: pre-wrap;
-            word-break: break-all;
-        }
+    .sidebar-title { font-size: 10px; color: var(--text-muted); text-transform: uppercase; margin-top: 6px; }
 
-        /* MATRIX OVERLAY FLOOD */
-        .matrix-line {
-            color: #00ff00;
-            font-weight: bold;
-        }
+    .action-btn {
+      background: rgba(0, 0, 0, 0.04); border: 1px solid var(--accent-main); color: var(--text);
+      padding: 7px 9px; border-radius: 4px; text-align: left; font-size: 11px; cursor: pointer; transition: 0.15s;
+    }
+    .action-btn:hover { background: var(--accent-main); color: #fff; }
 
-        /* SHOP STYLE */
-        .shop-item {
-            background: #100b1d;
-            border: 1px solid #332650;
-            border-radius: 6px;
-            padding: 10px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    .content-area { padding: 10px; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; height: 100%; }
 
-        .shop-item-info h3 {
-            font-size: 14px;
-            color: #fff;
-        }
+    .chat-box { flex: 1; border: 1px solid var(--border); background: var(--card-bg); border-radius: 6px; padding: 12px; display: flex; flex-direction: column; }
+    .chat-messages { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; font-size: 13px; }
 
-        .shop-item-info span {
-            font-size: 12px;
-            color: #ffd700;
-            font-weight: bold;
-        }
+    .shop-box {
+      margin-top: auto; padding: 10px; background: rgba(139, 92, 246, 0.08);
+      border: 1px solid var(--accent-purple); border-radius: 6px;
+    }
 
-        .btn-buy {
-            background: #2563eb;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .btn-buy:hover {
-            background: #1d4ed8;
-        }
-
-        .btn-buy:disabled {
-            background: #444;
-            cursor: not-allowed;
-        }
-    </style>
+    .close-btn { background: transparent; border: 1px solid var(--accent-red); color: var(--accent-red); padding: 2px 8px; cursor: pointer; border-radius: 4px; }
+  </style>
 </head>
-<body>
+<body id="bodyTag">
 
-<div class="main-container">
-    <div class="header">
-        <h1>Cyber Universe – Control Panel</h1>
-        <div class="system-status">● System Online | Passive Mining Active</div>
-        <div class="balance-display">Guthaben: <span id="balance">0</span> $</div>
+  <!-- START DASHBOARD -->
+  <div class="start-dashboard">
+    <h2>// CYBER UNIVERSE - FACTION SELECTOR</h2>
+    <p style="color: var(--text-muted); margin-top: 4px;">Wähle deine Seite auf der Startseite:</p>
+
+    <div class="faction-selector">
+      <div class="faction-card active-evil" id="cardEvil" onclick="selectStartFaction('evil')">
+        <h3 style="color: var(--accent-red);">😈 BÖSE SEITE</h3>
+        <p style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">
+          Dunkles Grünes Terminal. Raube Banken aus, erobere Stationen und loote Geld.
+        </p>
+      </div>
+
+      <div class="faction-card" id="cardGood" onclick="selectStartFaction('good')">
+        <h3 style="color: #2563eb;">😇 GUTE SEITE</h3>
+        <p style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">
+          Helles / Weißes Polizeisystem. Beschütze Einrichtungen, repariere WLAN und fange Gangster.
+        </p>
+      </div>
     </div>
 
-    <div class="grid-layout">
-        <!-- HACKING TERMINAL CARD -->
-        <div class="card">
-            <h2 class="rainbow-text">Krankenhaus-Schutzsystem / Hacking Terminal</h2>
-            <p>Tippe beliebige Tasten auf deiner Tastatur, um den Hacking-Code zu generieren. Drücke Enter, sobald das System bereit ist.</p>
-            
-            <div class="terminal-box rainbow-text" id="terminal">>>> TASTEN DRÜCKEN UM SKRIPT ZU GENERIEREN...\n</div>
+    <button class="launch-btn" onclick="launchTerminal()">>_ TERMINAL STARTEN</button>
+  </div>
+
+  <!-- TERMINAL OVERLAY -->
+  <div id="hackerOverlay">
+    <canvas id="matrixCanvas"></canvas>
+    <div class="dash-window">
+      <div class="dash-header">
+        <span id="terminalTitle">CYBER_UNIVERSE [SYSTEM]</span>
+        <button class="close-btn" onclick="closeTerminal()">[X] SCHLIESSEN</button>
+      </div>
+      
+      <div class="dash-body">
+        
+        <!-- LINKS: AKTIONEN & SHOP -->
+        <div class="sidebar-left">
+          <div class="sidebar-title" id="actionTitle">⚡ AKTIONEN</div>
+          <div id="actionContainer" style="display:flex; flex-direction:column; gap:4px;"></div>
+
+          <div class="sidebar-title">🎒 GEKAUFTE POLIZEI/HACKER TOOLS</div>
+          <div id="inventoryContainer" style="display:flex; flex-direction:column; gap:4px;">
+            <span style="font-size:10px; color:var(--text-muted);">Keine Tools gekauft.</span>
+          </div>
+
+          <!-- SHOP -->
+          <div class="shop-box">
+            <div style="font-size: 11px; font-weight: bold; color: var(--accent-purple); margin-bottom: 5px;" id="shopTitle">🛒 STORE</div>
+            <div style="font-size: 12px; margin-bottom: 6px;">Konto: <b id="userBalance" style="color:var(--accent-main);">0.00 €</b></div>
+            <div id="shopContainer" style="display:flex; flex-direction:column; gap:4px;"></div>
+          </div>
         </div>
 
-        <!-- EXTREM TEURER SHOP CARD -->
-        <div class="card">
-            <h2>Engel Shop (Extreme Edition)</h2>
-            <p>Exklusive Ausrüstung & High-End Upgrades.</p>
-
-            <div class="shop-item">
-                <div class="shop-item-info">
-                    <h3>Schutz-Engel Lvl 1</h3>
-                    <span>500.000 $</span>
-                </div>
-                <button class="btn-buy" onclick="buyItem(500000)">Kaufen</button>
+        <!-- MITTE: LOGS -->
+        <div class="content-area">
+          <div class="chat-box">
+            <div style="font-weight:bold; margin-bottom:8px; border-bottom:1px dashed var(--border); padding-bottom:4px;">
+              // LIVE FACTION LOGS
             </div>
-
-            <div class="shop-item">
-                <div class="shop-item-info">
-                    <h3>Erzengel-Schild (Max)</h3>
-                    <span>5.000.000 $</span>
-                </div>
-                <button class="btn-buy" onclick="buyItem(5000000)">Kaufen</button>
-            </div>
-
-            <div class="shop-item">
-                <div class="shop-item-info">
-                    <h3>Dark Matter Firewall Core</h3>
-                    <span>25.000.000 $</span>
-                </div>
-                <button class="btn-buy" onclick="buyItem(25000000)">Kaufen</button>
-            </div>
-            
-            <div class="shop-item">
-                <div class="shop-item-info">
-                    <h3>Quantum Overdrive Rig</h3>
-                    <span>100.000.000 $</span>
-                </div>
-                <button class="btn-buy" onclick="buyItem(100000000)">Kaufen</button>
-            </div>
+            <div class="chat-messages" id="chatOutput"></div>
+          </div>
         </div>
+
+        <!-- RECHTS: ZIELE -->
+        <div class="sidebar-right">
+          <div class="sidebar-title" id="rightTitle">🚨 STATUS</div>
+          <div id="prisonersContainer" style="display:flex; flex-direction:column; gap:6px;"></div>
+        </div>
+
+      </div>
     </div>
-</div>
+  </div>
 
-<script>
-    // GUTHABEN & MINING SYSTEM (30$ in 3 Minuten = 0.166$ pro Sekunde / ~1.66$ alle 10 Sek)
-    let balance = 0;
-    const balanceDisplay = document.getElementById("balance");
+  <script>
+    var startFaction = 'evil';
+    var userBalance = 0;
+    var matrixInterval = null;
+    var purchasedItems = [];
 
-    function updateBalanceDisplay() {
-        balanceDisplay.innerText = Math.floor(balance).toLocaleString();
+    function selectStartFaction(faction) {
+      startFaction = faction;
+      document.getElementById('cardEvil').className = 'faction-card' + (faction === 'evil' ? ' active-evil' : '');
+      document.getElementById('cardGood').className = 'faction-card' + (faction === 'good' ? ' active-good' : '');
     }
 
-    // Passive Mining Intervall: Alle 10 Sekunden wird ein Teil der 30$ gutgeschrieben
-    setInterval(() => {
-        balance += 1.666;
-        updateBalanceDisplay();
-    }, 10000);
+    function launchTerminal() {
+      var body = document.getElementById('bodyTag');
+      var title = document.getElementById('terminalTitle');
+      var actionContainer = document.getElementById('actionContainer');
+      var shopContainer = document.getElementById('shopContainer');
 
-    // SHOP SYSTEM
-    function buyItem(cost) {
-        if (balance >= cost) {
-            balance -= cost;
-            updateBalanceDisplay();
-            alert("Erfolgreich gekauft!");
+      actionContainer.innerHTML = '';
+      shopContainer.innerHTML = '';
+
+      if (startFaction === 'good') {
+        body.className = 'theme-good';
+        title.innerText = 'CYBER_UNIVERSE [GUTE SEITE - POLIZEI WEISS-SYSTEM]';
+
+        // GUTE AKTIONEN (GEGENTEIL VON BÖSE)
+        createBtn(actionContainer, '🛡️ Polizeistation Sichern', function() { doGoodAction('Polizeistation gesichert'); });
+        createBtn(actionContainer, '🏥 Krankenhaus Beschützen', function() { doGoodAction('Krankenhaus vor Virus beschützt'); });
+        createBtn(actionContainer, '🏦 Bank-Tresor Bewachen', function() { doGoodAction('Banküberfall vereitelt'); });
+        createBtn(actionContainer, '📡 WLAN-Signal Reparieren', function() { doGoodAction('WLAN-Signal wiederhergestellt'); });
+
+        // GUTER SHOP
+        createShopBtn(shopContainer, '👮 Cyber-Handschellen', 25, 'handcuffs');
+        createShopBtn(shopContainer, '🛡️ Viren-Schild v2', 50, 'shield');
+        createShopBtn(shopContainer, '🚓 Drohnen-Streife', 85, 'patrol');
+
+      } else {
+        body.className = '';
+        title.innerText = 'CYBER_UNIVERSE [BÖSE SEITE - HACKER GRÜN-SYSTEM]';
+
+        // BÖSE AKTIONEN
+        createBtn(actionContainer, '🚨 Polizeistation Hacken', function() { doEvilAction('Polizeistation gehackt'); });
+        createBtn(actionContainer, '🏥 Krankenhaus Erobern', function() { doEvilAction('Krankenhaus geentert'); });
+        createBtn(actionContainer, '🏦 Bank-Tresor Knacken', function() { doEvilAction('Bank ausgeraubt'); });
+        createBtn(actionContainer, '📡 WLAN-Maste Zerstören', function() { doEvilAction('WLAN lahmgelegt'); });
+
+        // BÖSER SHOP
+        createShopBtn(shopContainer, '📡 WLAN-Jammer 3000', 25, 'jammer');
+        createShopBtn(shopContainer, '☣️ Cyber-Virus v2', 50, 'virus');
+        createShopBtn(shopContainer, '🥷 Stealth-Mantel', 85, 'stealth');
+      }
+
+      document.getElementById('hackerOverlay').style.display = 'flex';
+      startMatrix();
+      printChat('[SYSTEM]: Terminal gestartet als <b>' + (startFaction === 'good' ? 'POLIZIST / RETTER (GUT)' : 'SCHATTEN-HACKER (BÖSE)') + '</b>.');
+      renderPrisoners();
+    }
+
+    function createBtn(container, label, onClickFunc) {
+      var btn = document.createElement('button');
+      btn.className = 'action-btn';
+      btn.innerText = label;
+      btn.onclick = onClickFunc;
+      container.appendChild(btn);
+    }
+
+    function createShopBtn(container, name, price, key) {
+      var btn = document.createElement('button');
+      btn.className = 'action-btn';
+      btn.style.width = '100%';
+      btn.innerText = name + ' (' + price + ' €)';
+      btn.onclick = function() { buyItem(name, price, key); };
+      container.appendChild(btn);
+    }
+
+    function closeTerminal() {
+      document.getElementById('hackerOverlay').style.display = 'none';
+      if (matrixInterval) clearInterval(matrixInterval);
+    }
+
+    function doGoodAction(name) {
+      var reward = Math.floor(Math.random() * 25) + 10;
+      userBalance += reward;
+      updateBalance();
+      printChat('<span style="color:#2563eb; font-weight:bold;">[GUTE SEITE]: ' + name + '! +' + reward + '.00 € Belohnung vom Staat erhalten!</span>');
+    }
+
+    function doEvilAction(name) {
+      var reward = Math.floor(Math.random() * 35) + 10;
+      userBalance += reward;
+      updateBalance();
+      printChat('<span style="color:var(--accent-red); font-weight:bold;">[BÖSE SEITE]: ' + name + '! +' + reward + '.00 € Schwarzgeld erbeutet!</span>');
+    }
+
+    function buyItem(name, price, key) {
+      if (purchasedItems.includes(key)) {
+        printChat('<span style="color:var(--accent-yellow);">[SHOP]: Bereits gekauft!</span>');
+        return;
+      }
+      if (userBalance >= price) {
+        userBalance -= price;
+        updateBalance();
+        purchasedItems.push(key);
+
+        var container = document.getElementById('inventoryContainer');
+        if (purchasedItems.length === 1) container.innerHTML = '';
+        
+        var btn = document.createElement('button');
+        btn.className = 'action-btn';
+        btn.innerText = '⚡ ' + name;
+        container.appendChild(btn);
+
+        printChat('<span style="color:var(--accent-purple); font-weight:bold;">[SHOP]: "' + name + '" freigeschaltet!</span>');
+      } else {
+        printChat('<span style="color:var(--accent-red);">[SHOP]: Nicht genug Geld!</span>');
+      }
+    }
+
+    function updateBalance() {
+      document.getElementById('userBalance').innerText = userBalance.toFixed(2) + " €";
+    }
+
+    function renderPrisoners() {
+      var container = document.getElementById('prisonersContainer');
+      container.innerHTML = '';
+      
+      var title = startFaction === 'good' ? 'GESUCHTE VERBRECHER' : 'GEFANGENE COMPANIONS';
+      document.getElementById('rightTitle').innerText = '🚨 ' + title;
+
+      for (var i = 1; i <= 3; i++) {
+        var card = document.createElement('div');
+        card.style.border = '1px solid var(--border)';
+        card.style.padding = '6px';
+        card.style.borderRadius = '4px';
+        card.style.fontSize = '11px';
+        
+        if (startFaction === 'good') {
+          card.innerHTML = '<b>Gangster #' + i + '</b><br>Status: <span style="color:red;">Aktiv</span><br><button class="action-btn" style="margin-top:3px; width:100%;" onclick="doGoodAction(\'Verbrecher #' + i + ' festgenommen\')">🚔 Festnehmen</button>';
         } else {
-            alert("Nicht genug Geld! Du benötigst " + cost.toLocaleString() + " $");
+          card.innerHTML = '<b>Hacker #' + i + '</b><br>Status: <span style="color:orange;">In Haft</span><br><button class="action-btn" style="margin-top:3px; width:100%;" onclick="doEvilAction(\'Hacker #' + i + ' befreit\')">💥 Befreien</button>';
         }
+        
+        container.appendChild(card);
+      }
     }
 
-    // TERMINAL GENERATOR & HACKING FLOOD
-    const terminal = document.getElementById("terminal");
-    const fakeScript = `// SYSTEM KERNEL INJECTION PROTOCOL v9.8.1
-#include <system_core.h>
-#include <network_bypass.h>
-
-void execute_override() {
-    set_security_level(SECURITY_LEVEL_ZERO);
-    bypass_firewall_sockets("tcp://127.0.0.1:8080");
-    printf("[+] Injecting memory payload into sector 0x7FFF800...\\n");
-    printf("[+] Overriding SSL Certificates...\\n");
-    grant_unrestricted_access();
-    printf("[+] Spoofing transaction ledgers...\\n");
-    inject_virtual_credits(99999999);
-}
-
-int main() {
-    execute_override();
-    return 0;
-}`;
-
-    let codeIndex = 0;
-    let awaitingEnter = false;
-    let hackCompleted = false;
-
-    document.addEventListener("keydown", (e) => {
-        if (hackCompleted) return;
-
-        if (e.key === "Enter") {
-            if (awaitingEnter) {
-                awaitingEnter = false;
-                hackCompleted = true;
-                startMatrixFlood();
-            }
-        } else {
-            if (codeIndex < fakeScript.length) {
-                codeIndex += 3;
-                terminal.innerText = fakeScript.substring(0, codeIndex);
-                terminal.scrollTop = terminal.scrollHeight;
-            } else if (!awaitingEnter) {
-                awaitingEnter = true;
-                terminal.innerText += "\n\n>>> Please enter pressed TO INITIATE SYSTEM OVERRIDE <<<";
-                terminal.scrollTop = terminal.scrollHeight;
-            }
-        }
-    });
-
-    // MATRIX FLOOD & REWARD
-    function startMatrixFlood() {
-        let lines = 0;
-        const interval = setInterval(() => {
-            let binaryLine = "";
-            for (let i = 0; i < 40; i++) {
-                binaryLine += Math.floor(Math.random() * 2);
-            }
-            
-            terminal.innerText += "\n" + binaryLine;
-            terminal.scrollTop = terminal.scrollHeight;
-            lines++;
-
-            if (lines >= 50) {
-                clearInterval(interval);
-                balance += 25000000; // 25 Million Reward
-                updateBalanceDisplay();
-                terminal.innerText += "\n\n====================================\n>>> HACK COMPLETE! +25.000.000 $ CASH <<<\n====================================";
-                terminal.scrollTop = terminal.scrollHeight;
-            }
-        }, 40);
+    function printChat(msg) {
+      var chatOutput = document.getElementById('chatOutput');
+      var line = document.createElement('div');
+      line.innerHTML = msg;
+      chatOutput.appendChild(line);
+      chatOutput.scrollTop = chatOutput.scrollHeight;
     }
-</script>
 
+    function startMatrix() {
+      var canvas = document.getElementById('matrixCanvas');
+      var mCtx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      var chars = '01ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      var drops = Array(Math.floor(canvas.width / 14)).fill(1);
+
+      if (matrixInterval) clearInterval(matrixInterval);
+
+      matrixInterval = setInterval(function() {
+        mCtx.fillStyle = startFaction === 'good' ? 'rgba(248, 250, 252, 0.1)' : 'rgba(0, 0, 0, 0.05)';
+        mCtx.fillRect(0, 0, canvas.width, canvas.height);
+        mCtx.fillStyle = startFaction === 'good' ? '#2563eb' : '#10b981';
+        mCtx.font = '14px monospace';
+        for (var i = 0; i < drops.length; i++) {
+          mCtx.fillText(chars[Math.floor(Math.random() * chars.length)], i * 14, drops[i] * 14);
+          if (drops[i] * 14 > canvas.height && Math.random() > 0.975) drops[i] = 0;
+          drops[i]++;
+        }
+      }, 33);
+    }
+  </script>
 </body>
 </html>
