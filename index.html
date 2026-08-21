@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cyber Universe v27.0 - 15-Phasen Heist mit Hinweisen</title>
+  <title>Cyber Universe v28.0 - 15-Phasen Heist mit Klaren Hinweisen</title>
   <style>
     :root {
       --bg: #030508;
@@ -97,12 +97,12 @@
 <body id="bodyTag">
 
   <div class="start-dashboard">
-    <h2 class="rainbow-text">// CYBER UNIVERSE v27.0 - 15 PHASEN HEIST</h2>
+    <h2 class="rainbow-text">// CYBER UNIVERSE v28.0 - 15 PHASEN HEIST</h2>
 
     <div class="faction-selector">
       <div class="faction-card active-evil" id="cardEvil" onclick="selectStartFaction('evil')">
         <h3 style="color: var(--accent-red);">💻 BÖSE SEITE (15 PHASEN HEIST)</h3>
-        <p style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">Phase 11 mit Hinweisen (Zu hoch / Zu niedrig)!</p>
+        <p style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">Phase 11 & Phase 12 mit exakten Hinweisen!</p>
       </div>
 
       <div class="faction-card" id="cardGood" onclick="selectStartFaction('good')">
@@ -118,7 +118,7 @@
     <canvas id="matrixCanvas"></canvas>
     <div class="dash-window">
       <div class="dash-header">
-        <span id="terminalTitle" class="rainbow-text">CYBER_UNIVERSE [SYSTEM v27.0]</span>
+        <span id="terminalTitle" class="rainbow-text">CYBER_UNIVERSE [SYSTEM v28.0]</span>
         <button class="close-btn" onclick="closeTerminal()">[X] SCHLIESSEN</button>
       </div>
       
@@ -379,7 +379,6 @@
       showInputField("Pin (1-20)...", "number");
     }
 
-    // PHASE 11 MIT DEUTLICHEN HINWEISEN (ZU HOCH / ZU NIEDRIG)
     function startPhase11SatelliteLink() {
       currentPhase = 11;
       targetLaserAngle = Math.floor(Math.random() * 360) + 1;
@@ -579,31 +578,37 @@
         if (p10Guess === secretCode[0]) {
           hideInputField(); startPhase11SatelliteLink();
         } else if (p10Guess < secretCode[0]) {
-          printChat('<span style="color:#ef4444;">[KI-FIREWALL]: ZU NIEDRIG!</span>');
+          printChat('<span style="color:#ef4444;">[KI-FEUERWALL]: ZU NIEDRIG!</span>');
         } else {
-          printChat('<span style="color:#ef4444;">[KI-FIREWALL]: ZU HOCH!</span>');
+          printChat('<span style="color:#ef4444;">[KI-FEUERWALL]: ZU HOCH!</span>');
         }
 
-      // HIER BEI PHASE 11 SIND NUN DIE KLAREN HINWEISE
+      // PHASE 11: SATELLITEN-AUSRICHTUNG (KLARE HINWEISE)
       } else if (currentPhase === 11) {
         var satAngle = parseInt(val);
-        if (satAngle === targetLaserAngle) {
-          printChat('<span style="color:var(--accent-main); font-weight:bold;">[SATELLIT]: VERBINDUNG HERGESTELLT (' + satAngle + '°)!</span>');
+        if (isNaN(satAngle)) {
+          printChat('<span style="color:#ef4444;">[SATELLIT]: BITTESCHÖN EINE ZAHL EINGEBEN!</span>');
+        } else if (satAngle === targetLaserAngle) {
+          printChat('<span style="color:var(--accent-main); font-weight:bold;">[SATELLIT]: PERFEKT! VERBINDUNG HERGESTELLT (' + satAngle + '°)!</span>');
           hideInputField(); startPhase12QuantumDecryption();
         } else if (satAngle < targetLaserAngle) {
-          printChat('<span style="color:#f59e0b;">[SATELLIT]: ZU NIEDRIG! Richte nach OBEN aus! (Versuche größere Zahl als ' + satAngle + ')</span>');
+          printChat('<span style="color:#f59e0b; font-weight:bold;">[SATELLIT]: ZU NIEDRIG! (' + satAngle + '°) -> Richte nach OBEN aus! (Versuche eine GRÖSSERE Zahl)</span>');
         } else {
-          printChat('<span style="color:#f59e0b;">[SATELLIT]: ZU HOCH! Richte nach UNTEN aus! (Versuche kleinere Zahl als ' + satAngle + ')</span>');
+          printChat('<span style="color:#f59e0b; font-weight:bold;">[SATELLIT]: ZU HOCH! (' + satAngle + '°) -> Richte nach UNTEN aus! (Versuche eine KLEINERE Zahl)</span>');
         }
 
+      // PHASE 12: QUANTEN-VERSCHLÜSSELUNG (KLARE HINWEISE)
       } else if (currentPhase === 12) {
         var qGuess = parseInt(val);
-        if (qGuess === masterVaultCode) {
+        if (isNaN(qGuess)) {
+          printChat('<span style="color:#ef4444;">[QUANTEN]: BITTESCHÖN EINE ZAHL EINGEBEN!</span>');
+        } else if (qGuess === masterVaultCode) {
+          printChat('<span style="color:var(--accent-main); font-weight:bold;">[QUANTEN]: CODE KORREKT (' + qGuess + ')! ZUGRIFF GEWÄHRT!</span>');
           hideInputField(); startPhase13EyeBiometrics();
         } else if (qGuess < masterVaultCode) {
-          printChat('<span style="color:#ef4444;">[QUANTEN]: ZU NIEDRIG!</span>');
+          printChat('<span style="color:#ef4444; font-weight:bold;">[QUANTEN]: ZU NIEDRIG! (' + qGuess + ') -> Versuche eine GRÖSSERE Zahl!</span>');
         } else {
-          printChat('<span style="color:#ef4444;">[QUANTEN]: ZU HOCH!</span>');
+          printChat('<span style="color:#ef4444; font-weight:bold;">[QUANTEN]: ZU HOCH! (' + qGuess + ') -> Versuche eine KLEINERE Zahl!</span>');
         }
 
       } else if (currentPhase === 15) {
@@ -649,16 +654,16 @@
 
       if (startFaction === 'good') {
         body.className = 'theme-good';
-        title.innerText = 'CYBER_UNIVERSE [POLIZEI 15-PHASEN SYSTEM v27.0]';
+        title.innerText = 'CYBER_UNIVERSE [POLIZEI 15-PHASEN SYSTEM v28.0]';
       } else {
         body.className = '';
-        title.innerText = 'CYBER_UNIVERSE [HACKER 15-PHASEN HEIST v27.0]';
+        title.innerText = 'CYBER_UNIVERSE [HACKER 15-PHASEN HEIST v28.0]';
       }
 
       document.getElementById('hackerOverlay').style.display = 'flex';
       startMatrix();
       updateBalance();
-      printChat('[SYSTEM]: Terminal v27.0 gestartet! Tippe beliebige Tasten...');
+      printChat('[SYSTEM]: Terminal v28.0 gestartet! Tippe beliebige Tasten...');
     }
 
     function closeTerminal() {
