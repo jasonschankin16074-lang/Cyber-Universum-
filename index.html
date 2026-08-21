@@ -61,7 +61,6 @@
       padding: 14px; font-size: 16px; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 10px;
     }
 
-    /* NEWS (LINKS) & DISCORD (RECHTS) NEBENEINANDER */
     .news-discord-container {
       margin-top: 20px;
       padding-top: 15px;
@@ -93,6 +92,12 @@
 
     .news-box ul li {
       margin-bottom: 4px;
+      outline: none;
+    }
+    
+    .news-box ul li[contenteditable="true"]:hover {
+      background: rgba(255, 255, 255, 0.05);
+      cursor: text;
     }
 
     .discord-box {
@@ -217,22 +222,22 @@
     <div class="level-selector">
       <div class="select-card active" id="levelCard1" onclick="selectLevel(1)">
         <h3 style="color: var(--accent-main); font-size:12px;">🏢 LEVEL 1: TRESOR</h3>
-        <p style="font-size: 9px; color: var(--text-muted); margin-top: 3px;">Normal (15 Phasen)</p>
+        <p style="font-size: 9px; color: var(--text-muted); margin-top: 3px;">Normal (15 Phasen - Safe)</p>
       </div>
 
       <div class="select-card" id="levelCard2" onclick="selectLevel(2)">
         <h3 style="color: #06b6d4; font-size:12px;">🏥 LEVEL 2: KLINIK</h3>
-        <p style="font-size: 9px; color: var(--text-muted); margin-top: 3px;">Schwer (15 Phasen)</p>
+        <p style="font-size: 9px; color: var(--text-muted); margin-top: 3px;">Schwer (15 Phasen - Safe)</p>
       </div>
 
       <div class="select-card" id="levelCard3" onclick="selectLevel(3)">
         <h3 style="color: var(--accent-orange); font-size:12px;">🚒 LEVEL 3: FEUERWEHR</h3>
-        <p style="font-size: 9px; color: var(--text-muted); margin-top: 3px;">Einfach (15 Phasen)</p>
+        <p style="font-size: 9px; color: var(--text-muted); margin-top: 3px;">Einfach (15 Phasen - Safe)</p>
       </div>
 
       <div class="select-card" id="levelCard4" onclick="selectLevel(4)">
         <h3 style="color: var(--accent-purple); font-size:12px;">👑 LEVEL 4: ENDBOSS</h3>
-        <p style="font-size: 9px; color: var(--text-muted); margin-top: 3px;">Extrem (15 Phasen)</p>
+        <p style="font-size: 9px; color: var(--text-muted); margin-top: 3px;">Extrem (Inkl. Live-Angriffen)</p>
       </div>
     </div>
 
@@ -254,18 +259,17 @@
     <!-- NEWS (LINKS) UND DISCORD LINK (RECHTS) -->
     <div class="news-discord-container">
       <div class="news-box">
-        <h3>📰 NEWS & UPDATES</h3>
+        <h3>📰 NEWS & UPDATES (Klicken zum Bearbeiten)</h3>
         <ul>
-          <li><strong>Update:</strong> Level 1 bis 3 ohne Endangriff.</li>
-          <li><strong>Level 4 Boss:</strong> Live-Angriff nach Hacken aktiv!</li>
+          <li contenteditable="true"><strong>Schutz:</strong> Level 1 bis 3 sind komplett sicher vor Gegenangriffen.</li>
+          <li contenteditable="true"><strong>Level 4 Boss:</strong> Live-Angriffe werden nach Phase 15 gestartet!</li>
         </ul>
       </div>
 
       <div class="discord-box">
         <h3>💬 DISCORD COMMUNITY</h3>
         <p>Tritt unserem Server bei:</p>
-        <!-- Passe den Link zu deinem Discord-Einladungslink an -->
-        <a href="https://discord.gg/DEIN_DISCORD_LINK" target="_blank" class="discord-btn">👉 DISCORD BEITRETEN</a>
+        <a href="https://discord.gg/bUertG8D4" target="_blank" class="discord-btn">👉 DISCORD BEITRETEN</a>
       </div>
     </div>
   </div>
@@ -616,7 +620,7 @@
     function startPhase14PowerGridShutdown() { currentPhase = 14; requiredKeys = ['G', 'R', 'I', 'D']; currentKeyIndex = 0; printChat('<span style="color:#f59e0b; font-weight:bold;">\n>>> PHASE 14/15: STROMNETZ ABSCHALTUNG (Combo: G - R - I - D) <<<</span>'); runMultiKeyPhase("Stromnetz tot!", startPhase15FinalCoreHack, startPhase14PowerGridShutdown); }
     function startHosp14GeneratorShutdown() { currentPhase = 14; requiredKeys = ['N', 'O', 'T']; currentKeyIndex = 0; printChat('<span style="color:#f59e0b; font-weight:bold;">\n>>> PHASE 14/15: NOTSTROM-GENERATOR OFF (Combo: N - O - T) <<<</span>'); runMultiKeyPhase("Generator aus!", startPhase15FinalCoreHack, startHosp14GeneratorShutdown); }
 
-    // PHASE 15
+    // PHASE 15 (ENDE)
     function startPhase15FinalCoreHack() {
       currentPhase = 15;
       phase15Count = 0;
@@ -706,14 +710,16 @@
         printChat('<span style="color:var(--accent-purple);">[KERN BYPASS]: Überlastung ' + (phase15Count * 20) + '%</span>');
         
         if (phase15Count >= 5) {
-          if (selectedLevel === 4) {
-            triggerBlackscreenCutscene();
-          } else {
-            userBalance += (selectedLevel === 1 ? 5000 : (selectedLevel === 2 ? 8000 : 4000));
+          if (selectedLevel < 4) {
+            // LEVEL 1 BIS 3: Normaler Abschluss OHNE Angriff!
+            userBalance += 25000;
             updateBalance();
-            printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:14px;">\n🏆 HEIST VOLLSTÄNDIG ERFOLGREICH! DAS SYSTEM IST SICHER UND DU WURDEST NICHT ENTDECKT!</span>');
-            printChat('<span style="color:var(--text-muted);">Terminal schließt sich automatisch...</span>');
+            printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:14px;">\n🏆 HACK ERFOLGREICH BEENDET! 25.000$ BONUS ERHALTEN!</span>');
+            printChat('<span style="color:var(--text-muted);">Level 1 bis 3 ist sicher. Du wirst nicht angegriffen.</span>');
             setTimeout(closeTerminal, 4000);
+          } else {
+            // NUR LEVEL 4: Angriffs-Modus & Cutscene starten!
+            triggerBlackscreenCutscene();
           }
         }
       }
@@ -737,6 +743,7 @@
       }, 1000);
     }
 
+    // NUR FÜR LEVEL 4 ACTIVATED
     function triggerBlackscreenCutscene() {
       var bs = document.getElementById("blackscreenOverlay");
       var txt = document.getElementById("blackscreenText");
