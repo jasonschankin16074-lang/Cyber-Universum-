@@ -3,205 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Celestial SMP – Offizielle Community Seite</title>
+    <title>Mein Soundboard</title>
     <style>
-        :root {
-            --bg-dark: #0f111a;
-            --card-bg: #1a1d2e;
-            --accent-gold: #fbbf24;
-            --accent-emerald: #10b981;
-            --text-light: #f3f4f6;
-            --text-dim: #9ca3af;
-            --border: #2d3248;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-        }
-
         body {
-            background-color: var(--bg-dark);
-            color: var(--text-light);
-            line-height: 1.6;
-        }
-
-        /* Hero Header */
-        header {
-            text-align: center;
-            padding: 60px 20px 40px;
-            background: radial-gradient(circle at top, #252a42 0%, var(--bg-dark) 80%);
-            border-bottom: 1px solid var(--border);
-        }
-
-        header h1 {
-            font-size: 3rem;
-            color: var(--accent-gold);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 10px;
-            text-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
-        }
-
-        header p {
-            color: var(--text-dim);
-            font-size: 1.2rem;
-            max-width: 600px;
-            margin: 0 auto 25px;
-        }
-
-        .server-status {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            background: var(--card-bg);
-            border: 1px solid var(--accent-emerald);
-            padding: 8px 18px;
-            border-radius: 20px;
-            font-weight: 600;
-            color: var(--accent-emerald);
-        }
-
-        .status-dot {
-            width: 10px;
-            height: 10px;
-            background-color: var(--accent-emerald);
-            border-radius: 50%;
-            box-shadow: 0 0 8px var(--accent-emerald);
-        }
-
-        /* Layout Grid */
-        main {
-            max-width: 1100px;
-            margin: 40px auto;
-            padding: 0 20px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 25px;
-        }
-
-        .card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 25px;
-            transition: transform 0.2s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-3px);
-        }
-
-        .card h2 {
-            color: var(--accent-gold);
-            font-size: 1.4rem;
-            margin-bottom: 15px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #121212;
+            color: #ffffff;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 10px;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
         }
 
-        /* Lists & Ranks */
-        ul {
-            list-style: none;
+        h1 {
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            color: #00e676;
+            text-shadow: 0 0 10px rgba(0, 230, 118, 0.3);
         }
 
-        ul li {
-            position: relative;
-            padding-left: 24px;
-            margin-bottom: 12px;
-            color: var(--text-light);
+        .soundboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 20px;
+            max-width: 600px;
+            width: 90%;
         }
 
-        ul li::before {
-            content: "✦";
-            position: absolute;
-            left: 0;
-            color: var(--accent-gold);
-        }
-
-        .rank-tag {
-            display: inline-block;
-            padding: 3px 10px;
-            border-radius: 6px;
-            font-size: 0.85rem;
+        .btn {
+            background: #1e1e1e;
+            color: #fff;
+            border: 2px solid #333;
+            border-radius: 12px;
+            padding: 25px 15px;
+            font-size: 1.1rem;
             font-weight: bold;
-            margin-right: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
         }
 
-        .rank-gold {
-            background-color: rgba(251, 191, 36, 0.15);
-            color: #fbbf24;
-            border: 1px solid #fbbf24;
+        .btn:hover {
+            border-color: #00e676;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 230, 118, 0.2);
         }
 
-        .rank-emerald {
-            background-color: rgba(16, 185, 129, 0.15);
-            color: #10b981;
-            border: 1px solid #10b981;
-        }
-
-        /* Footer */
-        footer {
-            text-align: center;
-            padding: 30px;
-            color: var(--text-dim);
-            font-size: 0.9rem;
-            border-top: 1px solid var(--border);
-            margin-top: 50px;
+        .btn:active {
+            transform: translateY(1px);
+            background: #00e676;
+            color: #000;
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>Celestial SMP</h1>
-        <p>Dein Zuhause für einzigartige Abenteuer, Modpack-Action und eine starke Community.</p>
-        <div class="server-status">
-            <span class="status-dot"></span>
-            <span>Server Online</span>
-        </div>
-    </header>
+    <h1>🔊 Soundboard</h1>
 
-    <main>
-        <!-- Card 1: Features -->
-        <div class="card">
-            <h2>✨ Server Features</h2>
-            <ul>
-                <li><strong>Eigene Mods & World-Events:</strong> Einzigartige Herausforderungen und Gefahren.</li>
-                <li><strong>Aktive Community:</strong> Gemeinsames Bauen, Erkunden und Überleben.</li>
-                <li><strong>Stabiles Hosting:</strong> Flüssiges Gameplay ohne nervige Lags.</li>
-                <li><strong>Support-Ticketsystem:</strong> Schnelle Hilfe bei Fragen oder Problemen.</li>
-            </ul>
-        </div>
+    <div class="soundboard">
+        <button class="btn" onclick="playSound('btn1')">Sound 1</button>
+        <button class="btn" onclick="playSound('btn2')">Sound 2</button>
+        <button class="btn" onclick="playSound('btn3')">Sound 3</button>
+        <button class="btn" onclick="playSound('btn4')">Sound 4</button>
+    </div>
 
-        <!-- Card 2: Regelwerk -->
-        <div class="card">
-            <h2>📜 Regeln</h2>
-            <ul>
-                <li><strong>Fairplay:</strong> Cheaten, X-Ray oder Hacks sind absolut verboten.</li>
-                <li><strong>Respekt:</strong> Höflicher Umgangston im Chat und im Voice.</li>
-                <li><strong>Griefing-Schutz:</strong> Bauten anderer Spieler nicht ohne Erlaubnis beschädigen.</li>
-                <li><strong>Spam-Schutz:</strong> Bitte den Chat und Ticket-Support übersichtlich halten.</li>
-            </ul>
-        </div>
+    <!-- Audio Elemente (Später eigene MP3-Links eintragen) -->
+    <audio id="btn1" src="https://www.soundjay.com/buttons/sounds/button-1.mp3"></audio>
+    <audio id="btn2" src="https://www.soundjay.com/buttons/sounds/button-2.mp3"></audio>
+    <audio id="btn3" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
+    <audio id="btn4" src="https://www.soundjay.com/buttons/sounds/button-4.mp3"></audio>
 
-        <!-- Card 3: Ränge & Rollen -->
-        <div class="card">
-            <h2>👑 Ränge & System</h2>
-            <ul>
-                <li><span class="rank-tag rank-gold">Gold Master</span> Exklusive Vorteile und optische Extras.</li>
-                <li><span class="rank-tag rank-emerald">Emerald Master</span> Höchster Unterstützer-Rang auf dem Server.</li>
-                <li><span class="rank-tag" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid #38bdf8;">Moderator</span> Sorgt für Ordnung im Spiel und im Discord.</li>
-            </ul>
-        </div>
-    </main>
-
-    <footer>
-        <p>&copy; Celestial SMP Community | Erstellt für Spieler und Abenteurer</p>
-    </footer>
+    <script>
+        function playSound(id) {
+            const audio = document.getElementById(id);
+            if (audio) {
+                audio.currentTime = 0;
+                audio.play();
+            }
+        }
+    </script>
 
 </body>
 </html>
