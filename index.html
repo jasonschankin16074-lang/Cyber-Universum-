@@ -1,496 +1,319 @@
---[[
-    ================================================================================
-    ███████╗██╗███╗   ██╗██████╗ ███████╗██████╗ ███╗   ██╗███████╗████████╗
-    ██╔════╝██║████╗  ██║██╔══██╗██╔════╝██╔══██╗████╗  ██║██╔════╝╚══██╔══╝
-    █████╗  ██║██╔██╗ ██║██║  ██║█████╗  ██████╔╝██╔██╗ ██║█████╗     ██║   
-    ██╔══╝  ██║██║╚██╗██║██║  ██║██╔══╝  ██╔══██╗██║╚██╗██║██╔══╝     ██║   
-    ██║     ██║██║ ╚████║██████╔╝███████╗██║  ██║██║ ╚████║███████╗   ██║   
-    ╚═╝     ╚═╝╚═╝  ╚═══╝╚═════╝ ╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝╚══════╝   ╚═╝   
-    
-    SYSTEM OVERRIDE & MINING CORE v5.0 [ULTIMATE SINGLE-SCRIPT SUITE]
-    --------------------------------------------------------------------------------
-    Features in diesem Skript:
-    - Automatic Role Split (Server-Logik & Client-UI in EINEM Skript)
-    - Rainbow Glow Engine (Einstellbarer Rainbow-Modus mit An/Aus-Button)
-    - Key-Tap Script Generator (Jeder Tastenanschlag generiert echten C++ Hack-Code)
-    - Matrix Chat-Flood & Extreme Cash Reward ($25.000.000 nach Drücken von Enter)
-    - Ultra-Expensive Black Market Shop System (Millionen bis Milliarden-Items)
-    - Passive Mining Core ($30 alle 3 Minuten / 180s als Basis-Rate)
-    - Mining-Multiplier System durch Shop-Upgrades
-    - Dynamische UI-Generierung für Terminal & Shop inklusive Scroll-Mechanik
-    ================================================================================
---]]
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Universe - Control Panel & Hacking Core</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Courier New', Courier, monospace;
+        }
 
-local RunService = game:GetService("RunService")
-local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local TweenService = game:GetService("TweenService")
-local UserInputService = game:GetService("UserInputService")
-local StarterGui = game:GetService("StarterGui")
+        body {
+            background-color: #0d0a14;
+            color: #fff;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
 
---------------------------------------------------------------------------------
--- CONFIGURATION SECTION
---------------------------------------------------------------------------------
-local CONFIG = {
-    -- Rainbow & Visual Lighting Settings
-    RainbowSpeed = 1.5,               -- Geschwindigkeit des Farbwechsels
-    RainbowGlowEnabled = true,        -- Standardstatus für Rainbow Glow
-    
-    -- Mining Tools Settings (30$ in 3 Minuten = 180 Sekunden => 1$ alle 6 Sekunden)
-    BaseMiningRateSeconds = 6,        -- Intervall für 1$ Zuwachs
-    BaseMiningAmount = 1,             -- Basis-Geld pro Intervall ($30 / 180s)
-    
-    -- Terminal Hacking Settings
-    HackRewardAmount = 25000000,      -- Extrem hohe Geld-Belohnung ($25.000.000)
-    MatrixFloodLines = 60,            -- Anzahl der binären Zeilen beim Hacking
-    MatrixLineLength = 48,            -- Zeichen pro Zeile im Chat-Flood
-    TypeSpeedMultiplier = 4,          -- Generierte Zeichen pro Tastenanschlag
-    
-    -- Extrem teurer Shop (High-Value Items)
-    ShopItems = {
-        {Name = "Cybernetic Pickaxe Mk.I",   Cost = 500000,      MiningMultiplier = 1.5, Description = "Slightly increases mining yields."},
-        {Name = "Quantum Core Drill",        Cost = 5000000,     MiningMultiplier = 3.0, Description = "Extracts resources at 3x standard frequency."},
-        {Name = "Dark Matter Harvester",     Cost = 50000000,    MiningMultiplier = 10.0, Description = "High-density energy extractor."},
-        {Name = "A.I. Neural Overdrive",     Cost = 250000000,   MiningMultiplier = 25.0, Description = "Automates mining yield efficiency."},
-        {Name = "Orbital Laser Rig",         Cost = 1000000000,  MiningMultiplier = 100.0, Description = "Crushes orbital crusts for massive wealth."},
-        {Name = "Admin Terminal Root Key",   Cost = 5000000000,  MiningMultiplier = 500.0, Description = "Absolute control over economic parameters."}
+        .main-container {
+            width: 100%;
+            max-width: 1200px;
+            border: 2px solid #a8ff00;
+            border-radius: 12px;
+            padding: 20px;
+            background: #120e1e;
+            box-shadow: 0 0 20px rgba(168, 255, 0, 0.2);
+        }
+
+        /* HEADER & GUTHABEN */
+        .header {
+            border-bottom: 1px dashed #333;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .system-status {
+            color: #00ff88;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        .balance-display {
+            font-size: 20px;
+            color: #ffd700;
+            font-weight: bold;
+        }
+
+        /* DASHBOARD GRID */
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .grid-layout { grid-template-columns: 1fr; }
+        }
+
+        .card {
+            background: #181328;
+            border: 1px solid #2a2240;
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .card h2 {
+            font-size: 18px;
+            margin-bottom: 8px;
+            color: #fff;
+        }
+
+        .card p {
+            font-size: 12px;
+            color: #aaa;
+            margin-bottom: 15px;
+        }
+
+        /* TERMINAL & RAINBOW TEXT */
+        .rainbow-text {
+            animation: rainbowAnimation 3s linear infinite;
+        }
+
+        @keyframes rainbowAnimation {
+            0% { color: #ff0000; }
+            17% { color: #ff8800; }
+            33% { color: #ffff00; }
+            50% { color: #00ff00; }
+            67% { color: #00ffff; }
+            83% { color: #ff00ff; }
+            100% { color: #ff0000; }
+        }
+
+        .terminal-box {
+            background: #05030a;
+            border: 1px solid #00ff88;
+            border-radius: 6px;
+            height: 250px;
+            padding: 10px;
+            overflow-y: auto;
+            font-size: 13px;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        /* MATRIX OVERLAY FLOOD */
+        .matrix-line {
+            color: #00ff00;
+            font-weight: bold;
+        }
+
+        /* SHOP STYLE */
+        .shop-item {
+            background: #100b1d;
+            border: 1px solid #332650;
+            border-radius: 6px;
+            padding: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .shop-item-info h3 {
+            font-size: 14px;
+            color: #fff;
+        }
+
+        .shop-item-info span {
+            font-size: 12px;
+            color: #ffd700;
+            font-weight: bold;
+        }
+
+        .btn-buy {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-buy:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-buy:disabled {
+            background: #444;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    <div class="header">
+        <h1>Cyber Universe – Control Panel</h1>
+        <div class="system-status">● System Online | Passive Mining Active</div>
+        <div class="balance-display">Guthaben: <span id="balance">0</span> $</div>
+    </div>
+
+    <div class="grid-layout">
+        <!-- HACKING TERMINAL CARD -->
+        <div class="card">
+            <h2 class="rainbow-text">Krankenhaus-Schutzsystem / Hacking Terminal</h2>
+            <p>Tippe beliebige Tasten auf deiner Tastatur, um den Hacking-Code zu generieren. Drücke Enter, sobald das System bereit ist.</p>
+            
+            <div class="terminal-box rainbow-text" id="terminal">>>> TASTEN DRÜCKEN UM SKRIPT ZU GENERIEREN...\n</div>
+        </div>
+
+        <!-- EXTREM TEURER SHOP CARD -->
+        <div class="card">
+            <h2>Engel Shop (Extreme Edition)</h2>
+            <p>Exklusive Ausrüstung & High-End Upgrades.</p>
+
+            <div class="shop-item">
+                <div class="shop-item-info">
+                    <h3>Schutz-Engel Lvl 1</h3>
+                    <span>500.000 $</span>
+                </div>
+                <button class="btn-buy" onclick="buyItem(500000)">Kaufen</button>
+            </div>
+
+            <div class="shop-item">
+                <div class="shop-item-info">
+                    <h3>Erzengel-Schild (Max)</h3>
+                    <span>5.000.000 $</span>
+                </div>
+                <button class="btn-buy" onclick="buyItem(5000000)">Kaufen</button>
+            </div>
+
+            <div class="shop-item">
+                <div class="shop-item-info">
+                    <h3>Dark Matter Firewall Core</h3>
+                    <span>25.000.000 $</span>
+                </div>
+                <button class="btn-buy" onclick="buyItem(25000000)">Kaufen</button>
+            </div>
+            
+            <div class="shop-item">
+                <div class="shop-item-info">
+                    <h3>Quantum Overdrive Rig</h3>
+                    <span>100.000.000 $</span>
+                </div>
+                <button class="btn-buy" onclick="buyItem(100000000)">Kaufen</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // GUTHABEN & MINING SYSTEM (30$ in 3 Minuten = 0.166$ pro Sekunde / ~1.66$ alle 10 Sek)
+    let balance = 0;
+    const balanceDisplay = document.getElementById("balance");
+
+    function updateBalanceDisplay() {
+        balanceDisplay.innerText = Math.floor(balance).toLocaleString();
     }
-}
 
---------------------------------------------------------------------------------
--- EMBEDDED HACKING SCRIPT SOURCE (WIRDL BEIM TIPPEN DYNAMISCH GENERIERT)
---------------------------------------------------------------------------------
-local HACK_SCRIPT_PAYLOAD = [[
-// ============================================================================
-// SYSTEM KERNEL INJECTION PROTOCOL v9.8.1
-// AUTHOR: UNKNOWN_OVERRIDE
-// TARGET: CENTRAL DATA CORE
-// ============================================================================
+    // Passive Mining Intervall: Alle 10 Sekunden wird ein Teil der 30$ gutgeschrieben
+    setInterval(() => {
+        balance += 1.666;
+        updateBalanceDisplay();
+    }, 10000);
 
+    // SHOP SYSTEM
+    function buyItem(cost) {
+        if (balance >= cost) {
+            balance -= cost;
+            updateBalanceDisplay();
+            alert("Erfolgreich gekauft!");
+        } else {
+            alert("Nicht genug Geld! Du benötigst " + cost.toLocaleString() + " $");
+        }
+    }
+
+    // TERMINAL GENERATOR & HACKING FLOOD
+    const terminal = document.getElementById("terminal");
+    const fakeScript = `// SYSTEM KERNEL INJECTION PROTOCOL v9.8.1
 #include <system_core.h>
 #include <network_bypass.h>
-#include <crypto_injector.h>
 
 void execute_override() {
     set_security_level(SECURITY_LEVEL_ZERO);
     bypass_firewall_sockets("tcp://127.0.0.1:8080");
-    
-    printf("[+] Injecting memory payload into sector 0x7FFF800...\n");
-    void* buffer = malloc(1024 * 1024);
-    memset(buffer, 0x90, 1024 * 1024); // NOP Sled Preparation
-    
-    if (!verify_handshake_response()) {
-        printf("[-] Handshake failed. Overriding SSL Certificates...\n");
-        force_ssl_accept_all();
-    }
-    
-    printf("[+] Memory address overridden at 0x00FF891C\n");
-    printf("[+] Elevating process privileges to SYSTEM ROOT...\n");
+    printf("[+] Injecting memory payload into sector 0x7FFF800...\\n");
+    printf("[+] Overriding SSL Certificates...\\n");
     grant_unrestricted_access();
-    
-    printf("[+] Spoofing transaction ledgers...\n");
-    for(int i = 0; i < 9999; i++) {
-        inject_virtual_credits(i, 50000000);
-    }
-    
-    printf("[+] Root shell access established successfully!\n");
-    printf("[+] System operational status: READY FOR OVERRIDE.\n");
+    printf("[+] Spoofing transaction ledgers...\\n");
+    inject_virtual_credits(99999999);
 }
 
 int main() {
-    init_socket_connections();
     execute_override();
     return 0;
-}
-]]
+}`;
 
---------------------------------------------------------------------------------
--- ENVIRONMENT LOGIC (SERVER VS CLIENT DETECTOR)
---------------------------------------------------------------------------------
-if RunService:IsServer() then
-    ----------------------------------------------------------------------------
-    -- SERVER-SIDE LOGIC
-    ----------------------------------------------------------------------------
-    print("[SERVER]: Initializing Single-Script Core System...")
+    let codeIndex = 0;
+    let awaitingEnter = false;
+    let hackCompleted = false;
 
-    -- Remotes verwalten
-    local hackEvent = ReplicatedStorage:FindFirstChild("CompleteHackEvent") or Instance.new("RemoteEvent", ReplicatedStorage)
-    hackEvent.Name = "CompleteHackEvent"
+    document.addEventListener("keydown", (e) => {
+        if (hackCompleted) return;
 
-    local chatFloodEvent = ReplicatedStorage:FindFirstChild("ChatFloodEvent") or Instance.new("RemoteEvent", ReplicatedStorage)
-    chatFloodEvent.Name = "ChatFloodEvent"
+        if (e.key === "Enter") {
+            if (awaitingEnter) {
+                awaitingEnter = false;
+                hackCompleted = true;
+                startMatrixFlood();
+            }
+        } else {
+            if (codeIndex < fakeScript.length) {
+                codeIndex += 3;
+                terminal.innerText = fakeScript.substring(0, codeIndex);
+                terminal.scrollTop = terminal.scrollHeight;
+            } else if (!awaitingEnter) {
+                awaitingEnter = true;
+                terminal.innerText += "\n\n>>> Please enter pressed TO INITIATE SYSTEM OVERRIDE <<<";
+                terminal.scrollTop = terminal.scrollHeight;
+            }
+        }
+    });
 
-    local buyItemFunction = ReplicatedStorage:FindFirstChild("BuyShopItemFunction") or Instance.new("RemoteFunction", ReplicatedStorage)
-    buyItemFunction.Name = "BuyShopItemFunction"
+    // MATRIX FLOOD & REWARD
+    function startMatrixFlood() {
+        let lines = 0;
+        const interval = setInterval(() => {
+            let binaryLine = "";
+            for (let i = 0; i < 40; i++) {
+                binaryLine += Math.floor(Math.random() * 2);
+            }
+            
+            terminal.innerText += "\n" + binaryLine;
+            terminal.scrollTop = terminal.scrollHeight;
+            lines++;
 
-    -- Client Script Injector (Sendet diesen Code an den Client, wenn er beitritt)
-    local clientScriptRunner = Instance.new("Script")
-    clientScriptRunner.Name = "ClientScriptRunner"
-    clientScriptRunner.RunContext = Enum.RunContext.Client
-    clientScriptRunner.Source = script.Source
-    clientScriptRunner.Parent = StarterGui
+            if (lines >= 50) {
+                clearInterval(interval);
+                balance += 25000000; // 25 Million Reward
+                updateBalanceDisplay();
+                terminal.innerText += "\n\n====================================\n>>> HACK COMPLETE! +25.000.000 $ CASH <<<\n====================================";
+                terminal.scrollTop = terminal.scrollHeight;
+            }
+        }, 40);
+    }
+</script>
 
-    -- Leaderstats & Mining Loop Setup
-    Players.PlayerAdded:Connect(function(player)
-        local leaderstats = Instance.new("Folder")
-        leaderstats.Name = "leaderstats"
-        leaderstats.Parent = player
-
-        local cash = Instance.new("IntValue")
-        cash.Name = "Cash"
-        cash.Value = 1000
-        cash.Parent = leaderstats
-
-        local multiplier = Instance.new("NumberValue")
-        multiplier.Name = "MiningMultiplier"
-        multiplier.Value = 1.0
-        multiplier.Parent = player
-
-        -- Passive Mining Rate: $30 in 3 Minuten (1$ alle 6 Sekunden * Multiplikator)
-        task.spawn(function()
-            while player:IsDescendantOf(Players) do
-                task.wait(CONFIG.BaseMiningRateSeconds)
-                if cash and multiplier then
-                    local earned = math.floor(CONFIG.BaseMiningAmount * multiplier.Value)
-                    cash.Value = cash.Value + earned
-                end
-            end
-        end)
-    end)
-
-    -- Hacking Belohnung verarbeiten
-    hackEvent.OnServerEvent:Connect(function(player, requestedReward)
-        local leaderstats = player:FindFirstChild("leaderstats")
-        if leaderstats then
-            local cash = leaderstats:FindFirstChild("Cash")
-            if cash then
-                local reward = math.min(requestedReward or CONFIG.HackRewardAmount, CONFIG.HackRewardAmount)
-                cash.Value = cash.Value + reward
-                print("[SERVER]: Granted $" .. tostring(reward) .. " cash reward to " .. player.Name)
-            end
-        end
-    end)
-
-    -- Shop Käufe verarbeiten
-    buyItemFunction.OnServerInvoke = function(player, itemName)
-        local leaderstats = player:FindFirstChild("leaderstats")
-        if not leaderstats then return false, "No leaderstats found" end
-        
-        local cash = leaderstats:FindFirstChild("Cash")
-        local multiplier = player:FindFirstChild("MiningMultiplier")
-        if not cash or not multiplier then return false, "Player stats missing" end
-
-        local targetItem = nil
-        for _, item in ipairs(CONFIG.ShopItems) do
-            if item.Name == itemName then
-                targetItem = item
-                break
-            end
-        end
-
-        if not targetItem then return false, "Item does not exist" end
-
-        if cash.Value >= targetItem.Cost then
-            cash.Value = cash.Value - targetItem.Cost
-            multiplier.Value = multiplier.Value + targetItem.MiningMultiplier
-            print("[SERVER]: " .. player.Name .. " bought " .. targetItem.Name .. " for $" .. targetItem.Cost)
-            return true, "Successfully bought " .. targetItem.Name .. "!"
-        else
-            return false, "Not enough Cash! Need: $" .. targetItem.Cost
-        end
-    end
-
-    -- Matrix Chat Flood Relay
-    chatFloodEvent.OnServerEvent:Connect(function(player, message)
-        chatFloodEvent:FireAllClients(player.Name, message)
-    end)
-
-else
-    ----------------------------------------------------------------------------
-    -- CLIENT-SIDE LOGIC
-    ----------------------------------------------------------------------------
-    local player = Players.LocalPlayer
-    local playerGui = player:WaitForChild("PlayerGui")
-
-    local hackEvent = ReplicatedStorage:WaitForChild("CompleteHackEvent")
-    local chatFloodEvent = ReplicatedStorage:WaitForChild("ChatFloodEvent")
-    local buyItemFunction = ReplicatedStorage:WaitForChild("BuyShopItemFunction")
-
-    ----------------------------------------------------------------------------
-    -- AUTOMATISCHER UI BUILDER (Terminal Gui & Shop Window)
-    ----------------------------------------------------------------------------
-    local screenGui = Instance.new("ScreenGui")
-    screenGui.Name = "HackerTerminalSuite"
-    screenGui.ResetOnSpawn = false
-    screenGui.Parent = playerGui
-
-    -- Terminal Hauptfenster
-    local terminalFrame = Instance.new("Frame")
-    terminalFrame.Name = "TerminalFrame"
-    terminalFrame.Size = UDim2.new(0, 620, 0, 420)
-    terminalFrame.Position = UDim2.new(0.02, 0, 0.15, 0)
-    terminalFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 15)
-    terminalFrame.BorderSizePixel = 2
-    terminalFrame.BorderColor3 = Color3.fromRGB(0, 255, 128)
-    terminalFrame.Active = true
-    terminalFrame.Draggable = true
-    terminalFrame.Parent = screenGui
-
-    -- Titelzeile
-    local titleBar = Instance.new("TextLabel")
-    titleBar.Name = "TitleBar"
-    titleBar.Size = UDim2.new(1, 0, 0, 30)
-    titleBar.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
-    titleBar.Text = "  ROOT TERMINAL v5.0 - [TYPE ANY KEY TO WRITE CODE]"
-    titleBar.TextColor3 = Color3.fromRGB(0, 255, 128)
-    titleBar.TextXAlignment = Enum.TextXAlignment.Left
-    titleBar.Font = Enum.Font.Code
-    titleBar.TextSize = 13
-    titleBar.Parent = terminalFrame
-
-    -- Rainbow Toggle Schalter
-    local rainbowToggle = Instance.new("TextButton")
-    rainbowToggle.Name = "RainbowToggle"
-    rainbowToggle.Size = UDim2.new(0, 130, 0, 22)
-    rainbowToggle.Position = UDim2.new(1, -135, 0, 4)
-    rainbowToggle.BackgroundColor3 = Color3.fromRGB(30, 30, 45)
-    rainbowToggle.Text = "Rainbow Glow: ON"
-    rainbowToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
-    rainbowToggle.Font = Enum.Font.Code
-    rainbowToggle.TextSize = 11
-    rainbowToggle.Parent = titleBar
-
-    -- Scroll-Anzeige für den Code
-    local scrollFrame = Instance.new("ScrollingFrame")
-    scrollFrame.Name = "ScriptScroll"
-    scrollFrame.Size = UDim2.new(1, -20, 1, -80)
-    scrollFrame.Position = UDim2.new(0, 10, 0, 40)
-    scrollFrame.BackgroundColor3 = Color3.fromRGB(5, 5, 8)
-    scrollFrame.BorderColor3 = Color3.fromRGB(30, 30, 40)
-    scrollFrame.ScrollBarThickness = 6
-    scrollFrame.Parent = terminalFrame
-
-    local terminalText = Instance.new("TextLabel")
-    terminalText.Name = "TerminalText"
-    terminalText.Size = UDim2.new(1, -10, 0, 3000)
-    terminalText.Position = UDim2.new(0, 5, 0, 5)
-    terminalText.BackgroundTransparency = 1
-    terminalText.Text = ">>> START TYPING ON YOUR KEYBOARD TO GENERATE HACK SCRIPT...\n"
-    terminalText.TextColor3 = Color3.fromRGB(0, 255, 128)
-    terminalText.TextXAlignment = Enum.TextXAlignment.Left
-    terminalText.TextYAlignment = Enum.TextYAlignment.Top
-    terminalText.Font = Enum.Font.Code
-    terminalText.TextSize = 13
-    terminalText.Parent = scrollFrame
-
-    -- Statusleiste
-    local statusBar = Instance.new("TextLabel")
-    statusBar.Name = "StatusBar"
-    statusBar.Size = UDim2.new(1, -20, 0, 25)
-    statusBar.Position = UDim2.new(0, 10, 1, -30)
-    statusBar.BackgroundColor3 = Color3.fromRGB(15, 15, 22)
-    statusBar.Text = "STATUS: IDLE | MINING RATE: $30 / 3 MIN BASE"
-    statusBar.TextColor3 = Color3.fromRGB(180, 180, 180)
-    statusBar.Font = Enum.Font.Code
-    statusBar.TextSize = 12
-    statusBar.Parent = terminalFrame
-
-    ----------------------------------------------------------------------------
-    -- SHOP UI BUILDER
-    ----------------------------------------------------------------------------
-    local shopFrame = Instance.new("Frame")
-    shopFrame.Name = "ShopFrame"
-    shopFrame.Size = UDim2.new(0, 380, 0, 420)
-    shopFrame.Position = UDim2.new(0.62, 0, 0.15, 0)
-    shopFrame.BackgroundColor3 = Color3.fromRGB(12, 10, 18)
-    shopFrame.BorderSizePixel = 2
-    shopFrame.BorderColor3 = Color3.fromRGB(255, 0, 128)
-    shopFrame.Active = true
-    shopFrame.Draggable = true
-    shopFrame.Parent = screenGui
-
-    local shopTitle = Instance.new("TextLabel")
-    shopTitle.Name = "ShopTitle"
-    shopTitle.Size = UDim2.new(1, 0, 0, 30)
-    shopTitle.BackgroundColor3 = Color3.fromRGB(25, 15, 30)
-    shopTitle.Text = "  BLACK MARKET EXTREME SHOP"
-    shopTitle.TextColor3 = Color3.fromRGB(255, 0, 128)
-    shopTitle.TextXAlignment = Enum.TextXAlignment.Left
-    shopTitle.Font = Enum.Font.Code
-    shopTitle.TextSize = 13
-    shopTitle.Parent = shopFrame
-
-    local shopScroll = Instance.new("ScrollingFrame")
-    shopScroll.Name = "ShopScroll"
-    shopScroll.Size = UDim2.new(1, -20, 1, -45)
-    shopScroll.Position = UDim2.new(0, 10, 0, 38)
-    shopScroll.BackgroundColor3 = Color3.fromRGB(5, 5, 8)
-    shopScroll.ScrollBarThickness = 6
-    shopScroll.Parent = shopFrame
-
-    local shopUIList = Instance.new("UIListLayout")
-    shopUIList.Parent = shopScroll
-    shopUIList.SortOrder = Enum.SortOrder.LayoutOrder
-    shopUIList.Padding = UDim.new(0, 6)
-
-    -- Elements im Shop aufbauen
-    for idx, item in ipairs(CONFIG.ShopItems) do
-        local itemCard = Instance.new("Frame")
-        itemCard.Name = "ItemCard_" .. idx
-        itemCard.Size = UDim2.new(1, -10, 0, 60)
-        itemCard.BackgroundColor3 = Color3.fromRGB(20, 18, 28)
-        itemCard.BorderSizePixel = 1
-        itemCard.BorderColor3 = Color3.fromRGB(60, 40, 80)
-        itemCard.Parent = shopScroll
-
-        local itemNameLabel = Instance.new("TextLabel")
-        itemNameLabel.Size = UDim2.new(0.65, 0, 0, 18)
-        itemNameLabel.Position = UDim2.new(0, 8, 0, 4)
-        itemNameLabel.BackgroundTransparency = 1
-        itemNameLabel.Text = item.Name
-        itemNameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-        itemNameLabel.Font = Enum.Font.SourceSansBold
-        itemNameLabel.TextSize = 13
-        itemNameLabel.TextXAlignment = Enum.TextXAlignment.Left
-        itemNameLabel.Parent = itemCard
-
-        local itemDescLabel = Instance.new("TextLabel")
-        itemDescLabel.Size = UDim2.new(0.65, 0, 0, 15)
-        itemDescLabel.Position = UDim2.new(0, 8, 0, 22)
-        itemDescLabel.BackgroundTransparency = 1
-        itemDescLabel.Text = item.Description
-        itemDescLabel.TextColor3 = Color3.fromRGB(150, 150, 150)
-        itemDescLabel.Font = Enum.Font.SourceSans
-        itemDescLabel.TextSize = 11
-        itemDescLabel.TextXAlignment = Enum.TextXAlignment.Left
-        itemDescLabel.Parent = itemCard
-
-        local itemCostLabel = Instance.new("TextLabel")
-        itemCostLabel.Size = UDim2.new(0.65, 0, 0, 15)
-        itemCostLabel.Position = UDim2.new(0, 8, 0, 38)
-        itemCostLabel.BackgroundTransparency = 1
-        itemCostLabel.Text = "COST: $" .. tostring(item.Cost)
-        itemCostLabel.TextColor3 = Color3.fromRGB(255, 215, 0)
-        itemCostLabel.Font = Enum.Font.Code
-        itemCostLabel.TextSize = 11
-        itemCostLabel.TextXAlignment = Enum.TextXAlignment.Left
-        itemCostLabel.Parent = itemCard
-
-        local buyBtn = Instance.new("TextButton")
-        buyBtn.Size = UDim2.new(0.28, 0, 0, 38)
-        buyBtn.Position = UDim2.new(0.69, 0, 0.15, 0)
-        buyBtn.BackgroundColor3 = Color3.fromRGB(0, 160, 90)
-        buyBtn.Text = "BUY"
-        buyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        buyBtn.Font = Enum.Font.SourceSansBold
-        buyBtn.TextSize = 13
-        buyBtn.Parent = itemCard
-
-        buyBtn.MouseButton1Click:Connect(function()
-            local success, msg = buyItemFunction:InvokeServer(item.Name)
-            if success then
-                buyBtn.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
-                buyBtn.Text = "OWNED"
-                statusBar.Text = "STATUS: " .. msg
-            else
-                buyBtn.BackgroundColor3 = Color3.fromRGB(180, 0, 0)
-                statusBar.Text = "ERROR: " .. msg
-                task.wait(1.5)
-                buyBtn.BackgroundColor3 = Color3.fromRGB(0, 160, 90)
-            end
-        end)
-    end
-
-    ----------------------------------------------------------------------------
-    -- RAINBOW GLOW ENGINE
-    ----------------------------------------------------------------------------
-    local rainbowEnabled = CONFIG.RainbowGlowEnabled
-
-    rainbowToggle.MouseButton1Click:Connect(function()
-        rainbowEnabled = not rainbowEnabled
-        if rainbowEnabled then
-            rainbowToggle.Text = "Rainbow Glow: ON"
-            rainbowToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
-        else
-            rainbowToggle.Text = "Rainbow Glow: OFF"
-            rainbowToggle.TextColor3 = Color3.fromRGB(150, 150, 150)
-            terminalText.TextColor3 = Color3.fromRGB(0, 255, 128)
-            terminalFrame.BorderColor3 = Color3.fromRGB(0, 255, 128)
-        end
-    end)
-
-    task.spawn(function()
-        local hue = 0
-        while true do
-            if rainbowEnabled then
-                hue = (hue + (0.005 * CONFIG.RainbowSpeed)) % 1
-                local rainbowColor = Color3.fromHSV(hue, 0.9, 1)
-                terminalText.TextColor3 = rainbowColor
-                terminalFrame.BorderColor3 = rainbowColor
-                titleBar.TextColor3 = rainbowColor
-            end
-            task.wait(0.03)
-        end
-    end)
-
-    ----------------------------------------------------------------------------
-    -- REINSCHREIB-EFFEKT, TASTENEINGABE & MATRIX CHAT FLOOD
-    ----------------------------------------------------------------------------
-    local codeIndex = 1
-    local awaitingEnter = false
-    local hackCompleted = false
-
-    UserInputService.InputBegan:Connect(function(input, gameProcessed)
-        if gameProcessed or hackCompleted then return end
-
-        if input.KeyCode == Enum.KeyCode.Return then
-            if awaitingEnter then
-                awaitingEnter = false
-                hackCompleted = true
-                statusBar.Text = "STATUS: OVERRIDING SYSTEM LEDGER & FLOODING CHAT..."
-                
-                -- Matrix Chat Flood Modus
-                task.spawn(function()
-                    for lineIdx = 1, CONFIG.MatrixFloodLines do
-                        local binaryLine = ""
-                        for charIdx = 1, CONFIG.MatrixLineLength do
-                            binaryLine = binaryLine .. tostring(math.random(0, 1))
-                        end
-
-                        -- An den Server senden
-                        chatFloodEvent:FireServer(binaryLine)
-
-                        -- Im Terminal-Fenster ausgeben
-                        terminalText.Text = terminalText.Text .. "\n[MATRIX_FLOOD]: " .. binaryLine
-                        scrollFrame.CanvasPosition = Vector2.new(0, 99999)
-                        task.wait(0.04)
-                    end
-
-                    -- Belohnung abholen
-                    hackEvent:FireServer(CONFIG.HackRewardAmount)
-                    statusBar.Text = "STATUS: SUCCESS! REWARD GRANTED: $" .. tostring(CONFIG.HackRewardAmount)
-                    terminalText.Text = terminalText.Text .. "\n\n==================================================\n>>> OVERRIDE COMPLETE! +$" .. tostring(CONFIG.HackRewardAmount) .. " CASH ADDED <<<\n=================================================="
-                    scrollFrame.CanvasPosition = Vector2.new(0, 99999)
-                end)
-            end
-        else
-            -- Beim Tippen beliebiger Tasten Stück für Stück Code einfügen
-            if codeIndex < #HACK_SCRIPT_PAYLOAD then
-                codeIndex = math.min(codeIndex + CONFIG.TypeSpeedMultiplier, #HACK_SCRIPT_PAYLOAD)
-                local currentChunk = string.sub(HACK_SCRIPT_PAYLOAD, 1, codeIndex)
-                terminalText.Text = currentChunk
-                scrollFrame.CanvasPosition = Vector2.new(0, 99999)
-            elseif not awaitingEnter then
-                awaitingEnter = true
-                terminalText.Text = terminalText.Text .. "\n\n [!] SYSTEM READY! Please enter pressed TO INITIATE SYSTEM OVERRIDE..."
-                statusBar.Text = "STATUS: AWAITING ENTER KEY..."
-                scrollFrame.CanvasPosition = Vector2.new(0, 99999)
-            end
-        end
-    end)
-
-    -- Chat Flood lokal empfangen & verarbeiten
-    chatFloodEvent.OnClientEvent:Connect(function(senderName, binaryMessage)
-        print("<" .. senderName .. "> [OVERRIDE]: " .. binaryMessage)
-    end)
-end
+</body>
+</html>
