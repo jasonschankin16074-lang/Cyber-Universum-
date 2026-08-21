@@ -61,6 +61,76 @@
       padding: 14px; font-size: 16px; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 10px;
     }
 
+    /* NEWS & DISCORD FOOTER STYLES */
+    .news-discord-container {
+      margin-top: 25px;
+      padding-top: 15px;
+      border-top: 2px dashed var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .news-box {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--accent-main);
+      border-radius: 8px;
+      padding: 12px;
+    }
+
+    .news-box h3 {
+      color: var(--accent-main);
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .news-box ul {
+      list-style-type: square;
+      padding-left: 18px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .news-box ul li {
+      margin-bottom: 4px;
+    }
+
+    .discord-box {
+      background: rgba(88, 101, 242, 0.1);
+      border: 1px solid #5865F2;
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .discord-box h3 {
+      color: #5865F2;
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+
+    .discord-box p {
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .discord-btn {
+      display: inline-block;
+      background: #5865F2;
+      color: #ffffff;
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      font-weight: bold;
+      font-size: 12px;
+      transition: 0.2s;
+    }
+
+    .discord-btn:hover {
+      background: #4752C4;
+    }
+
     #hackerOverlay {
       display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
       background: rgba(0, 0, 0, 0.95); z-index: 9999; flex-direction: column; align-items: center; justify-content: center; padding: 5px;
@@ -143,22 +213,22 @@
     <div class="level-selector">
       <div class="select-card active" id="levelCard1" onclick="selectLevel(1)">
         <h3 style="color: var(--accent-main); font-size:12px;">🏢 LEVEL 1: TRESOR</h3>
-        <p style="font-size: 9px; color: var(--text-muted); margin-top: 3px;">Normal (15 Phasen)</p>
+        <p style="font-size: 9px; color: var(--text-muted); margin-top: 3px;">Normal (Kein Angriff)</p>
       </div>
 
       <div class="select-card" id="levelCard2" onclick="selectLevel(2)">
         <h3 style="color: #06b6d4; font-size:12px;">🏥 LEVEL 2: KLINIK</h3>
-        <p style="font-size: 9px; color: var(--text-muted); margin-top: 3px;">Schwer (15 Phasen)</p>
+        <p style="font-size: 9px; color: var(--text-muted); margin-top: 3px;">Schwer (Kein Angriff)</p>
       </div>
 
       <div class="select-card" id="levelCard3" onclick="selectLevel(3)">
         <h3 style="color: var(--accent-orange); font-size:12px;">🚒 LEVEL 3: FEUERWEHR</h3>
-        <p style="font-size: 9px; color: var(--text-muted); margin-top: 3px;">Einfach (15 Phasen)</p>
+        <p style="font-size: 9px; color: var(--text-muted); margin-top: 3px;">Einfach (Kein Angriff)</p>
       </div>
 
       <div class="select-card" id="levelCard4" onclick="selectLevel(4)">
         <h3 style="color: var(--accent-purple); font-size:12px;">👑 LEVEL 4: ENDBOSS</h3>
-        <p style="font-size: 9px; color: var(--text-muted); margin-top: 3px;">Extrem (15 Phasen)</p>
+        <p style="font-size: 9px; color: var(--text-muted); margin-top: 3px;">Extrem (Mit Angriff!)</p>
       </div>
     </div>
 
@@ -176,6 +246,24 @@
     </div>
 
     <button class="launch-btn" onclick="launchTerminal()">>_ OVERRIDE TERMINAL STARTEN</button>
+
+    <!-- NEWS & DISCORD FOOTER BEREICH -->
+    <div class="news-discord-container">
+      <div class="news-box">
+        <h3>📰 NEWS & UPDATES</h3>
+        <ul>
+          <li><strong>Update:</strong> Angriffe nach dem Hacken in Level 1, 2 und 3 wurden vollständig entfernt!</li>
+          <li><strong>Level 4 Boss:</strong> Nur in Level 4 wartet nach dem Hacken weiterhin der epische Live-Angriff auf dich.</li>
+          <li><strong>System:</strong> Performance optimiert und Admin-Panel erweitert.</li>
+        </ul>
+      </div>
+
+      <div class="discord-box">
+        <h3>💬 TRITT UNSEREM DISCORD BEI!</h3>
+        <p>Bleibe auf dem Laufenden, erhalte Support und tausche dich mit der Community aus:</p>
+        <a href="https://discord.gg/DEIN_DISCORD_LINK" target="_blank" class="discord-btn">👉 DISCORD SERVER BEITRETEN</a>
+      </div>
+    </div>
   </div>
 
   <div id="hackerOverlay">
@@ -247,7 +335,6 @@
     var targetLaserAngle = 0;
     var masterVaultCode = 0;
     var phase15Count = 0;
-    var awaitingFinalEnter = false;
 
     var qteInterval = null;
     var requiredKeys = [];
@@ -513,7 +600,7 @@
     function startBoss13Scan() { currentPhase = 13; requiredKeys = ['G', 'O', 'D']; currentKeyIndex = 0; printChat('<span style="color:var(--accent-purple); font-weight:bold;">\n>>> PHASE 13/15: CHEF-BIOMETRIE (Combo: G - O - D) <<<</span>'); runMultiKeyPhase("Biometrie OK!", startBoss14Power, startBoss13Scan); }
     function startBoss14Power() { currentPhase = 14; requiredKeys = ['N', 'U', 'L', 'L']; currentKeyIndex = 0; printChat('<span style="color:var(--accent-purple); font-weight:bold;">\n>>> PHASE 14/15: GLOBAL POWER DOWN (Combo: N - U - L - L) <<<</span>'); runMultiKeyPhase("Netz Aus!", startPhase15FinalCoreHack, startBoss14Power); }
 
-    // GEMEINSAME PHASEN (10, 11-14 Generisch, 15)
+    // GEMEINSAME PHASEN
     function startPhase10AiFirewall() { currentPhase = 10; printChat('<span style="color:var(--accent-purple); font-weight:bold;">\n>>> PHASE 10/15: KI-FEUERWALL BYPASS <<<</span>'); runBruteForceAnimation(10, startPhase11SatelliteLink); }
     function startHosp10AiFirewall() { currentPhase = 10; printChat('<span style="color:var(--accent-purple); font-weight:bold;">\n>>> PHASE 10/15: KLINIK-KI FEUERWALL BYPASS <<<</span>'); runBruteForceAnimation(10, startHosp11SatLink); }
     function startPhase11SatelliteLink() { currentPhase = 11; targetLaserAngle = Math.floor(Math.random() * 180) + 1; printChat('<span style="color:#06b6d4; font-weight:bold;">\n>>> PHASE 11/15: SATELLITEN-VERBINDUNG (1-180°) <<<</span>'); setPlaceholder("Winkel (1-180)..."); }
@@ -525,11 +612,10 @@
     function startPhase14PowerGridShutdown() { currentPhase = 14; requiredKeys = ['G', 'R', 'I', 'D']; currentKeyIndex = 0; printChat('<span style="color:#f59e0b; font-weight:bold;">\n>>> PHASE 14/15: STROMNETZ ABSCHALTUNG (Combo: G - R - I - D) <<<</span>'); runMultiKeyPhase("Stromnetz tot!", startPhase15FinalCoreHack, startPhase14PowerGridShutdown); }
     function startHosp14GeneratorShutdown() { currentPhase = 14; requiredKeys = ['N', 'O', 'T']; currentKeyIndex = 0; printChat('<span style="color:#f59e0b; font-weight:bold;">\n>>> PHASE 14/15: NOTSTROM-GENERATOR OFF (Combo: N - O - T) <<<</span>'); runMultiKeyPhase("Generator aus!", startPhase15FinalCoreHack, startHosp14GeneratorShutdown); }
 
-    // PHASE 15 & ENDGAME ENGINE
+    // PHASE 15
     function startPhase15FinalCoreHack() {
       currentPhase = 15;
       phase15Count = 0;
-      awaitingFinalEnter = false;
       printChat('<span style="color:var(--accent-purple); font-weight:bold; font-size:13px;">\n>>> PHASE 15/15: FINALE KERN-ÜBERNAHME <<<</span>');
       printChat('<span style="color:var(--text-muted);">Tippe 5 Mal ENTER oder Klicke zum Durchbrechen der Firewall!</span>');
       setPlaceholder("DRÜCKE ENTER / TIPPEN (0/5)...");
@@ -540,7 +626,7 @@
 
       if (currentPhase === 3) {
         if (num === secretCode[currentDigitIndex]) {
-          printChat('<span style="color:var(--accent-main); font-weight:bold;">[PIN ACCEPTED]: Zahl ' + (currentDigitIndex + 1) + ' korrektt!</span>');
+          printChat('<span style="color:var(--accent-main); font-weight:bold;">[PIN ACCEPTED]: Zahl ' + (currentDigitIndex + 1) + ' korrekt!</span>');
           currentDigitIndex++;
           if (currentDigitIndex >= 2) {
             if (selectedLevel === 1) startPhase4LaserBypass();
@@ -614,8 +700,19 @@
         phase15Count++;
         setPlaceholder("DRÜCKE ENTER / TIPPEN (" + phase15Count + "/5)...");
         printChat('<span style="color:var(--accent-purple);">[KERN BYPASS]: Überlastung ' + (phase15Count * 20) + '%</span>');
+        
         if (phase15Count >= 5) {
-          triggerBlackscreenCutscene();
+          // ANGRIFF NUR BEI LEVEL 4 (ENDBOSS)
+          if (selectedLevel === 4) {
+            triggerBlackscreenCutscene();
+          } else {
+            // LEVEL 1, 2 UND 3 SCHLIESSEN NORMAL SONDER-GEWINN AB (KEIN ANGRIFF)
+            userBalance += (selectedLevel === 1 ? 5000 : (selectedLevel === 2 ? 8000 : 4000));
+            updateBalance();
+            printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:14px;">\n🏆 HEIST VOLLSTÄNDIG ERFOLGREICH! DAS SYSTEM IST SICHER UND DU WURDEST NICHT ENTDECKT!</span>');
+            printChat('<span style="color:var(--text-muted);">Terminal schließt sich automatisch...</span>');
+            setTimeout(closeTerminal, 4000);
+          }
         }
       }
     }
@@ -638,6 +735,7 @@
       }, 1000);
     }
 
+    // CUTSCENE & ENDGAME NUR FÜR LEVEL 4
     function triggerBlackscreenCutscene() {
       var bs = document.getElementById("blackscreenOverlay");
       var txt = document.getElementById("blackscreenText");
@@ -647,7 +745,7 @@
       var lines = [
         "CRITICAL SYSTEM FAILURE...",
         "OVERRIDE COMPLETE...",
-        "SYSTEM KERN BEZIEHT NEUE COMMANDS...",
+        "WARNUNG: FEINDLICHER GEGENANGRIFF GESTARTET!",
         "WILLKOMMEN IM ENDGAME PROTOKOLL."
       ];
       var idx = 0;
@@ -668,7 +766,6 @@
       }, 800);
     }
 
-    // ENDGAME LIVE ATTACK/DEFENSE
     function startEndgameMode() {
       isEndgameActive = true;
       systemHealth = 100;
