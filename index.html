@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cyber Universe v19.0 - Pure Number Stream</title>
+  <title>Cyber Universe v20.0 - Vault Password Cracker</title>
   <style>
     :root {
       --bg: #030508;
@@ -85,18 +85,18 @@
 <body id="bodyTag">
 
   <div class="start-dashboard">
-    <h2 class="rainbow-text">// CYBER UNIVERSE v19.0 - RAW NUMBER STREAM</h2>
-    <p style="color: var(--text-muted); margin-top: 4px;">Wähle deine Seite für das Terminal:</p>
+    <h2 class="rainbow-text">// CYBER UNIVERSE v20.0 - VAULT CRACKER</h2>
+    <p style="color: var(--text-muted); margin-top: 4px;">Wähle deine Seite für das Überfall-Terminal:</p>
 
     <div class="faction-selector">
       <div class="faction-card active-evil" id="cardEvil" onclick="selectStartFaction('evil')">
-        <h3 style="color: var(--accent-red);">💻 BÖSE SEITE (ZAHLEN-HACK)</h3>
-        <p style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">60 Blöcke tippen -> Enter -> 20s Spam -> 70$ Beute!</p>
+        <h3 style="color: var(--accent-red);">💻 BÖSE SEITE (TRESOR HACK)</h3>
+        <p style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">60 Blöcke tippen -> Enter -> Stream -> Passwort Knacken -> 150$ Beute!</p>
       </div>
 
       <div class="faction-card" id="cardGood" onclick="selectStartFaction('good')">
         <h3 style="color: #2563eb;">🛡️ GUTE SEITE (CYBER-ABWEHR)</h3>
-        <p style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">60 Blöcke tippen -> Enter -> 20s Spam -> 70$ Gehalt!</p>
+        <p style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">60 Blöcke tippen -> Enter -> Stream -> Tresor Sichern -> 150$ Gehalt!</p>
       </div>
     </div>
 
@@ -121,7 +121,7 @@
 
           <div class="chat-box">
             <div style="font-weight:bold; margin-bottom:8px; border-bottom:1px dashed var(--border); padding-bottom:4px; font-size:11px;">
-              // LIVE RAW DATA TERMINAL
+              // LIVE VAULT HEIST & PASSWORD CRACKER
             </div>
             <div class="chat-messages" id="chatOutput"></div>
           </div>
@@ -144,29 +144,26 @@
       localStorage.setItem('cyber_balance', userBalance);
     }
 
-    // Erzeugt zufällige Zahlen- oder Binärblöcke
     function generateNumberBlock() {
       if (Math.random() > 0.5) {
-        // Generiert Binärblöcke (11001010...)
         var b = "";
         for (var i = 0; i < 16; i++) b += Math.floor(Math.random() * 2);
         return b;
       } else {
-        // Generiert lange Zahlenketten (93847638...)
         var n = "";
         for (var j = 0; j < 12; j++) n += Math.floor(Math.random() * 10);
         return n;
       }
     }
 
-    // TASTATUR ENGINE - GENERIERT NUR ZAHLEN
+    // TASTATUR ENGINE
     document.addEventListener("keydown", function(e) {
       if (document.getElementById("hackerOverlay").style.display !== "flex") return;
       if (isProcessingHack) return;
 
       if (e.key === "Enter") {
         if (isAwaitingEnter) {
-          startHiddenSpam();
+          startPhase1Stream();
         }
       } else if (e.key.length === 1 || e.key === "Backspace") {
         if (!isAwaitingEnter) {
@@ -190,23 +187,24 @@
             document.getElementById("typeStatus").innerText = "DATEN BEREIT! DRÜCKE ENTER!";
             document.getElementById("typeStatus").style.color = "#ef4444";
             
-            printChat('<span style="color:#ef4444; font-weight:bold;">\n>>> MAXIMUM ERREICHT! DRÜCKE JETZT [ENTER] UM DIE ZAHLEN ZU ÜBERTRAGEN! <<<</span>');
+            printChat('<span style="color:#ef4444; font-weight:bold;">\n>>> INITIALISIERUNG BEREIT! DRÜCKE [ENTER] UM DEN TRESOR-OVERRIDE ZU STARTEN! <<<</span>');
           }
         }
       }
     });
 
-    // VOLLSTÄNDIGER ZAHLEN-SPAM OHNE SICHTBAREN TIMER (20s DAHINTER)
-    function startHiddenSpam() {
+    // PHASE 1: UNSICHTBARER 20s ZAHLENSTREAM
+    function startPhase1Stream() {
       isAwaitingEnter = false;
       isProcessingHack = true;
-      document.getElementById("typeStatus").innerText = "ÜBERTRAGUNG LÄUFT...";
+      document.getElementById("typeStatus").innerText = "PHASE 1: DATEN-OVERRIDE LÄUFT...";
       document.getElementById("typeStatus").style.color = "#f59e0b";
+
+      printChat('<span style="color:var(--accent-yellow); font-weight:bold;">>>> PHASE 1: BYPASS TRESOR-NETZWERK <<<</span>');
 
       var durationInSeconds = 20;
       var elapsed = 0;
 
-      // Spamt den Chat im 100ms Takt mit massiven Zahlenzeilen voll
       var spamInterval = setInterval(function() {
         elapsed += 0.1;
 
@@ -217,16 +215,45 @@
         
         printChat('<span style="color:var(--text-muted); opacity:0.85;">' + massiveNumberLine + '</span>');
 
-        // Nach exakt 20 Sekunden stoppen
         if (elapsed >= durationInSeconds) {
           clearInterval(spamInterval);
-          isProcessingHack = false;
+          startPhase2VaultPasswordCrack(); // Startet Phase 2 (Passwort knacken)
+        }
+      }, 100); 
+    }
+
+    // PHASE 2: PASSWORT KNACKEN VOM TRESOR
+    function startPhase2VaultPasswordCrack() {
+      document.getElementById("typeStatus").innerText = "PHASE 2: PASSWORT BRUTE-FORCE LÄUFT...";
+      document.getElementById("typeStatus").style.color = "#ef4444";
+
+      printChat('<span style="color:#ef4444; font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 2: TRESOR PASSWORT KNACKEN GESTARTET <<<\n========================================</span>');
+
+      var attempts = 0;
+      var maxAttempts = 35; // Versuche bis Erfolg
+
+      var crackInterval = setInterval(function() {
+        attempts++;
+
+        // Generiert ein zufälliges 6-stelliges Passwort
+        var randomPass = Math.floor(100000 + Math.random() * 900000);
+        
+        printChat('<span style="color:#ef4444;">[BRUTE_FORCE]: Versuche Code [' + randomPass + '] -> ACCESS DENIED!</span>');
+
+        if (attempts >= maxAttempts) {
+          clearInterval(crackInterval);
           
-          userBalance += 70;
+          // Erfolgreiches Passwort
+          var secretMasterKey = "984201";
+          printChat('<span style="color:var(--accent-yellow); font-weight:bold;">[BRUTE_FORCE]: Versuche Code [' + secretMasterKey + '] -> CODE KORREKT!</span>');
+          printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:14px;">\n>>> TRESOR ERFOLGREICH GEÖFFNET! ACCESS GRANTED! <<<</span>');
+
+          isProcessingHack = false;
+          userBalance += 150;
           updateBalance();
           saveData();
 
-          printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:13px;">\n========================================\n>>> ERFOLG! +70.00 $ gutgeschrieben! <<<\n========================================</span>');
+          printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:13px;">========================================\n>>> ERFOLG! +150.00 $ Tresor-Beute erhalten! <<<\n========================================</span>');
           
           // Reset
           currentBlockCount = 0;
@@ -235,7 +262,7 @@
           document.getElementById("typeStatus").innerText = "Tippe Tasten auf deiner Tastatur...";
           document.getElementById("typeStatus").style.color = "var(--accent-yellow)";
         }
-      }, 100); 
+      }, 120); // Alle 120ms ein neuer Passwort-Versuch
     }
 
     function selectStartFaction(faction) {
@@ -250,10 +277,10 @@
 
       if (startFaction === 'good') {
         body.className = 'theme-good';
-        title.innerText = 'CYBER_UNIVERSE [POLIZEI ABWEHR-SYSTEM v19.0]';
+        title.innerText = 'CYBER_UNIVERSE [POLIZEI TRESOR-SCHUTZ v20.0]';
       } else {
         body.className = '';
-        title.innerText = 'CYBER_UNIVERSE [HACKER ZAHLEN-SYSTEM v19.0]';
+        title.innerText = 'CYBER_UNIVERSE [HACKER TRESOR-CRACKER v20.0]';
       }
 
       document.getElementById('hackerOverlay').style.display = 'flex';
