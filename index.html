@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cyber Universe v25.0 - Ultimate 15-Phasen Heist</title>
+  <title>Cyber Universe v26.0 - 15-Phasen Heist & Reboot</title>
   <style>
     :root {
       --bg: #030508;
@@ -97,13 +97,12 @@
 <body id="bodyTag">
 
   <div class="start-dashboard">
-    <h2 class="rainbow-text">// CYBER UNIVERSE v25.0 - ULTIMATE 15 PHASEN HEIST</h2>
-    <p style="color: var(--text-muted); margin-top: 4px;">Mehrere Tasten-Combos & Erweiterung bis Level 15!</p>
+    <h2 class="rainbow-text">// CYBER UNIVERSE v26.0 - 15 PHASEN HEIST & REBOOT</h2>
 
     <div class="faction-selector">
       <div class="faction-card active-evil" id="cardEvil" onclick="selectStartFaction('evil')">
         <h3 style="color: var(--accent-red);">💻 BÖSE SEITE (15 PHASEN HEIST)</h3>
-        <p style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">Reaktions-Combos -> Fortsetzen-Abfrage -> bis Level 15!</p>
+        <p style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">Mehrere Tasten -> Abfrage -> 3x 'a' -> Reboot Animation</p>
       </div>
 
       <div class="faction-card" id="cardGood" onclick="selectStartFaction('good')">
@@ -119,7 +118,7 @@
     <canvas id="matrixCanvas"></canvas>
     <div class="dash-window">
       <div class="dash-header">
-        <span id="terminalTitle" class="rainbow-text">CYBER_UNIVERSE [SYSTEM]</span>
+        <span id="terminalTitle" class="rainbow-text">CYBER_UNIVERSE [SYSTEM v26.0]</span>
         <button class="close-btn" onclick="closeTerminal()">[X] SCHLIESSEN</button>
       </div>
       
@@ -158,14 +157,12 @@
     var activeTypingLine = null;
 
     var currentPhase = 1;
-
     var secretCode = [];
     var currentDigitIndex = 0;
     var targetLaserAngle = 0;
-    var targetDnaSequence = "AAAA";
     var masterVaultCode = 0;
+    var phase15Count = 0;
 
-    // QTE Tasten-Combo System
     var qteInterval = null;
     var requiredKeys = [];
     var currentKeyIndex = 0;
@@ -189,7 +186,6 @@
     document.addEventListener("keydown", function(e) {
       if (document.getElementById("hackerOverlay").style.display !== "flex") return;
 
-      // QTE TASTEN-CHECK FÜR MEHRERE TASTEN
       if ((currentPhase >= 7 && currentPhase <= 9) || (currentPhase >= 13 && currentPhase <= 14)) {
         if (requiredKeys.length > 0 && currentKeyIndex < requiredKeys.length) {
           if (e.key.toLowerCase() === requiredKeys[currentKeyIndex].toLowerCase()) {
@@ -227,7 +223,6 @@
             isAwaitingEnter = true;
             document.getElementById("typeStatus").innerText = "DATEN BEREIT! DRÜCKE ENTER!";
             document.getElementById("typeStatus").style.color = "#ef4444";
-            
             printChat('<span style="color:#ef4444; font-weight:bold;">\n>>> INITIALISIERUNG BEREIT! DRÜCKE [ENTER] UM DEN OVERRIDE ZU STARTEN! <<<</span>');
           }
         }
@@ -242,17 +237,13 @@
 
       printChat('<span style="color:var(--accent-yellow); font-weight:bold;">>>> PHASE 1/15: BYPASS TRESOR-NETZWERK <<<</span>');
 
-      var durationInSeconds = 20;
+      var durationInSeconds = 15;
       var elapsed = 0;
 
       var spamInterval = setInterval(function() {
         elapsed += 0.1;
-
         var massiveNumberLine = "";
-        for (var i = 0; i < 110; i++) {
-          massiveNumberLine += Math.floor(Math.random() * 10);
-        }
-        
+        for (var i = 0; i < 110; i++) massiveNumberLine += Math.floor(Math.random() * 10);
         printChat('<span style="color:var(--text-muted); opacity:0.85;">' + massiveNumberLine + '</span>');
 
         if (elapsed >= durationInSeconds) {
@@ -270,14 +261,12 @@
       printChat('<span style="color:#ef4444; font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 2/15: BRUTE-FORCE PASSWORT CRACKER <<<\n========================================</span>');
 
       var attempts = 0;
-      var maxAttempts = 15;
-
       var crackInterval = setInterval(function() {
         attempts++;
         var randomPass = Math.floor(100000 + Math.random() * 900000);
         printChat('<span style="color:#ef4444;">[BRUTE_FORCE]: Versuche Code [' + randomPass + '] -> ACCESS DENIED!</span>');
 
-        if (attempts >= maxAttempts) {
+        if (attempts >= 12) {
           clearInterval(crackInterval);
           printChat('<span style="color:var(--accent-yellow); font-weight:bold;">[BRUTE_FORCE]: VOR-SYSTEM DEAKTIVIERT!</span>');
           startPhase3ManualGuessing();
@@ -295,7 +284,6 @@
 
       printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 3/15: TRESOR PIN-PAD (2 ZAHLEN 1-10) <<<\n========================================</span>');
       printChat('<span style="color:var(--accent-yellow);">-> Errate Zahl 1 von 2:</span>');
-
       showInputField("Zahl eingeben (1-10)...", "number");
     }
 
@@ -308,19 +296,16 @@
 
       printChat('<span style="color:#f59e0b; font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 4/15: LASER-SCHUTZSCHILD AUSRICHTEN <<<\n========================================</span>');
       printChat('<span style="color:var(--accent-yellow);">-> Gib einen Winkel in Grad ein (1-180):</span>');
-
       showInputField("Winkel eingeben (1-180)...", "number");
     }
 
     function startPhase5DnaBypass() {
       currentPhase = 5;
-
       document.getElementById("typeStatus").innerText = "PHASE 5: DNA-BIOMETRIE OVERRIDE";
       document.getElementById("typeStatus").style.color = "#ef4444";
 
       printChat('<span style="color:#ef4444; font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 5/15: DNA-BIOMETRIE <<<\nDer Code lautet: AAAA\n========================================</span>');
       printChat('<span style="color:var(--accent-yellow);">-> Gib "AAAA" ein:</span>');
-
       showInputField("Tippe AAAA...", "text");
     }
 
@@ -333,11 +318,9 @@
 
       printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 6/15: TRESOR-TÜRCODE <<<\nErrate die Zahl (1 bis 50)!\n========================================</span>');
       printChat('<span style="color:var(--accent-yellow);">-> Gib deine Vermutung ab:</span>');
-
       showInputField("Mastercode (1-50)...", "number");
     }
 
-    // MULTI-KEY QUICK TIME PHASEN (7, 8, 9)
     function startPhase7WlanJammer() {
       currentPhase = 7;
       hideInputField();
@@ -347,8 +330,7 @@
       document.getElementById("typeStatus").innerText = "PHASE 7: TASTEN-COMBO WLAN JAMMER";
       document.getElementById("typeStatus").style.color = "#f59e0b";
 
-      printChat('<span style="color:#f59e0b; font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 7/15: GEBÄUDE-WLAN LAHMLEGEN <<<\nDrücke nacheinander die Tasten: E - A - S innerhalb von 5s!\n========================================</span>');
-
+      printChat('<span style="color:#f59e0b; font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 7/15: GEBÄUDE-WLAN LAHMLEGEN <<<\nDrücke nacheinander: E - A - S innerhalb von 5s!\n========================================</span>');
       runMultiKeyPhase("WLAN-Jammer Signal gesendet!", startPhase8SecurityOverride, startPhase7WlanJammer);
     }
 
@@ -360,8 +342,7 @@
       document.getElementById("typeStatus").innerText = "PHASE 8: TASTEN-COMBO KAMERA BYPASS";
       document.getElementById("typeStatus").style.color = "#ef4444";
 
-      printChat('<span style="color:#ef4444; font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 8/15: SECURITY OVERRIDE <<<\nDrücke nacheinander die Tasten: D - F - E innerhalb von 5s!\n========================================</span>');
-
+      printChat('<span style="color:#ef4444; font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 8/15: SECURITY OVERRIDE <<<\nDrücke nacheinander: D - F - E innerhalb von 5s!\n========================================</span>');
       runMultiKeyPhase("Kamera-Loop erfolgreich aktiviert!", startPhase9AntiLocationVirus, startPhase8SecurityOverride);
     }
 
@@ -373,44 +354,29 @@
       document.getElementById("typeStatus").innerText = "PHASE 9: TASTEN-COMBO ANTI-STANDORT";
       document.getElementById("typeStatus").style.color = "var(--accent-main)";
 
-      printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 9/15: ANTI-STANDORT VIRUS <<<\nDrücke nacheinander die Tasten: E - S - D - F innerhalb von 5s!\n========================================</span>');
-
+      printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 9/15: ANTI-STANDORT VIRUS <<<\nDrücke nacheinander: E - S - D - F innerhalb von 5s!\n========================================</span>');
       runMultiKeyPhase("GPS Spoofing abgeschlossen!", promptContinueToLevel15, startPhase9AntiLocationVirus);
     }
 
-    // FORTSETZEN-ABFRAGE NACH PHASE 9
+    // FORTSETZEN-ABFRAGE
     function promptContinueToLevel15() {
       userBalance += 2500;
       updateBalance();
       saveData();
 
-      printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:14px;">\n========================================\n>>> PHASE 9 ERFOLGREICH! +2.500$ GUTGESCHRIEBEN! <<<\n>>> WARNUNG: DIE SICHERHEITSKRÄFTE FORDIERN VERSTÄRKUNG AN! <<<\nMÖCHTEST DU WEITERMACHEN BIS LEVEL 15 FÜR EXTREME BEUTE? <<<\n========================================</span>');
+      printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:14px;">\n========================================\n>>> PHASE 9 ERFOLGREICH! +2.500$ GUTGESCHRIEBEN! <<<\n>>> WARNUNG: DIE SICHERHEITSKRÄFTE FORDEREN VERSTÄRKUNG AN! <<<\nMÖCHTEST DU WEITERMACHEN BIS LEVEL 15 FÜR EXTREME BEUTE? <<<\n========================================</span>');
 
-      showInputField("", "button");
-      var input = document.getElementById("actionInput");
-      input.style.display = "none";
-      var btn = document.getElementById("actionSubmitBtn");
-      btn.innerText = "JA! WEITERMACHEN BIS LEVEL 15!";
-      btn.onclick = function() {
-        btn.innerText = "EINGABE";
-        btn.onclick = handlePhaseInput;
-        input.style.display = "block";
-        hideInputField();
-        startPhase10AiFirewall();
-      };
+      showInputField("Tippe JA um weiterzumachen oder NEIN...", "text");
     }
 
-    // LEVEL 10 BIS 15 (DEINE FANTASIE LEVEL)
     function startPhase10AiFirewall() {
       currentPhase = 10;
       secretCode = [Math.floor(Math.random() * 20) + 1];
-      currentDigitIndex = 0;
 
-      document.getElementById("typeStatus").innerText = "PHASE 10: KI-FEUERWALL ÜBERLASTUNG";
+      document.getElementById("typeStatus").innerText = "PHASE 10: KI-FEUERWALL";
       document.getElementById("typeStatus").style.color = "#ef4444";
 
       printChat('<span style="color:#ef4444; font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 10/15: KI-FEUERWALL DURCHBRECHEN <<<\nErrate den Überlastungs-Pin (1 bis 20)!\n========================================</span>');
-
       showInputField("Pin (1-20)...", "number");
     }
 
@@ -418,11 +384,10 @@
       currentPhase = 11;
       targetLaserAngle = Math.floor(Math.random() * 360) + 1;
 
-      document.getElementById("typeStatus").innerText = "PHASE 11: CYBER-SATELLITEN AUSRICHTUNG";
+      document.getElementById("typeStatus").innerText = "PHASE 11: CYBER-SATELLIT";
       document.getElementById("typeStatus").style.color = "#f59e0b";
 
       printChat('<span style="color:#f59e0b; font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 11/15: SATELLITEN-UMLAUFBAHN <<<\nRichte die Parabolantenne aus (1° bis 360°)!\n========================================</span>');
-
       showInputField("Winkel (1-360)...", "number");
     }
 
@@ -434,12 +399,12 @@
       document.getElementById("typeStatus").style.color = "var(--accent-main)";
 
       printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 12/15: QUANTEN-SCHLÜSSEL KNACKEN <<<\nFinde den Quanten-Code (1 bis 100)!\n========================================</span>');
-
       showInputField("Code (1-100)...", "number");
     }
 
     function startPhase13EyeBiometrics() {
       currentPhase = 13;
+      hideInputField();
       requiredKeys = ['A', 'W', 'S', 'D'];
       currentKeyIndex = 0;
 
@@ -447,36 +412,35 @@
       document.getElementById("typeStatus").style.color = "#ef4444";
 
       printChat('<span style="color:#ef4444; font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 13/15: BIOMETRISCHER AUGENSCAN <<<\nDrücke nacheinander: A - W - S - D innerhalb von 5s!\n========================================</span>');
-
       runMultiKeyPhase("Augenscan gefälscht!", startPhase14PowerGridShutdown, startPhase13EyeBiometrics);
     }
 
     function startPhase14PowerGridShutdown() {
       currentPhase = 14;
-      requiredKeys = ['E', 'R', 'T', 'Z', 'U'];
+      hideInputField();
+      requiredKeys = ['E', 'R', 'T', 'Z'];
       currentKeyIndex = 0;
 
       document.getElementById("typeStatus").innerText = "PHASE 14: STROMNETZ SHUTDOWN";
       document.getElementById("typeStatus").style.color = "#f59e0b";
 
-      printChat('<span style="color:#f59e0b; font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 14/15: NOTSTROM-GENERATOR ABSCHALTEN <<<\nDrücke nacheinander: E - R - T - Z - U innerhalb von 5s!\n========================================</span>');
-
+      printChat('<span style="color:#f59e0b; font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 14/15: NOTSTROM GENERATOR ABSCHALTEN <<<\nDrücke nacheinander: E - R - T - Z innerhalb von 5s!\n========================================</span>');
       runMultiKeyPhase("Stromnetz komplett lahmgelegt!", startPhase15FinalCoreHack, startPhase14PowerGridShutdown);
     }
 
+    // PHASE 15: 3x 'a' + ENTER
     function startPhase15FinalCoreHack() {
       currentPhase = 15;
-      masterVaultCode = 777;
+      phase15Count = 0;
 
       document.getElementById("typeStatus").innerText = "PHASE 15: DER FINALE KERN-HACK";
       document.getElementById("typeStatus").style.color = "#ef4444";
 
-      printChat('<span style="color:#ef4444; font-weight:bold; font-size:14px;">\n========================================\n>>> PHASE 15/15: DER ULTIMATIVE MASTER-KERN <<<\nGib den finalen Freischaltcode ein: 777\n========================================</span>');
-
-      showInputField("Tippe 777...", "number");
+      printChat('<span style="color:#ef4444; font-weight:bold; font-size:14px;">\n========================================\n>>> PHASE 15/15: ULTIMATIVER KERN-OVERRIDE <<<\nTippe 3-mal hintereinander "a" und drücke jeweils ENTER!\n========================================</span>');
+      printChat('<span style="color:var(--accent-yellow);">-> Eingabe 1/3 (Tippe "a"):</span>');
+      showInputField("Tippe a...", "text");
     }
 
-    // MULTI-KEY QUICK TIME ENGINE
     function runMultiKeyPhase(successMessage, nextPhaseFunc, retryPhaseFunc) {
       var timeLeft = 5;
 
@@ -495,27 +459,65 @@
 
         if (timeLeft < 0) {
           clearInterval(qteInterval);
-          printChat('<span style="color:#ef4444; font-weight:bold;">[FEHLER]: COMBO FEHLGESCHLAGEN / ZU LANGSAM! PHASE STARTET NEU...</span>');
+          printChat('<span style="color:#ef4444; font-weight:bold;">[FEHLER]: COMBO FEHLGESCHLAGEN! STARTE NEU...</span>');
           setTimeout(retryPhaseFunc, 1500);
         }
       }, 1000);
     }
 
-    function finishHeist() {
-      isProcessingHack = false;
-
+    // DEINE FANTASIE: LOESCHUNGS-ANIMATION + 10s COUNTDOWN + SYSTEM REBOOT
+    function triggerSystemDestructionAndReboot() {
+      hideInputField();
       userBalance += 10000;
       updateBalance();
       saveData();
 
-      printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:16px;">\n========================================\n>>> ALL 15 PHASES CLEARED! <<<\n>>> MEGAMASTER HEIST ERFOLGREICH! <<<\n>>> EXTRA-BEUTE: +10.000.00 $ GUTGESCHRIEBEN! <<<\n========================================</span>');
+      printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:15px;">\n========================================\n>>> LEVEL 15 ERFOLGREICH! BEUTE: +10.000$ <<<\n========================================</span>');
 
-      currentPhase = 1;
-      currentBlockCount = 0;
-      activeTypingLine = null;
-      document.getElementById("wordCounter").innerText = "0 / 60";
-      document.getElementById("typeStatus").innerText = "Tippe Tasten auf deiner Tastatur...";
-      document.getElementById("typeStatus").style.color = "var(--accent-yellow)";
+      setTimeout(function() {
+        printChat('<span style="color:#ef4444; font-weight:bold; font-size:16px;">\n[KRITISCHER FEHLER]: SICHERHEITS PROTOKOLL 99 ACTIVATED!\n[WARNUNG]: DAS SYSTEM LÖSCHT SICH IN WENIGEN SEKUNDEN!</span>');
+
+        var destroySpam = setInterval(function() {
+          var errorLine = "CRITICAL_ERROR_0x889 " + Math.floor(Math.random()*1000000) + " SYSTEM_DELETE_CORE_FILES_PURGING...";
+          printChat('<span style="color:#ef4444; opacity:0.8;">' + errorLine + '</span>');
+        }, 80);
+
+        setTimeout(function() {
+          clearInterval(destroySpam);
+
+          var countdown = 10;
+          printChat('<span style="color:#f59e0b; font-weight:bold; font-size:18px;">\n>>> BACKSTEIN-BIT MODUS AKTIVIEREN... <<<</span>');
+
+          var cdInterval = setInterval(function() {
+            printChat('<span style="color:#ef4444; font-weight:bold;">[SYSTEM DESTRUCTION]: SHUTDOWN IN ' + countdown + ' SEKUNDEN...</span>');
+            countdown--;
+
+            if (countdown < 0) {
+              clearInterval(cdInterval);
+              
+              printChat('<span style="color:#64748b; font-size:16px;">\n========================================\n>>> SYSTEM ERFOLGREICH GELÖSCHT & DEAKTIVIERT <<<\n========================================</span>');
+
+              setTimeout(function() {
+                printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:15px;">\n>>> TERMINAL BOOTET NEU... LADE SYSTEM DAEMON... <<<</span>');
+                
+                setTimeout(function() {
+                  currentPhase = 1;
+                  currentBlockCount = 0;
+                  activeTypingLine = null;
+                  isProcessingHack = false;
+                  document.getElementById("wordCounter").innerText = "0 / 60";
+                  document.getElementById("typeStatus").innerText = "Tippe Tasten auf deiner Tastatur...";
+                  document.getElementById("typeStatus").style.color = "var(--accent-yellow)";
+                  printChat('<span style="color:var(--accent-main); font-weight:bold;">\n[SYSTEM REBOOT ABGESCHLOSSEN]: Bereit für den nächsten Heist! Tippe Tasten...</span>');
+                }, 2000);
+
+              }, 1500);
+            }
+          }, 1000);
+
+        }, 3000);
+
+      }, 1000);
     }
 
     function handlePhaseInput() {
@@ -528,7 +530,6 @@
       if (currentPhase === 3) {
         var guess = parseInt(val);
         var targetNum = secretCode[currentDigitIndex];
-
         if (guess === targetNum) {
           printChat('<span style="color:var(--accent-main); font-weight:bold;">[PIN_PAD]: ' + guess + ' KORREKT!</span>');
           currentDigitIndex++;
@@ -566,6 +567,14 @@
           printChat('<span style="color:#ef4444;">[TRESOR]: ZU HOCH!</span>');
         }
 
+      } else if (currentPhase === 9) {
+        if (val.toLowerCase() === "ja") {
+          hideInputField(); startPhase10AiFirewall();
+        } else {
+          printChat('<span style="color:#ef4444;">[HEIST]: Abgebrochen. Du verlässt das System.</span>');
+          hideInputField();
+        }
+
       } else if (currentPhase === 10) {
         if (parseInt(val) === secretCode[0]) {
           hideInputField(); startPhase11SatelliteLink();
@@ -577,21 +586,27 @@
         if (parseInt(val) === targetLaserAngle) {
           hideInputField(); startPhase12QuantumDecryption();
         } else {
-          printChat('<span style="color:#f59e0b;">[SATELLIT]: Ausrichtung nicht optimal!</span>');
+          printChat('<span style="color:#f59e0b;">[SATELLIT]: Ausrichtung falsch!</span>');
         }
 
       } else if (currentPhase === 12) {
         if (parseInt(val) === masterVaultCode) {
           hideInputField(); startPhase13EyeBiometrics();
         } else {
-          printChat('<span style="color:#ef4444;">[QUANTEN]: Schlüssel falsch!</span>');
+          printChat('<span style="color:#ef4444;">[QUANTEN]: Code falsch!</span>');
         }
 
       } else if (currentPhase === 15) {
-        if (parseInt(val) === 777) {
-          hideInputField(); finishHeist();
+        if (val.toLowerCase() === "a") {
+          phase15Count++;
+          printChat('<span style="color:var(--accent-main); font-weight:bold;">[KERN]: OVERRIDE SIGNAL ' + phase15Count + '/3 ERFOLGREICH!</span>');
+          if (phase15Count >= 3) {
+            triggerSystemDestructionAndReboot();
+          } else {
+            printChat('<span style="color:var(--accent-yellow);">-> Tippe noch einmal "a":</span>');
+          }
         } else {
-          printChat('<span style="color:#ef4444;">[KERN]: CODE FALSCH! Tippe 777!</span>');
+          printChat('<span style="color:#ef4444;">[KERN]: FALSCHE TASTE! Tippe "a"!</span>');
         }
       }
 
@@ -624,16 +639,16 @@
 
       if (startFaction === 'good') {
         body.className = 'theme-good';
-        title.innerText = 'CYBER_UNIVERSE [POLIZEI 15-PHASEN SYSTEM v25.0]';
+        title.innerText = 'CYBER_UNIVERSE [POLIZEI 15-PHASEN SYSTEM v26.0]';
       } else {
         body.className = '';
-        title.innerText = 'CYBER_UNIVERSE [HACKER 15-PHASEN HEIST v25.0]';
+        title.innerText = 'CYBER_UNIVERSE [HACKER 15-PHASEN HEIST v26.0]';
       }
 
       document.getElementById('hackerOverlay').style.display = 'flex';
       startMatrix();
       updateBalance();
-      printChat('[SYSTEM]: Terminal gestartet! Tippe beliebige Tasten...');
+      printChat('[SYSTEM]: Terminal v26.0 gestartet! Tippe beliebige Tasten...');
     }
 
     function closeTerminal() {
