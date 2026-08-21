@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cyber Universe v20.0 - Vault Password Cracker</title>
+  <title>Cyber Universe v21.0 - Manual Vault Pin Guessing</title>
   <style>
     :root {
       --bg: #030508;
@@ -79,24 +79,36 @@
     .chat-box { flex: 1; border: 1px solid var(--border); background: var(--card-bg); border-radius: 6px; padding: 12px; display: flex; flex-direction: column; overflow: hidden; }
     .chat-messages { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 2px; font-size: 11px; font-family: monospace; white-space: pre-wrap; word-break: break-all; }
 
+    .guess-input-container {
+      display: none; gap: 8px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border);
+    }
+    .guess-input {
+      flex: 1; background: rgba(0,0,0,0.3); border: 1px solid var(--accent-main);
+      color: var(--text); padding: 8px; border-radius: 4px; font-size: 14px; outline: none;
+    }
+    .guess-btn {
+      background: var(--accent-main); color: #fff; border: none; padding: 8px 16px;
+      font-weight: bold; border-radius: 4px; cursor: pointer;
+    }
+
     .close-btn { background: transparent; border: 1px solid var(--accent-red); color: var(--accent-red); padding: 2px 8px; cursor: pointer; border-radius: 4px; }
   </style>
 </head>
 <body id="bodyTag">
 
   <div class="start-dashboard">
-    <h2 class="rainbow-text">// CYBER UNIVERSE v20.0 - VAULT CRACKER</h2>
-    <p style="color: var(--text-muted); margin-top: 4px;">Wähle deine Seite für das Überfall-Terminal:</p>
+    <h2 class="rainbow-text">// CYBER UNIVERSE v21.0 - VAULT GUESSING ENGINE</h2>
+    <p style="color: var(--text-muted); margin-top: 4px;">Wähle deine Seite für den Tresor-Überfall:</p>
 
     <div class="faction-selector">
       <div class="faction-card active-evil" id="cardEvil" onclick="selectStartFaction('evil')">
-        <h3 style="color: var(--accent-red);">💻 BÖSE SEITE (TRESOR HACK)</h3>
-        <p style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">60 Blöcke tippen -> Enter -> Stream -> Passwort Knacken -> 150$ Beute!</p>
+        <h3 style="color: var(--accent-red);">💻 BÖSE SEITE (TRESOR-OVERRIDE)</h3>
+        <p style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">Tippen -> Stream -> Auto-Crack -> 4 Zahlen Erraten -> 300$ Beute!</p>
       </div>
 
       <div class="faction-card" id="cardGood" onclick="selectStartFaction('good')">
-        <h3 style="color: #2563eb;">🛡️ GUTE SEITE (CYBER-ABWEHR)</h3>
-        <p style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">60 Blöcke tippen -> Enter -> Stream -> Tresor Sichern -> 150$ Gehalt!</p>
+        <h3 style="color: #2563eb;">🛡️ GUTE SEITE (DEFENSE OVERRIDE)</h3>
+        <p style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">Tippen -> Stream -> Auto-Crack -> 4 Zahlen Erraten -> 300$ Gehalt!</p>
       </div>
     </div>
 
@@ -121,9 +133,14 @@
 
           <div class="chat-box">
             <div style="font-weight:bold; margin-bottom:8px; border-bottom:1px dashed var(--border); padding-bottom:4px; font-size:11px;">
-              // LIVE VAULT HEIST & PASSWORD CRACKER
+              // LIVE TERMINAL STREAM & PIN GUESSER
             </div>
             <div class="chat-messages" id="chatOutput"></div>
+
+            <div class="guess-input-container" id="guessContainer">
+              <input type="number" id="guessInput" class="guess-input" placeholder="Zahl eingeben (0-99)..." onkeydown="if(e.key==='Enter') submitGuess()">
+              <button class="guess-btn" onclick="submitGuess()">BESTÄTIGEN</button>
+            </div>
           </div>
         </div>
       </div>
@@ -139,6 +156,10 @@
     var isAwaitingEnter = false;
     var isProcessingHack = false;
     var activeTypingLine = null;
+
+    // Phase 3: Zahlen-Raten Variablen
+    var secretCode = [];
+    var currentDigitIndex = 0;
 
     function saveData() {
       localStorage.setItem('cyber_balance', userBalance);
@@ -217,52 +238,96 @@
 
         if (elapsed >= durationInSeconds) {
           clearInterval(spamInterval);
-          startPhase2VaultPasswordCrack(); // Startet Phase 2 (Passwort knacken)
+          startPhase2VaultPasswordCrack();
         }
       }, 100); 
     }
 
-    // PHASE 2: PASSWORT KNACKEN VOM TRESOR
+    // PHASE 2: AUTOMATISCHER PASSWORT-CRACKER
     function startPhase2VaultPasswordCrack() {
-      document.getElementById("typeStatus").innerText = "PHASE 2: PASSWORT BRUTE-FORCE LÄUFT...";
+      document.getElementById("typeStatus").innerText = "PHASE 2: BRUTE-FORCE LÄUFT...";
       document.getElementById("typeStatus").style.color = "#ef4444";
 
-      printChat('<span style="color:#ef4444; font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 2: TRESOR PASSWORT KNACKEN GESTARTET <<<\n========================================</span>');
+      printChat('<span style="color:#ef4444; font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 2: TRESOR AUTO-CRACKER GESTARTET <<<\n========================================</span>');
 
       var attempts = 0;
-      var maxAttempts = 35; // Versuche bis Erfolg
+      var maxAttempts = 25;
 
       var crackInterval = setInterval(function() {
         attempts++;
-
-        // Generiert ein zufälliges 6-stelliges Passwort
         var randomPass = Math.floor(100000 + Math.random() * 900000);
-        
-        printChat('<span style="color:#ef4444;">[BRUTE_FORCE]: Versuche Code [' + randomPass + '] -> ACCESS DENIED!</span>');
+        printChat('<span style="color:#ef4444;">[AUTO_CRACK]: Versuche Code [' + randomPass + '] -> ACCESS DENIED!</span>');
 
         if (attempts >= maxAttempts) {
           clearInterval(crackInterval);
-          
-          // Erfolgreiches Passwort
-          var secretMasterKey = "984201";
-          printChat('<span style="color:var(--accent-yellow); font-weight:bold;">[BRUTE_FORCE]: Versuche Code [' + secretMasterKey + '] -> CODE KORREKT!</span>');
-          printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:14px;">\n>>> TRESOR ERFOLGREICH GEÖFFNET! ACCESS GRANTED! <<<</span>');
+          printChat('<span style="color:var(--accent-yellow); font-weight:bold;">[AUTO_CRACK]: HUPT-SYSTEM WEICHGEKOCHT!</span>');
+          startPhase3ManualGuessing(); // Startet Phase 3
+        }
+      }, 100);
+    }
 
+    // PHASE 3: MANUELLES ZAHLEN RATEN (4 ZIFFERN VON 0-99)
+    function startPhase3ManualGuessing() {
+      // Erzeugt 4 Zufallszahlen zwischen 1 und 50
+      secretCode = [
+        Math.floor(Math.random() * 50) + 1,
+        Math.floor(Math.random() * 50) + 1,
+        Math.floor(Math.random() * 50) + 1,
+        Math.floor(Math.random() * 50) + 1
+      ];
+      currentDigitIndex = 0;
+
+      document.getElementById("typeStatus").innerText = "PHASE 3: PIN-PAD SPEER-GEKNACKE AKTIV";
+      document.getElementById("typeStatus").style.color = "var(--accent-main)";
+
+      printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 3: SICHERHEITS-PIN ERRATEN <<<\nErrate nacheinander 4 Zahlen (1 - 50)!\n========================================</span>');
+      printChat('<span style="color:var(--accent-yellow);">-> Errate Zahl 1 von 4:</span>');
+
+      document.getElementById("guessContainer").style.display = "flex";
+      document.getElementById("guessInput").focus();
+    }
+
+    function submitGuess() {
+      var inputEl = document.getElementById("guessInput");
+      var guess = parseInt(inputEl.value);
+      inputEl.value = "";
+
+      if (isNaN(guess)) return;
+
+      var targetNum = secretCode[currentDigitIndex];
+
+      if (guess === targetNum) {
+        printChat('<span style="color:var(--accent-main); font-weight:bold;">[PIN_PAD]: ' + guess + ' IST KORREKT! Zahl ' + (currentDigitIndex + 1) + ' freigeschaltet!</span>');
+        currentDigitIndex++;
+
+        if (currentDigitIndex >= 4) {
+          // ALLE 4 ZAHLEN ERRATEN
+          document.getElementById("guessContainer").style.display = "none";
           isProcessingHack = false;
-          userBalance += 150;
+          
+          userBalance += 300;
           updateBalance();
           saveData();
 
-          printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:13px;">========================================\n>>> ERFOLG! +150.00 $ Tresor-Beute erhalten! <<<\n========================================</span>');
-          
+          printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:14px;">\n========================================\n>>> TRESOR GEÖFFNET! +300.00 $ BEUTE ERHALTEN! <<<\n========================================</span>');
+
           // Reset
           currentBlockCount = 0;
           activeTypingLine = null;
           document.getElementById("wordCounter").innerText = "0 / 60";
           document.getElementById("typeStatus").innerText = "Tippe Tasten auf deiner Tastatur...";
           document.getElementById("typeStatus").style.color = "var(--accent-yellow)";
+        } else {
+          printChat('<span style="color:var(--accent-yellow);">-> Errate Zahl ' + (currentDigitIndex + 1) + ' von 4:</span>');
         }
-      }, 120); // Alle 120ms ein neuer Passwort-Versuch
+      } else if (guess < targetNum) {
+        printChat('<span style="color:#ef4444;">[PIN_PAD]: ' + guess + ' ist ZU NIEDRIG! Die Zahl ist GRÖSSER!</span>');
+      } else {
+        printChat('<span style="color:#ef4444;">[PIN_PAD]: ' + guess + ' ist ZU HOCH! Die Zahl ist KLEINER!</span>');
+      }
+
+      document.getElementById("chatOutput").scrollTop = document.getElementById("chatOutput").scrollHeight;
+      inputEl.focus();
     }
 
     function selectStartFaction(faction) {
@@ -277,10 +342,10 @@
 
       if (startFaction === 'good') {
         body.className = 'theme-good';
-        title.innerText = 'CYBER_UNIVERSE [POLIZEI TRESOR-SCHUTZ v20.0]';
+        title.innerText = 'CYBER_UNIVERSE [POLIZEI PIN-OVERRIDE v21.0]';
       } else {
         body.className = '';
-        title.innerText = 'CYBER_UNIVERSE [HACKER TRESOR-CRACKER v20.0]';
+        title.innerText = 'CYBER_UNIVERSE [HACKER TRESOR-GUESSER v21.0]';
       }
 
       document.getElementById('hackerOverlay').style.display = 'flex';
