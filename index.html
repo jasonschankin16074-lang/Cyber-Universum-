@@ -2,8 +2,8 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cyber Universe v31.0 - Blackscreen & Blitzeffekt</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Cyber Universe v33.0 - iPad & Touch Ready</title>
   <style>
     :root {
       --bg: #030508;
@@ -28,7 +28,7 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: monospace, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); padding: 15px; transition: 0.3s; }
+    body { background-color: var(--bg); color: var(--text); padding: 10px; transition: 0.3s; touch-action: manipulation; }
 
     .rainbow-text { animation: rainbow 3s linear infinite; }
     @keyframes rainbow {
@@ -38,105 +38,90 @@
 
     .start-dashboard {
       max-width: 900px; margin: 0 auto; background: var(--card-bg);
-      border: 2px solid var(--accent-main); border-radius: 12px; padding: 20px;
+      border: 2px solid var(--accent-main); border-radius: 12px; padding: 15px;
     }
 
-    .faction-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
-    .faction-card {
-      border: 2px solid var(--border); border-radius: 8px; padding: 15px;
-      text-align: center; cursor: pointer; transition: 0.2s; background: rgba(0,0,0,0.03);
+    .level-selector, .faction-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; }
+    
+    .select-card {
+      border: 2px solid var(--border); border-radius: 8px; padding: 12px;
+      text-align: center; cursor: pointer; transition: 0.2s; background: rgba(0,0,0,0.2);
     }
-    .faction-card.active-evil { border-color: var(--accent-red); background: rgba(239, 68, 68, 0.1); }
-    .faction-card.active-good { border-color: #2563eb; background: rgba(37, 99, 235, 0.1); }
+    .select-card.active { border-color: var(--accent-main); background: rgba(16, 185, 129, 0.15); }
+    .select-card.active-evil { border-color: var(--accent-red); background: rgba(239, 68, 68, 0.15); }
+    .select-card.active-good { border-color: #2563eb; background: rgba(37, 99, 235, 0.15); }
 
     .launch-btn {
       width: 100%; background: var(--accent-main); color: #fff; border: none;
-      padding: 12px; font-size: 16px; font-weight: bold; border-radius: 6px; cursor: pointer;
+      padding: 14px; font-size: 16px; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 10px;
     }
 
     #hackerOverlay {
       display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-      background: rgba(0, 0, 0, 0.95); z-index: 9999; flex-direction: column; align-items: center; justify-content: center; padding: 10px;
+      background: rgba(0, 0, 0, 0.95); z-index: 9999; flex-direction: column; align-items: center; justify-content: center; padding: 5px;
     }
 
-    body.theme-good #hackerOverlay { background: rgba(248, 250, 252, 0.96); }
     #matrixCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; opacity: 0.15; }
 
     .dash-window {
-      position: relative; z-index: 2; width: 98vw; height: 96vh;
+      position: relative; z-index: 2; width: 100%; height: 100%;
       background: var(--dash-bg); border: 2px solid var(--accent-main);
       border-radius: 8px; display: flex; flex-direction: column; overflow: hidden; color: var(--text);
-      transition: background 0.1s, opacity 0.2s;
     }
 
     .dash-header {
-      background: rgba(0, 0, 0, 0.2); padding: 8px 14px; border-bottom: 1px solid var(--accent-main);
+      background: rgba(0, 0, 0, 0.4); padding: 8px 12px; border-bottom: 1px solid var(--accent-main);
       display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: bold;
     }
 
     .header-controls { display: flex; align-items: center; gap: 8px; }
-
     .dash-body { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 
-    .content-area { padding: 10px; display: flex; flex-direction: column; gap: 10px; height: 100%; width: 100%; }
-    .chat-box { flex: 1; border: 1px solid var(--border); background: var(--card-bg); border-radius: 6px; padding: 12px; display: flex; flex-direction: column; overflow: hidden; }
-    .chat-messages { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 2px; font-size: 11px; font-family: monospace; white-space: pre-wrap; word-break: break-all; }
+    .content-area { padding: 8px; display: flex; flex-direction: column; gap: 8px; height: 100%; width: 100%; }
+    .chat-box { flex: 1; border: 1px solid var(--border); background: var(--card-bg); border-radius: 6px; padding: 10px; display: flex; flex-direction: column; overflow: hidden; }
+    .chat-messages { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 3px; font-size: 11px; font-family: monospace; white-space: pre-wrap; word-break: break-all; }
 
     .interactive-container {
-      display: none; gap: 8px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border);
+      display: flex; gap: 8px; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border);
     }
     .action-input {
-      flex: 1; background: rgba(0,0,0,0.3); border: 1px solid var(--accent-main);
-      color: var(--text); padding: 8px; border-radius: 4px; font-size: 14px; outline: none;
+      flex: 1; background: rgba(0,0,0,0.5); border: 1px solid var(--accent-main);
+      color: var(--text); padding: 10px; border-radius: 4px; font-size: 14px; outline: none;
     }
     .action-btn {
-      background: var(--accent-main); color: #fff; border: none; padding: 8px 16px;
-      font-weight: bold; border-radius: 4px; cursor: pointer;
+      background: var(--accent-main); color: #fff; border: none; padding: 10px 16px;
+      font-weight: bold; border-radius: 4px; cursor: pointer; font-size: 13px;
     }
 
-    .close-btn { background: transparent; border: 1px solid var(--accent-red); color: var(--accent-red); padding: 2px 8px; cursor: pointer; border-radius: 4px; }
+    .close-btn { background: transparent; border: 1px solid var(--accent-red); color: var(--accent-red); padding: 4px 8px; cursor: pointer; border-radius: 4px; }
     
     .admin-burger-btn {
-      background: transparent; border: 1px solid var(--border); color: var(--text-muted);
-      padding: 2px 10px; cursor: pointer; border-radius: 4px; font-size: 14px; transition: 0.2s;
+      background: rgba(255,255,255,0.1); border: 1px solid var(--border); color: #fff;
+      padding: 4px 12px; cursor: pointer; border-radius: 4px; font-size: 16px; font-weight:bold;
     }
-    .admin-burger-btn:hover { color: var(--accent-yellow); border-color: var(--accent-yellow); }
 
     .admin-modal {
-      display: none; position: absolute; top: 40px; right: 10px; z-index: 10000;
+      display: none; position: absolute; top: 45px; right: 10px; z-index: 10000;
       background: var(--card-bg); border: 2px solid var(--accent-yellow);
-      border-radius: 8px; padding: 15px; width: 280px; box-shadow: 0 0 15px rgba(0,0,0,0.8);
+      border-radius: 8px; padding: 15px; width: 280px; box-shadow: 0 0 15px rgba(0,0,0,0.9);
     }
     .admin-modal h4 { color: var(--accent-yellow); margin-bottom: 10px; font-size: 12px; text-align: center; }
     .admin-modal select, .admin-modal input {
-      width: 100%; padding: 6px; margin-bottom: 10px; background: rgba(0,0,0,0.5);
+      width: 100%; padding: 8px; margin-bottom: 10px; background: rgba(0,0,0,0.5);
       border: 1px solid var(--border); color: var(--text); border-radius: 4px; font-size: 12px;
     }
     .admin-modal button {
       width: 100%; background: var(--accent-yellow); color: #000; border: none;
-      padding: 6px; font-weight: bold; border-radius: 4px; cursor: pointer; font-size: 12px;
+      padding: 8px; font-weight: bold; border-radius: 4px; cursor: pointer; font-size: 12px;
     }
 
-    /* BLACKSCREEN & BLITZEFFEKT OVERLAY */
     #blackscreenOverlay {
-      display: none;
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: #000000;
-      z-index: 99999;
-      color: #00ff66;
-      font-size: 14px;
-      padding: 20px;
-      box-sizing: border-box;
-      flex-direction: column;
-      justify-content: flex-end;
+      display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background: #000000; z-index: 99999; color: #00ff66; font-size: 13px; padding: 20px;
+      box-sizing: border-box; flex-direction: column; justify-content: flex-end;
     }
 
-    /* Blitz-Effekt Animationen */
-    .flash-white {
-      animation: flashAnim 0.15s ease-in-out infinite alternate;
-    }
+    .flash-white { animation: flashAnim 0.15s ease-in-out infinite alternate; }
     @keyframes flashAnim {
       0% { background-color: #000000; }
       50% { background-color: #ffffff; }
@@ -147,17 +132,31 @@
 <body id="bodyTag">
 
   <div class="start-dashboard">
-    <h2 class="rainbow-text">// CYBER UNIVERSE v31.0 - 15 PHASEN HEIST</h2>
+    <h2 class="rainbow-text">// CYBER UNIVERSE v33.0 - TOUCH & IPAD OPTIMIZED</h2>
 
-    <div class="faction-selector">
-      <div class="faction-card active-evil" id="cardEvil" onclick="selectStartFaction('evil')">
-        <h3 style="color: var(--accent-red);">💻 BÖSE SEITE (15 PHASEN HEIST)</h3>
-        <p style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">Inklusive Admin Panel (☰)!</p>
+    <label style="font-size: 11px; font-weight: bold; color: var(--text-muted); margin-top:8px; display:block;">1. SZENARIO WÄHLEN:</label>
+    <div class="level-selector">
+      <div class="select-card active" id="levelCard1" onclick="selectLevel(1)">
+        <h3 style="color: var(--accent-main); font-size:14px;">🏢 LEVEL 1: TRESOR</h3>
+        <p style="font-size: 10px; color: var(--text-muted); margin-top: 3px;">Banken & Datentresore (15 Phasen)</p>
       </div>
 
-      <div class="faction-card" id="cardGood" onclick="selectStartFaction('good')">
-        <h3 style="color: #2563eb;">🛡️ GUTE SEITE (15 PHASEN ABWEHR)</h3>
-        <p style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">Verhindere den Großangriff!</p>
+      <div class="select-card" id="levelCard2" onclick="selectLevel(2)">
+        <h3 style="color: #06b6d4; font-size:14px;">🏥 LEVEL 2: KRANKENHAUS</h3>
+        <p style="font-size: 10px; color: var(--text-muted); margin-top: 3px;">Klinik & Medizin-Netz (15 Phasen)</p>
+      </div>
+    </div>
+
+    <label style="font-size: 11px; font-weight: bold; color: var(--text-muted); display:block;">2. SEITE WÄHLEN:</label>
+    <div class="faction-selector">
+      <div class="select-card active-evil" id="cardEvil" onclick="selectStartFaction('evil')">
+        <h3 style="color: var(--accent-red); font-size:14px;">💻 ANGRIFF</h3>
+        <p style="font-size: 10px; color: var(--text-muted); margin-top: 3px;">Inklusive Admin Panel (☰)</p>
+      </div>
+
+      <div class="select-card" id="cardGood" onclick="selectStartFaction('good')">
+        <h3 style="color: #2563eb; font-size:14px;">🛡️ ABWEHR</h3>
+        <p style="font-size: 10px; color: var(--text-muted); margin-top: 3px;">Systeme sichern</p>
       </div>
     </div>
 
@@ -173,59 +172,43 @@
       </div>
 
       <div class="dash-header">
-        <span id="terminalTitle" class="rainbow-text">CYBER_UNIVERSE [SYSTEM v31.0]</span>
+        <span id="terminalTitle" class="rainbow-text">CYBER_UNIVERSE v33.0</span>
         <div class="header-controls">
-          <button class="admin-burger-btn" onclick="toggleAdminPanel()" title="Geheim-Menü">☰</button>
-          <button class="close-btn" onclick="closeTerminal()">[X] SCHLIESSEN</button>
+          <button class="admin-burger-btn" onclick="toggleAdminPanel()">☰</button>
+          <button class="close-btn" onclick="closeTerminal()">[X]</button>
         </div>
       </div>
       
       <div class="admin-modal" id="adminModal">
         <h4>🔐 GEHEIMES ADMIN PANEL</h4>
         <div id="adminAuthBox">
-          <input type="password" id="adminPasswordInput" placeholder="Passwort (123)..." onkeydown="if(event.key==='Enter') verifyAdminPassword()">
+          <input type="password" id="adminPasswordInput" placeholder="Passwort (123)...">
           <button onclick="verifyAdminPassword()">FREISCHALTEN</button>
         </div>
         <div id="adminControlsBox" style="display:none;">
-          <label style="font-size: 10px; color: var(--text-muted); display:block; margin-bottom: 4px;">WÄHLE ZIEL-PHASE:</label>
-          <select id="phaseSelect">
-            <option value="1">Phase 1: Zahlen-Stream</option>
-            <option value="2">Phase 2: Brute-Force Cracker</option>
-            <option value="3">Phase 3: Pin-Pad</option>
-            <option value="4">Phase 4: Laser-Schutzschild</option>
-            <option value="5">Phase 5: DNA-Biometrie</option>
-            <option value="6">Phase 6: Master-Tresor</option>
-            <option value="7">Phase 7: WLAN Jammer</option>
-            <option value="8">Phase 8: Security Override</option>
-            <option value="9">Phase 9: Anti-Standort</option>
-            <option value="10">Phase 10: KI-Feuerwall</option>
-            <option value="11">Phase 11: Satellit</option>
-            <option value="12">Phase 12: Quanten-Code</option>
-            <option value="13">Phase 13: Augenscanner</option>
-            <option value="14">Phase 14: Stromnetz</option>
-            <option value="15">Phase 15: Finaler Kern-Hack</option>
-          </select>
-          <button onclick="jumpToSelectedPhase()">TELEPORTIEREN</button>
+          <label style="font-size: 10px; color: var(--text-muted); display:block; margin-bottom: 4px;">TELEPORT PHASEN:</label>
+          <select id="phaseSelect"></select>
+          <button onclick="jumpToSelectedPhase()">SPRINGEN</button>
         </div>
       </div>
 
       <div class="dash-body">
         <div class="content-area">
-          <div style="font-size: 11px; color: var(--text-muted); display:flex; justify-content:space-between; background: rgba(0,0,0,0.2); padding: 8px 12px; border-radius:4px; border:1px solid var(--border);">
-            <span>STATUS: <b id="typeStatus" style="color:var(--accent-yellow);">Tippe Tasten auf deiner Tastatur...</b></span>
-            <span>Konto: <b id="userBalance" style="color:var(--accent-main);">0.00 $</b></span>
+          <div style="font-size: 10px; color: var(--text-muted); display:flex; justify-content:space-between; background: rgba(0,0,0,0.3); padding: 6px 10px; border-radius:4px; border:1px solid var(--border);">
+            <span>MODUS: <b id="currentLevelName" style="color: #06b6d4;">LEVEL 1: TRESOR</b></span>
+            <span>Guthaben: <b id="userBalance" style="color:var(--accent-main);">0.00 $</b></span>
             <span>Fortschritt: <b id="wordCounter" style="color:var(--accent-main);">0 / 60</b></span>
           </div>
 
           <div class="chat-box">
-            <div style="font-weight:bold; margin-bottom:8px; border-bottom:1px dashed var(--border); padding-bottom:4px; font-size:11px;">
-              // LIVE TERMINAL STREAM & 15-PHASE PROTOCOL
+            <div style="font-weight:bold; margin-bottom:6px; border-bottom:1px dashed var(--border); padding-bottom:4px; font-size:10px;">
+              // TERMINAL STREAM & 15-PHASE SYSTEM
             </div>
             <div class="chat-messages" id="chatOutput"></div>
 
             <div class="interactive-container" id="actionContainer">
-              <input type="text" id="actionInput" class="action-input" placeholder="Eingabe..." onkeydown="if(event.key==='Enter') handlePhaseInput()">
-              <button class="action-btn" id="actionSubmitBtn" onclick="handlePhaseInput()">EINGABE</button>
+              <input type="text" id="actionInput" class="action-input" placeholder="Tippen zum Hacken..." onkeydown="if(event.key==='Enter') handleInputOrTap()">
+              <button class="action-btn" id="actionSubmitBtn" onclick="handleInputOrTap()">TIPPEN / ENTER</button>
             </div>
           </div>
         </div>
@@ -234,6 +217,7 @@
   </div>
 
   <script>
+    var selectedLevel = 1;
     var startFaction = 'evil';
     var userBalance = parseFloat(localStorage.getItem('cyber_balance')) || 0;
     var matrixInterval = null;
@@ -241,7 +225,6 @@
     var currentBlockCount = 0;
     var isAwaitingEnter = false;
     var isProcessingHack = false;
-    var activeTypingLine = null;
 
     var currentPhase = 1;
     var secretCode = [];
@@ -254,8 +237,30 @@
     var qteInterval = null;
     var requiredKeys = [];
     var currentKeyIndex = 0;
-    
     var adminPassword = "123";
+
+    function selectLevel(lvl) {
+      selectedLevel = lvl;
+      document.getElementById('levelCard1').className = 'select-card' + (lvl === 1 ? ' active' : '');
+      document.getElementById('levelCard2').className = 'select-card' + (lvl === 2 ? ' active' : '');
+      updateAdminSelectOptions();
+    }
+
+    function selectStartFaction(faction) {
+      startFaction = faction;
+      document.getElementById('cardEvil').className = 'select-card' + (faction === 'evil' ? ' active-evil' : '');
+      document.getElementById('cardGood').className = 'select-card' + (faction === 'good' ? ' active-good' : '');
+    }
+
+    function updateAdminSelectOptions() {
+      var select = document.getElementById("phaseSelect");
+      select.innerHTML = "";
+      var names = selectedLevel === 1 
+        ? ["Zahlen-Stream", "Brute-Force", "Pin-Pad", "Laser-Schutz", "DNA-Scan", "Master-Tresor", "WLAN-Jammer", "Kamera-Bypass", "Anti-Standort", "KI-Feuerwall", "Satellit", "Quanten-Code", "Augenscan", "Stromnetz", "Finaler Kern-Hack"]
+        : ["Klinik-Stream", "Brute-Force Meds", "Intensiv PIN", "OP-Laser", "Blutgruppen-Scan", "Gift-Schrank", "Defibrillator-Jammer", "Akten-Override", "Krankenwagen GPS", "Klinik KI", "Satellit", "Labor-Code", "Chirurgen-Scan", "Generator Off", "Krankenhaus Kern-Hack"];
+      
+      for(var i=0; i<15; i++) select.innerHTML += '<option value="' + (i+1) + '">Phase ' + (i+1) + ': ' + names[i] + '</option>';
+    }
 
     function toggleAdminPanel() {
       var modal = document.getElementById("adminModal");
@@ -268,552 +273,471 @@
         document.getElementById("adminAuthBox").style.display = "none";
         document.getElementById("adminControlsBox").style.display = "block";
         printChat('<span style="color:var(--accent-yellow); font-weight:bold;">[ADMIN]: ZUGRIFF GEWÄHRT!</span>');
-      } else {
-        alert("FALSCHES PASSWORT!");
-      }
+      } else { alert("Falsches Passwort!"); }
     }
 
     function jumpToSelectedPhase() {
       var targetPhase = parseInt(document.getElementById("phaseSelect").value);
       if (qteInterval) clearInterval(qteInterval);
-      hideInputField();
-
       printChat('<span style="color:var(--accent-yellow); font-weight:bold;">\n[ADMIN TELEPORT]: Springe zu Phase ' + targetPhase + '...</span>');
-      
-      switch(targetPhase) {
-        case 1: currentPhase = 1; isProcessingHack = false; startPhase1Stream(); break;
-        case 2: startPhase2VaultPasswordCrack(); break;
-        case 3: startPhase3ManualGuessing(); break;
-        case 4: startPhase4LaserBypass(); break;
-        case 5: startPhase5DnaBypass(); break;
-        case 6: startPhase6MasterVault(); break;
-        case 7: startPhase7WlanJammer(); break;
-        case 8: startPhase8SecurityOverride(); break;
-        case 9: startPhase9AntiLocationVirus(); break;
-        case 10: startPhase10AiFirewall(); break;
-        case 11: startPhase11SatelliteLink(); break;
-        case 12: startPhase12QuantumDecryption(); break;
-        case 13: startPhase13EyeBiometrics(); break;
-        case 14: startPhase14PowerGridShutdown(); break;
-        case 15: startPhase15FinalCoreHack(); break;
-      }
-
+      startPhaseDirectly(targetPhase);
       toggleAdminPanel();
     }
 
-    function saveData() {
-      localStorage.setItem('cyber_balance', userBalance);
+    function startPhaseDirectly(phaseNum) {
+      currentPhase = phaseNum;
+      if (selectedLevel === 1) {
+        switch(phaseNum) {
+          case 1: isProcessingHack = false; startPhase1Stream(); break;
+          case 2: startPhase2VaultPasswordCrack(); break;
+          case 3: startPhase3ManualGuessing(); break;
+          case 4: startPhase4LaserBypass(); break;
+          case 5: startPhase5DnaBypass(); break;
+          case 6: startPhase6MasterVault(); break;
+          case 7: startPhase7WlanJammer(); break;
+          case 8: startPhase8SecurityOverride(); break;
+          case 9: startPhase9AntiLocationVirus(); break;
+          case 10: startPhase10AiFirewall(); break;
+          case 11: startPhase11SatelliteLink(); break;
+          case 12: startPhase12QuantumDecryption(); break;
+          case 13: startPhase13EyeBiometrics(); break;
+          case 14: startPhase14PowerGridShutdown(); break;
+          case 15: startPhase15FinalCoreHack(); break;
+        }
+      } else {
+        switch(phaseNum) {
+          case 1: isProcessingHack = false; startHosp1Stream(); break;
+          case 2: startHosp2MedsCrack(); break;
+          case 3: startHosp3IcuPin(); break;
+          case 4: startHosp4OpLaser(); break;
+          case 5: startHosp5BloodDna(); break;
+          case 6: startHosp6PharmaVault(); break;
+          case 7: startHosp7DefibrillatorJammer(); break;
+          case 8: startHosp8RecordsOverride(); break;
+          case 9: startHosp9AmbulanceGps(); break;
+          case 10: promptContinueHospital(); break;
+          case 11: startHosp11SatLink(); break;
+          case 12: startHosp12LabCode(); break;
+          case 13: startHosp13SurgeonBiometrics(); break;
+          case 14: startHosp14GeneratorShutdown(); break;
+          case 15: startPhase15FinalCoreHack(); break;
+        }
+      }
     }
 
     function generateNumberBlock() {
-      if (Math.random() > 0.5) {
-        var b = "";
-        for (var i = 0; i < 16; i++) b += Math.floor(Math.random() * 2);
-        return b;
-      } else {
-        var n = "";
-        for (var j = 0; j < 12; j++) n += Math.floor(Math.random() * 10);
-        return n;
+      var chars = selectedLevel === 2 ? "MED0123456789HOSP" : "0123456789ABCDEF";
+      var b = "";
+      for (var i = 0; i < 12; i++) b += chars[Math.floor(Math.random() * chars.length)];
+      return b;
+    }
+
+    // IPAD & TOUCH HANDLING FÜR PHASE 1
+    function doTapHack() {
+      if (currentPhase === 1 && !isProcessingHack) {
+        if (!isAwaitingEnter) {
+          currentBlockCount += 3;
+          if (currentBlockCount > 60) currentBlockCount = 60;
+          document.getElementById("wordCounter").innerText = currentBlockCount + " / 60";
+          
+          printChat('<span style="color:' + (selectedLevel === 2 ? '#06b6d4' : 'var(--accent-main)') + ';">' + generateNumberBlock() + ' ' + generateNumberBlock() + ' ' + generateNumberBlock() + '</span>');
+          
+          if (currentBlockCount >= 60) {
+            isAwaitingEnter = true;
+            printChat('<span style="color:#ef4444; font-weight:bold;">\n>>> INITIALISIERUNG BEREIT! DRÜCKE ENTER ODER TIPPEN ZUM STARTEN! <<<</span>');
+          }
+        } else {
+          if (selectedLevel === 1) startPhase1Stream();
+          else startHosp1Stream();
+        }
       }
+    }
+
+    function handleInputOrTap() {
+      var inputEl = document.getElementById("actionInput");
+      var val = inputEl.value.trim();
+      
+      if (currentPhase === 1) {
+        doTapHack();
+        inputEl.value = "";
+        return;
+      }
+
+      handlePhaseInput(val);
+      inputEl.value = "";
     }
 
     document.addEventListener("keydown", function(e) {
       if (document.getElementById("hackerOverlay").style.display !== "flex") return;
 
+      // QTE Key handling
       if ((currentPhase >= 7 && currentPhase <= 9) || (currentPhase >= 13 && currentPhase <= 14)) {
         if (requiredKeys.length > 0 && currentKeyIndex < requiredKeys.length) {
           if (e.key.toLowerCase() === requiredKeys[currentKeyIndex].toLowerCase()) {
             currentKeyIndex++;
-            printChat('<span style="color:var(--accent-main); font-weight:bold;">[TASTE KORREKT]: ' + e.key.toUpperCase() + ' gedrückt! (' + currentKeyIndex + '/' + requiredKeys.length + ')</span>');
+            printChat('<span style="color:var(--accent-main); font-weight:bold;">[TASTE OK]: ' + e.key.toUpperCase() + ' (' + currentKeyIndex + '/' + requiredKeys.length + ')</span>');
           }
         }
         return;
       }
 
-      if (isProcessingHack) return;
-
-      if (e.key === "Enter") {
-        if (isAwaitingEnter) {
-          startPhase1Stream();
-        }
-      } else if (e.key.length === 1 || e.key === "Backspace") {
-        if (!isAwaitingEnter && currentPhase === 1) {
-          var chatOutput = document.getElementById('chatOutput');
-
-          if (currentBlockCount === 0 || !activeTypingLine) {
-            activeTypingLine = document.createElement('div');
-            activeTypingLine.style.color = 'var(--accent-main)';
-            chatOutput.appendChild(activeTypingLine);
-          }
-
-          var numBlock = generateNumberBlock();
-          activeTypingLine.innerHTML += numBlock + " ";
-          currentBlockCount++;
-          
-          document.getElementById("wordCounter").innerText = currentBlockCount + " / 60";
-          chatOutput.scrollTop = chatOutput.scrollHeight;
-
-          if (currentBlockCount >= 60) {
-            isAwaitingEnter = true;
-            document.getElementById("typeStatus").innerText = "DATEN BEREIT! DRÜCKE ENTER!";
-            document.getElementById("typeStatus").style.color = "#ef4444";
-            printChat('<span style="color:#ef4444; font-weight:bold;">\n>>> INITIALISIERUNG BEREIT! DRÜCKE [ENTER] UM DEN OVERRIDE ZU STARTEN! <<<</span>');
-          }
-        }
+      if (currentPhase === 1) {
+        doTapHack();
       }
     });
 
+    // LEVEL 1 LOGIK
     function startPhase1Stream() {
-      isAwaitingEnter = false;
-      isProcessingHack = true;
-      document.getElementById("typeStatus").innerText = "PHASE 1: ZAHLEN-STREAM LÄUFT...";
-      document.getElementById("typeStatus").style.color = "#f59e0b";
-
-      printChat('<span style="color:var(--accent-yellow); font-weight:bold;">>>> PHASE 1/15: BYPASS TRESOR-NETZWERK <<<</span>');
-
-      var durationInSeconds = 15;
-      var elapsed = 0;
-
-      var spamInterval = setInterval(function() {
-        elapsed += 0.1;
-        var massiveNumberLine = "";
-        for (var i = 0; i < 110; i++) massiveNumberLine += Math.floor(Math.random() * 10);
-        printChat('<span style="color:var(--text-muted); opacity:0.85;">' + massiveNumberLine + '</span>');
-
-        if (elapsed >= durationInSeconds) {
-          clearInterval(spamInterval);
-          startPhase2VaultPasswordCrack();
-        }
-      }, 100); 
+      isAwaitingEnter = false; isProcessingHack = true;
+      printChat('<span style="color:var(--accent-yellow); font-weight:bold;">>>> LEVEL 1 - PHASE 1/15: TRESOR-NETZWERK <<<</span>');
+      runStreamAnimation(10, startPhase2VaultPasswordCrack);
     }
-
     function startPhase2VaultPasswordCrack() {
       currentPhase = 2;
-      document.getElementById("typeStatus").innerText = "PHASE 2: BRUTE-FORCE CRACKER LÄUFT...";
-      document.getElementById("typeStatus").style.color = "#ef4444";
-
-      printChat('<span style="color:#ef4444; font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 2/15: BRUTE-FORCE PASSWORT CRACKER <<<\n========================================</span>');
-
-      var attempts = 0;
-      var crackInterval = setInterval(function() {
-        attempts++;
-        var randomPass = Math.floor(100000 + Math.random() * 900000);
-        printChat('<span style="color:#ef4444;">[BRUTE_FORCE]: Versuche Code [' + randomPass + '] -> ACCESS DENIED!</span>');
-
-        if (attempts >= 12) {
-          clearInterval(crackInterval);
-          printChat('<span style="color:var(--accent-yellow); font-weight:bold;">[BRUTE_FORCE]: VOR-SYSTEM DEAKTIVIERT!</span>');
-          startPhase3ManualGuessing();
-        }
-      }, 100);
+      printChat('<span style="color:#ef4444; font-weight:bold;">\n>>> PHASE 2/15: BRUTE-FORCE PASSWORT <<<</span>');
+      runBruteForceAnimation(8, startPhase3ManualGuessing);
     }
-
     function startPhase3ManualGuessing() {
-      currentPhase = 3;
-      secretCode = [Math.floor(Math.random() * 10) + 1, Math.floor(Math.random() * 10) + 1];
-      currentDigitIndex = 0;
-
-      document.getElementById("typeStatus").innerText = "PHASE 3: PIN-PAD";
-      document.getElementById("typeStatus").style.color = "var(--accent-main)";
-
-      printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 3/15: TRESOR PIN-PAD (2 ZAHLEN 1-10) <<<\n========================================</span>');
-      printChat('<span style="color:var(--accent-yellow);">-> Errate Zahl 1 von 2:</span>');
-      showInputField("Zahl eingeben (1-10)...", "number");
+      currentPhase = 3; secretCode = [Math.floor(Math.random() * 10) + 1, Math.floor(Math.random() * 10) + 1]; currentDigitIndex = 0;
+      printChat('<span style="color:var(--accent-main); font-weight:bold;">\n>>> PHASE 3/15: PIN-PAD (2 ZAHLEN 1-10) <<<</span>');
+      setPlaceholder("Errate Zahl 1 (1-10)...");
     }
-
     function startPhase4LaserBypass() {
-      currentPhase = 4;
-      targetLaserAngle = Math.floor(Math.random() * 180) + 1;
-
-      document.getElementById("typeStatus").innerText = "PHASE 4: LASER-NEUTRALISIERUNG";
-      document.getElementById("typeStatus").style.color = "#f59e0b";
-
-      printChat('<span style="color:#f59e0b; font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 4/15: LASER-SCHUTZSCHILD AUSRICHTEN <<<\n========================================</span>');
-      printChat('<span style="color:var(--accent-yellow);">-> Gib einen Winkel in Grad ein (1-180):</span>');
-      showInputField("Winkel eingeben (1-180)...", "number");
+      currentPhase = 4; targetLaserAngle = Math.floor(Math.random() * 180) + 1;
+      printChat('<span style="color:#f59e0b; font-weight:bold;">\n>>> PHASE 4/15: LASER-SCHUTZ (1-180°) <<<</span>');
+      setPlaceholder("Winkel (1-180)...");
     }
-
     function startPhase5DnaBypass() {
       currentPhase = 5;
-      document.getElementById("typeStatus").innerText = "PHASE 5: DNA-BIOMETRIE OVERRIDE";
-      document.getElementById("typeStatus").style.color = "#ef4444";
-
-      printChat('<span style="color:#ef4444; font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 5/15: DNA-BIOMETRIE <<<\nDer Code lautet: AAAA\n========================================</span>');
-      printChat('<span style="color:var(--accent-yellow);">-> Gib "AAAA" ein:</span>');
-      showInputField("Tippe AAAA...", "text");
+      printChat('<span style="color:#ef4444; font-weight:bold;">\n>>> PHASE 5/15: DNA-SCAN (Code: AAAA) <<<</span>');
+      setPlaceholder("Tippe AAAA...");
     }
-
     function startPhase6MasterVault() {
-      currentPhase = 6;
-      masterVaultCode = Math.floor(Math.random() * 50) + 1;
-
-      document.getElementById("typeStatus").innerText = "PHASE 6: MASTER-TRESOR KOMBINATION";
-      document.getElementById("typeStatus").style.color = "var(--accent-main)";
-
-      printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 6/15: TRESOR-TÜRCODE <<<\nErrate die Zahl (1 bis 50)!\n========================================</span>');
-      printChat('<span style="color:var(--accent-yellow);">-> Gib deine Vermutung ab:</span>');
-      showInputField("Mastercode (1-50)...", "number");
+      currentPhase = 6; masterVaultCode = Math.floor(Math.random() * 50) + 1;
+      printChat('<span style="color:var(--accent-main); font-weight:bold;">\n>>> PHASE 6/15: MASTER-TRESOR (1-50) <<<</span>');
+      setPlaceholder("Mastercode (1-50)...");
     }
-
     function startPhase7WlanJammer() {
-      currentPhase = 7;
-      hideInputField();
-      requiredKeys = ['E', 'A', 'S'];
-      currentKeyIndex = 0;
-
-      document.getElementById("typeStatus").innerText = "PHASE 7: TASTEN-COMBO WLAN JAMMER";
-      document.getElementById("typeStatus").style.color = "#f59e0b";
-
-      printChat('<span style="color:#f59e0b; font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 7/15: GEBÄUDE-WLAN LAHMLEGEN <<<\nDrücke nacheinander: E - A - S innerhalb von 5s!\n========================================</span>');
-      runMultiKeyPhase("WLAN-Jammer Signal gesendet!", startPhase8SecurityOverride, startPhase7WlanJammer);
+      currentPhase = 7; requiredKeys = ['E', 'A', 'S']; currentKeyIndex = 0;
+      printChat('<span style="color:#f59e0b; font-weight:bold;">\n>>> PHASE 7/15: WLAN JAMMER (Combo: E - A - S) <<<</span>');
+      runMultiKeyPhase("WLAN aus!", startPhase8SecurityOverride, startPhase7WlanJammer);
     }
-
     function startPhase8SecurityOverride() {
-      currentPhase = 8;
-      requiredKeys = ['D', 'F', 'E'];
-      currentKeyIndex = 0;
-
-      document.getElementById("typeStatus").innerText = "PHASE 8: TASTEN-COMBO KAMERA BYPASS";
-      document.getElementById("typeStatus").style.color = "#ef4444";
-
-      printChat('<span style="color:#ef4444; font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 8/15: SECURITY OVERRIDE <<<\nDrücke nacheinander: D - F - E innerhalb von 5s!\n========================================</span>');
-      runMultiKeyPhase("Kamera-Loop erfolgreich aktiviert!", startPhase9AntiLocationVirus, startPhase8SecurityOverride);
+      currentPhase = 8; requiredKeys = ['D', 'F', 'E']; currentKeyIndex = 0;
+      printChat('<span style="color:#ef4444; font-weight:bold;">\n>>> PHASE 8/15: KAMERA BYPASS (Combo: D - F - E) <<<</span>');
+      runMultiKeyPhase("Kameras aus!", startPhase9AntiLocationVirus, startPhase8SecurityOverride);
     }
-
     function startPhase9AntiLocationVirus() {
-      currentPhase = 9;
-      requiredKeys = ['E', 'S', 'D', 'F'];
-      currentKeyIndex = 0;
-
-      document.getElementById("typeStatus").innerText = "PHASE 9: TASTEN-COMBO ANTI-STANDORT";
-      document.getElementById("typeStatus").style.color = "var(--accent-main)";
-
-      printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 9/15: ANTI-STANDORT VIRUS <<<\nDrücke nacheinander: E - S - D - F innerhalb von 5s!\n========================================</span>');
-      runMultiKeyPhase("GPS Spoofing abgeschlossen!", promptContinueToLevel15, startPhase9AntiLocationVirus);
+      currentPhase = 9; requiredKeys = ['E', 'S', 'D', 'F']; currentKeyIndex = 0;
+      printChat('<span style="color:var(--accent-main); font-weight:bold;">\n>>> PHASE 9/15: ANTI-STANDORT (Combo: E - S - D - F) <<<</span>');
+      runMultiKeyPhase("GPS aus!", promptContinueLevel1, startPhase9AntiLocationVirus);
+    }
+    function promptContinueLevel1() {
+      userBalance += 2500; updateBalance();
+      printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:13px;">\n>>> PHASE 9 ERFOLGREICH! +2.500$! <<<\nWEITERMACHEN BIS PHASE 15? (Tippe JA oder NEIN)</span>');
+      setPlaceholder("JA oder NEIN...");
     }
 
-    function promptContinueToLevel15() {
-      userBalance += 2500;
-      updateBalance();
-      saveData();
-
-      printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:14px;">\n========================================\n>>> PHASE 9 ERFOLGREICH! +2.500$ GUTGESCHRIEBEN! <<<\n>>> WARNUNG: DIE SICHERHEITSKRÄFTE FORDEREN VERSTÄRKUNG AN! <<<\nMÖCHTEST DU WEITERMACHEN BIS LEVEL 15 FÜR EXTREME BEUTE? <<<\n========================================</span>');
-
-      showInputField("Tippe JA um weiterzumachen oder NEIN...", "text");
+    // LEVEL 2 LOGIK (KRANKENHAUS)
+    function startHosp1Stream() {
+      isAwaitingEnter = false; isProcessingHack = true;
+      printChat('<span style="color:#06b6d4; font-weight:bold;">>>> LEVEL 2 - PHASE 1/15: KLINIK-NETZWERK BYPASS <<<</span>');
+      runStreamAnimation(10, startHosp2MedsCrack);
+    }
+    function startHosp2MedsCrack() {
+      currentPhase = 2;
+      printChat('<span style="color:#ef4444; font-weight:bold;">\n>>> PHASE 2/15: BRUTE-FORCE APOTHEKE <<<</span>');
+      runBruteForceAnimation(8, startHosp3IcuPin);
+    }
+    function startHosp3IcuPin() {
+      currentPhase = 3; secretCode = [Math.floor(Math.random() * 10) + 1, Math.floor(Math.random() * 10) + 1]; currentDigitIndex = 0;
+      printChat('<span style="color:#06b6d4; font-weight:bold;">\n>>> PHASE 3/15: INTENSIVSTATION PIN (2 ZAHLEN 1-10) <<<</span>');
+      setPlaceholder("Errate Zahl 1 (1-10)...");
+    }
+    function startHosp4OpLaser() {
+      currentPhase = 4; targetLaserAngle = Math.floor(Math.random() * 180) + 1;
+      printChat('<span style="color:#f59e0b; font-weight:bold;">\n>>> PHASE 4/15: CHIRURGIE-LASER (1-180°) <<<</span>');
+      setPlaceholder("Laser-Winkel (1-180)...");
+    }
+    function startHosp5BloodDna() {
+      currentPhase = 5;
+      printChat('<span style="color:#ef4444; font-weight:bold;">\n>>> PHASE 5/15: BLUT-SCANNER (Code: MED1) <<<</span>');
+      setPlaceholder("Tippe MED1...");
+    }
+    function startHosp6PharmaVault() {
+      currentPhase = 6; masterVaultCode = Math.floor(Math.random() * 50) + 1;
+      printChat('<span style="color:#06b6d4; font-weight:bold;">\n>>> PHASE 6/15: GIFT-SCHRANK TRESORCODE (1-50) <<<</span>');
+      setPlaceholder("Code (1-50)...");
+    }
+    function startHosp7DefibrillatorJammer() {
+      currentPhase = 7; requiredKeys = ['M', 'E', 'D']; currentKeyIndex = 0;
+      printChat('<span style="color:#f59e0b; font-weight:bold;">\n>>> PHASE 7/15: DEFIBRILLATOR JAMMER (Combo: M - E - D) <<<</span>');
+      runMultiKeyPhase("Signal gekoppelt!", startHosp8RecordsOverride, startHosp7DefibrillatorJammer);
+    }
+    function startHosp8RecordsOverride() {
+      currentPhase = 8; requiredKeys = ['H', 'O', 'S']; currentKeyIndex = 0;
+      printChat('<span style="color:#ef4444; font-weight:bold;">\n>>> PHASE 8/15: PATIENTENAKTEN OVERRIDE (Combo: H - O - S) <<<</span>');
+      runMultiKeyPhase("Akten gehackt!", startHosp9AmbulanceGps, startHosp8RecordsOverride);
+    }
+    function startHosp9AmbulanceGps() {
+      currentPhase = 9; requiredKeys = ['N', 'O', 'T']; currentKeyIndex = 0;
+      printChat('<span style="color:#06b6d4; font-weight:bold;">\n>>> PHASE 9/15: KRANKENWAGEN GPS (Combo: N - O - T) <<<</span>');
+      runMultiKeyPhase("GPS gespooft!", promptContinueHospital, startHosp9AmbulanceGps);
+    }
+    function promptContinueHospital() {
+      userBalance += 3500; updateBalance();
+      printChat('<span style="color:#06b6d4; font-weight:bold; font-size:13px;">\n>>> PHASE 10/15 ERREICHT! +3.500$ BELOHNUNG! <<<\nCHIEF MEDICAL KI GEWARNT! WEITERMACHEN BIS PHASE 15? (JA / NEIN)</span>');
+      setPlaceholder("Tippe JA oder NEIN...");
+    }
+    function startHosp11SatLink() {
+      currentPhase = 11; targetLaserAngle = Math.floor(Math.random() * 360) + 1;
+      printChat('<span style="color:#f59e0b; font-weight:bold;">\n>>> PHASE 11/15: SATELLIT (1-360°) <<<</span>');
+      setPlaceholder("Ausrichtung (1-360)...");
+    }
+    function startHosp12LabCode() {
+      currentPhase = 12; masterVaultCode = Math.floor(Math.random() * 100) + 1;
+      printChat('<span style="color:#06b6d4; font-weight:bold;">\n>>> PHASE 12/15: LABOR SCHLÜSSEL (1-100) <<<</span>');
+      setPlaceholder("Code (1-100)...");
+    }
+    function startHosp13SurgeonBiometrics() {
+      currentPhase = 13; requiredKeys = ['O', 'P', '1']; currentKeyIndex = 0;
+      printChat('<span style="color:#ef4444; font-weight:bold;">\n>>> PHASE 13/15: AUGENSCAN (Combo: O - P - 1) <<<</span>');
+      runMultiKeyPhase("Scan OK!", startHosp14GeneratorShutdown, startHosp13SurgeonBiometrics);
+    }
+    function startHosp14GeneratorShutdown() {
+      currentPhase = 14; requiredKeys = ['A', 'U', 'S']; currentKeyIndex = 0;
+      printChat('<span style="color:#f59e0b; font-weight:bold;">\n>>> PHASE 14/15: GENERATOR OFF (Combo: A - U - S) <<<</span>');
+      runMultiKeyPhase("Strom aus!", startPhase15FinalCoreHack, startHosp14GeneratorShutdown);
     }
 
+    // SPÄTE PHASEN & KERN
     function startPhase10AiFirewall() {
-      currentPhase = 10;
-      secretCode = [Math.floor(Math.random() * 20) + 1];
-
-      document.getElementById("typeStatus").innerText = "PHASE 10: KI-FEUERWALL";
-      document.getElementById("typeStatus").style.color = "#ef4444";
-
-      printChat('<span style="color:#ef4444; font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 10/15: KI-FEUERWALL DURCHBRECHEN <<<\nErrate den Überlastungs-Pin (1 bis 20)!\n========================================</span>');
-      showInputField("Pin (1-20)...", "number");
+      currentPhase = 10; secretCode = [Math.floor(Math.random() * 20) + 1];
+      printChat('<span style="color:#ef4444; font-weight:bold;">\n>>> PHASE 10/15: KI-FEUERWALL (1-20) <<<</span>');
+      setPlaceholder("Pin (1-20)...");
     }
-
     function startPhase11SatelliteLink() {
-      currentPhase = 11;
-      targetLaserAngle = Math.floor(Math.random() * 360) + 1;
-
-      document.getElementById("typeStatus").innerText = "PHASE 11: CYBER-SATELLIT";
-      document.getElementById("typeStatus").style.color = "#f59e0b";
-
-      printChat('<span style="color:#f59e0b; font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 11/15: SATELLITEN-UMLAUFBAHN <<<\nRichte die Parabolantenne aus (1° bis 360°)!\n========================================</span>');
-      printChat('<span style="color:var(--accent-yellow);">-> Gib einen Winkel in Grad ein (1-360):</span>');
-      showInputField("Winkel (1-360)...", "number");
+      currentPhase = 11; targetLaserAngle = Math.floor(Math.random() * 360) + 1;
+      printChat('<span style="color:#f59e0b; font-weight:bold;">\n>>> PHASE 11/15: SATELLIT (1-360°) <<<</span>');
+      setPlaceholder("Winkel (1-360)...");
     }
-
     function startPhase12QuantumDecryption() {
-      currentPhase = 12;
-      masterVaultCode = Math.floor(Math.random() * 100) + 1;
-
-      document.getElementById("typeStatus").innerText = "PHASE 12: QUANTEN-VERSCHLÜSSELUNG";
-      document.getElementById("typeStatus").style.color = "var(--accent-main)";
-
-      printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 12/15: QUANTEN-SCHLÜSSEL KNACKEN <<<\nFinde den Quanten-Code (1 bis 100)!\n========================================</span>');
-      showInputField("Code (1-100)...", "number");
+      currentPhase = 12; masterVaultCode = Math.floor(Math.random() * 100) + 1;
+      printChat('<span style="color:var(--accent-main); font-weight:bold;">\n>>> PHASE 12/15: QUANTEN-SCHLÜSSEL (1-100) <<<</span>');
+      setPlaceholder("Code (1-100)...");
     }
-
     function startPhase13EyeBiometrics() {
-      currentPhase = 13;
-      hideInputField();
-      requiredKeys = ['A', 'W', 'S', 'D'];
-      currentKeyIndex = 0;
-
-      document.getElementById("typeStatus").innerText = "PHASE 13: AUGENSCANNER OVERRIDE";
-      document.getElementById("typeStatus").style.color = "#ef4444";
-
-      printChat('<span style="color:#ef4444; font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 13/15: BIOMETRISCHER AUGENSCAN <<<\nDrücke nacheinander: A - W - S - D innerhalb von 5s!\n========================================</span>');
-      runMultiKeyPhase("Augenscan gefälscht!", startPhase14PowerGridShutdown, startPhase13EyeBiometrics);
+      currentPhase = 13; requiredKeys = ['A', 'W', 'S', 'D']; currentKeyIndex = 0;
+      printChat('<span style="color:#ef4444; font-weight:bold;">\n>>> PHASE 13/15: AUGENSCAN (Combo: A - W - S - D) <<<</span>');
+      runMultiKeyPhase("Augenscan OK!", startPhase14PowerGridShutdown, startPhase13EyeBiometrics);
     }
-
     function startPhase14PowerGridShutdown() {
-      currentPhase = 14;
-      hideInputField();
-      requiredKeys = ['E', 'R', 'T', 'Z'];
-      currentKeyIndex = 0;
-
-      document.getElementById("typeStatus").innerText = "PHASE 14: STROMNETZ SHUTDOWN";
-      document.getElementById("typeStatus").style.color = "#f59e0b";
-
-      printChat('<span style="color:#f59e0b; font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 14/15: NOTSTROM GENERATOR ABSCHALTEN <<<\nDrücke nacheinander: E - R - T - Z innerhalb von 5s!\n========================================</span>');
-      runMultiKeyPhase("Stromnetz komplett lahmgelegt!", startPhase15FinalCoreHack, startPhase14PowerGridShutdown);
+      currentPhase = 14; requiredKeys = ['E', 'R', 'T', 'Z']; currentKeyIndex = 0;
+      printChat('<span style="color:#f59e0b; font-weight:bold;">\n>>> PHASE 14/15: STROMNETZ (Combo: E - R - T - Z) <<<</span>');
+      runMultiKeyPhase("Netz aus!", startPhase15FinalCoreHack, startPhase14PowerGridShutdown);
     }
 
     function startPhase15FinalCoreHack() {
-      currentPhase = 15;
-      phase15Count = 0;
-      awaitingFinalEnter = false;
-
-      document.getElementById("typeStatus").innerText = "PHASE 15: DER FINALE KERN-HACK";
-      document.getElementById("typeStatus").style.color = "#ef4444";
-
-      printChat('<span style="color:#ef4444; font-weight:bold; font-size:14px;">\n========================================\n>>> PHASE 15/15: ULTIMATIVER KERN-OVERRIDE <<<\nTippe 3-mal "a" + ENTER, danach 1x FINALES ENTER! <<<\n========================================</span>');
-      printChat('<span style="color:var(--accent-yellow);">-> Eingabe 1/3 (Tippe "a" + Enter):</span>');
-      showInputField("Tippe a...", "text");
+      currentPhase = 15; phase15Count = 0; awaitingFinalEnter = false;
+      printChat('<span style="color:#ef4444; font-weight:bold; font-size:13px;">\n>>> PHASE 15/15: FINALE KERN-ÜBERSCHREIBUNGS-SEQUENZ <<<\nTippe 3x "a" + ENTER / Button!</span>');
+      setPlaceholder("Tippe 'a'...");
     }
 
-    function runMultiKeyPhase(successMessage, nextPhaseFunc, retryPhaseFunc) {
-      var timeLeft = 5;
-
-      qteInterval = setInterval(function() {
-        var remainingCombo = requiredKeys.slice(currentKeyIndex).join("-");
-        printChat('<span style="color:var(--accent-yellow);">[COMBO_SYSTEM]: Zeit: ' + timeLeft + 's | Noch zu drücken: [' + remainingCombo + ']</span>');
-
-        if (currentKeyIndex >= requiredKeys.length) {
-          clearInterval(qteInterval);
-          printChat('<span style="color:var(--accent-main); font-weight:bold;">[ERFOLG]: ' + successMessage + '</span>');
-          setTimeout(nextPhaseFunc, 1000);
-          return;
-        }
-
-        timeLeft--;
-
-        if (timeLeft < 0) {
-          clearInterval(qteInterval);
-          printChat('<span style="color:#ef4444; font-weight:bold;">[FEHLER]: COMBO FEHLGESCHLAGEN! STARTE NEU...</span>');
-          setTimeout(retryPhaseFunc, 1500);
-        }
-      }, 1000);
-    }
-
-    // VOLLSTÄNDIGER BLACKSCREEN & BLITZEFFEKT NEUSTART
-    function triggerSystemDestructionAndReboot() {
-      hideInputField();
-      userBalance += 10000;
-      updateBalance();
-      saveData();
-
-      printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:15px;">\n========================================\n>>> LEVEL 15 ERFOLGREICH! BEUTE: +10.000$ <<<\n========================================</span>');
-
-      setTimeout(function() {
-        var blackOverlay = document.getElementById("blackscreenOverlay");
-        var blackText = document.getElementById("blackscreenText");
-        
-        // ECHTER BLACKSCREEN GEHT AN
-        blackOverlay.style.display = "flex";
-        blackText.innerHTML = "SYSTEM CRITICAL FAILURE... SHUTTING DOWN CORE...<br>";
-
-        var lines = [
-          "PURGING SYSTEM MEMORY...",
-          "DELETING LOGS...",
-          "TERMINATING DAEMON PROCESSES...",
-          "SYSTEM OFFLINE."
-        ];
-
-        var lineIndex = 0;
-        var printInterval = setInterval(function() {
-          if (lineIndex < lines.length) {
-            blackText.innerHTML += lines[lineIndex] + "<br>";
-            lineIndex++;
-          } else {
-            clearInterval(printInterval);
-
-            // BLITZEFFEKT / GLITCH
-            setTimeout(function() {
-              blackOverlay.classList.add("flash-white");
-
-              setTimeout(function() {
-                blackOverlay.classList.remove("flash-white");
-                blackOverlay.style.display = "none";
-                blackText.innerHTML = "";
-
-                // NEUSTART IM TERMINAL
-                currentPhase = 1;
-                currentBlockCount = 0;
-                activeTypingLine = null;
-                isProcessingHack = false;
-                document.getElementById("wordCounter").innerText = "0 / 60";
-                document.getElementById("typeStatus").innerText = "Tippe Tasten auf deiner Tastatur...";
-                document.getElementById("typeStatus").style.color = "var(--accent-yellow)";
-                printChat('<span style="color:var(--accent-main); font-weight:bold;">\n========================================\n[REBOOT ERFOLGREICH]: System wiederhergestellt!\nBereit für die nächste Runde. Tippe Tasten...\n========================================</span>');
-              }, 600); // 0.6 Sek Blitz
-            }, 1000);
-          }
-        }, 800);
-
-      }, 1000);
-    }
-
-    function handlePhaseInput() {
-      var inputEl = document.getElementById("actionInput");
-      var val = inputEl.value.trim();
-      inputEl.value = "";
-
+    // INTERAKTIONS-VERARBEITUNG
+    function handlePhaseInput(val) {
       if (currentPhase === 15) {
         if (awaitingFinalEnter) {
-          // FINALES ENTER WURDE GEDRÜCKT
           awaitingFinalEnter = false;
           triggerSystemDestructionAndReboot();
           return;
         }
-
-        if (val.toLowerCase() === "a") {
+        if (val.toLowerCase() === "a" || val === "") {
           phase15Count++;
-          printChat('<span style="color:var(--accent-main); font-weight:bold;">[KERN]: OVERRIDE SIGNAL ' + phase15Count + '/3 ERFOLGREICH!</span>');
+          printChat('<span style="color:var(--accent-main); font-weight:bold;">[KERN]: SIGNAL ' + phase15Count + '/3 ERFOLGREICH!</span>');
           if (phase15Count >= 3) {
             awaitingFinalEnter = true;
-            printChat('<span style="color:#ef4444; font-weight:bold; font-size:13px;">\n>>> FINALES SIGNAL BEREIT! DRÜCKE NUCH EINMAL ENTER ZUM AUSLÖSEN! <<<</span>');
-            inputEl.placeholder = "Drücke jetzt ENTER...";
-          } else {
-            printChat('<span style="color:var(--accent-yellow);">-> Tippe noch einmal "a" + Enter:</span>');
+            printChat('<span style="color:#ef4444; font-weight:bold;">\n>>> DRÜCKE NOCH EINMAL ENTER / BUTTON ZUM AUSLÖSEN! <<<</span>');
+            setPlaceholder("Jetzt TIPPEN zum Zerstören...");
           }
-        } else {
-          printChat('<span style="color:#ef4444;">[KERN]: FALSCHE TASTE! Tippe "a"!</span>');
         }
-        document.getElementById("chatOutput").scrollTop = document.getElementById("chatOutput").scrollHeight;
-        inputEl.focus();
+        return;
+      }
+
+      if ((currentPhase >= 7 && currentPhase <= 9) || (currentPhase >= 13 && currentPhase <= 14)) {
+        if (val && requiredKeys.length > 0 && currentKeyIndex < requiredKeys.length) {
+          if (val.toLowerCase().charAt(0) === requiredKeys[currentKeyIndex].toLowerCase()) {
+            currentKeyIndex++;
+            printChat('<span style="color:var(--accent-main); font-weight:bold;">[TOUCH TASTE OK]: ' + val.toUpperCase() + '</span>');
+          }
+        }
         return;
       }
 
       if (!val) return;
 
       if (currentPhase === 3) {
-        var guess = parseInt(val);
-        var targetNum = secretCode[currentDigitIndex];
-        if (guess === targetNum) {
-          printChat('<span style="color:var(--accent-main); font-weight:bold;">[PIN_PAD]: ' + guess + ' KORREKT!</span>');
+        var g = parseInt(val);
+        var target = secretCode[currentDigitIndex];
+        if (g === target) {
+          printChat('<span style="color:var(--accent-main); font-weight:bold;">[PIN]: ' + g + ' KORREKT!</span>');
           currentDigitIndex++;
-          if (currentDigitIndex >= 2) { hideInputField(); startPhase4LaserBypass(); }
-        } else if (guess < targetNum) {
-          printChat('<span style="color:#ef4444;">[PIN_PAD]: ZU NIEDRIG!</span>');
-        } else {
-          printChat('<span style="color:#ef4444;">[PIN_PAD]: ZU HOCH!</span>');
-        }
+          if (currentDigitIndex >= 2) {
+            if (selectedLevel === 1) startPhase4LaserBypass(); else startHosp4OpLaser();
+          }
+        } else if (g < target) { printChat('<span style="color:#ef4444;">[PIN]: ZU NIEDRIG!</span>'); }
+        else { printChat('<span style="color:#ef4444;">[PIN]: ZU HOCH!</span>'); }
 
       } else if (currentPhase === 4) {
         var angle = parseInt(val);
         if (angle === targetLaserAngle) {
-          hideInputField(); startPhase5DnaBypass();
-        } else if (angle < targetLaserAngle) {
-          printChat('<span style="color:#f59e0b;">[LASER]: ZU KLEIN! Drehe weiter nach RECHTS!</span>');
-        } else {
-          printChat('<span style="color:#f59e0b;">[LASER]: ZU GROSS! Drehe weiter nach LINKS!</span>');
-        }
+          if (selectedLevel === 1) startPhase5DnaBypass(); else startHosp5BloodDna();
+        } else if (angle < targetLaserAngle) { printChat('<span style="color:#f59e0b;">[LASER]: ZU NIEDRIG / KLEIN! nach RECHTS drehen!</span>'); }
+        else { printChat('<span style="color:#f59e0b;">[LASER]: ZU HOCH / GROSS! nach LINKS drehen!</span>'); }
 
       } else if (currentPhase === 5) {
-        if (val.toUpperCase() === "AAAA") {
-          hideInputField(); startPhase6MasterVault();
-        } else {
-          printChat('<span style="color:#ef4444;">[DNA]: FALSCH! Tippe AAAA!</span>');
-        }
+        var req = selectedLevel === 2 ? "MED1" : "AAAA";
+        if (val.toUpperCase() === req) {
+          if (selectedLevel === 1) startPhase6MasterVault(); else startHosp6PharmaVault();
+        } else { printChat('<span style="color:#ef4444;">[DNA]: FALSCH! Tippe ' + req + '!</span>'); }
 
       } else if (currentPhase === 6) {
-        var mGuess = parseInt(val);
-        if (mGuess === masterVaultCode) {
-          hideInputField(); startPhase7WlanJammer();
-        } else if (mGuess < masterVaultCode) {
-          printChat('<span style="color:#ef4444;">[TRESOR]: ZU NIEDRIG!</span>');
-        } else {
-          printChat('<span style="color:#ef4444;">[TRESOR]: ZU HOCH!</span>');
-        }
+        var mG = parseInt(val);
+        if (mG === masterVaultCode) {
+          if (selectedLevel === 1) startPhase7WlanJammer(); else startHosp7DefibrillatorJammer();
+        } else if (mG < masterVaultCode) { printChat('<span style="color:#ef4444;">[TRESOR]: ZU NIEDRIG!</span>'); }
+        else { printChat('<span style="color:#ef4444;">[TRESOR]: ZU HOCH!</span>'); }
 
-      } else if (currentPhase === 9) {
+      } else if (currentPhase === 9 || (selectedLevel === 2 && currentPhase === 10)) {
         if (val.toLowerCase() === "ja") {
-          hideInputField(); startPhase10AiFirewall();
+          if (selectedLevel === 1) startPhase10AiFirewall(); else startHosp11SatLink();
         } else {
-          printChat('<span style="color:#ef4444;">[HEIST]: Abgebrochen. Du verlässt das System.</span>');
-          hideInputField();
+          printChat('<span style="color:#ef4444;">[SYSTEM]: Beendet mit Beute.</span>');
         }
 
       } else if (currentPhase === 10) {
-        var p10Guess = parseInt(val);
-        if (p10Guess === secretCode[0]) {
-          hideInputField(); startPhase11SatelliteLink();
-        } else if (p10Guess < secretCode[0]) {
-          printChat('<span style="color:#ef4444;">[KI-FEUERWALL]: ZU NIEDRIG!</span>');
-        } else {
-          printChat('<span style="color:#ef4444;">[KI-FEUERWALL]: ZU HOCH!</span>');
-        }
+        var p10 = parseInt(val);
+        if (p10 === secretCode[0]) { startPhase11SatelliteLink(); }
+        else if (p10 < secretCode[0]) { printChat('<span style="color:#ef4444;">[KI]: ZU NIEDRIG!</span>'); }
+        else { printChat('<span style="color:#ef4444;">[KI]: ZU HOCH!</span>'); }
 
       } else if (currentPhase === 11) {
-        var satAngle = parseInt(val);
-        if (isNaN(satAngle)) {
-          printChat('<span style="color:#ef4444;">[SATELLIT]: BITTE EINE ZAHL EINGEBEN!</span>');
-        } else if (satAngle === targetLaserAngle) {
-          printChat('<span style="color:var(--accent-main); font-weight:bold;">[SATELLIT]: PERFEKT! VERBINDUNG HERGESTELLT (' + satAngle + '°)!</span>');
-          hideInputField(); startPhase12QuantumDecryption();
-        } else if (satAngle < targetLaserAngle) {
-          printChat('<span style="color:#f59e0b; font-weight:bold;">[SATELLIT]: ZU NIEDRIG! (' + satAngle + '°) -> Richte nach OBEN aus!</span>');
-        } else {
-          printChat('<span style="color:#f59e0b; font-weight:bold;">[SATELLIT]: ZU HOCH! (' + satAngle + '°) -> Richte nach UNTEN aus!</span>');
-        }
+        var sA = parseInt(val);
+        if (sA === targetLaserAngle) {
+          if (selectedLevel === 1) startPhase12QuantumDecryption(); else startHosp12LabCode();
+        } else if (sA < targetLaserAngle) { printChat('<span style="color:#f59e0b;">[SATELLIT]: ZU NIEDRIG! Höher ausrichten!</span>'); }
+        else { printChat('<span style="color:#f59e0b;">[SATELLIT]: ZU HOCH! Niedriger ausrichten!</span>'); }
 
       } else if (currentPhase === 12) {
-        var qGuess = parseInt(val);
-        if (isNaN(qGuess)) {
-          printChat('<span style="color:#ef4444;">[QUANTEN]: BITTE EINE ZAHL EINGEBEN!</span>');
-        } else if (qGuess === masterVaultCode) {
-          printChat('<span style="color:var(--accent-main); font-weight:bold;">[QUANTEN]: CODE KORREKT (' + qGuess + ')! ZUGRIFF GEWÄHRT!</span>');
-          hideInputField(); startPhase13EyeBiometrics();
-        } else if (qGuess < masterVaultCode) {
-          printChat('<span style="color:#ef4444; font-weight:bold;">[QUANTEN]: ZU NIEDRIG! (' + qGuess + ') -> Versuche eine GRÖSSERE Zahl!</span>');
-        } else {
-          printChat('<span style="color:#ef4444; font-weight:bold;">[QUANTEN]: ZU HOCH! (' + qGuess + ') -> Versuche eine KLEINERE Zahl!</span>');
-        }
+        var qG = parseInt(val);
+        if (qG === masterVaultCode) {
+          if (selectedLevel === 1) startPhase13EyeBiometrics(); else startHosp13SurgeonBiometrics();
+        } else if (qG < masterVaultCode) { printChat('<span style="color:#ef4444;">[CODE]: ZU NIEDRIG!</span>'); }
+        else { printChat('<span style="color:#ef4444;">[CODE]: ZU HOCH!</span>'); }
       }
-
-      document.getElementById("chatOutput").scrollTop = document.getElementById("chatOutput").scrollHeight;
-      inputEl.focus();
     }
 
-    function showInputField(placeholderText, inputType) {
-      var container = document.getElementById("actionContainer");
-      var input = document.getElementById("actionInput");
-      input.type = inputType || "text";
-      input.placeholder = placeholderText;
-      container.style.display = "flex";
-      input.focus();
+    function runStreamAnimation(seconds, callback) {
+      var elapsed = 0;
+      var interval = setInterval(function() {
+        elapsed += 0.2;
+        printChat('<span style="color:var(--text-muted); opacity:0.7;">' + generateNumberBlock() + generateNumberBlock() + '</span>');
+        if (elapsed >= seconds) { clearInterval(interval); callback(); }
+      }, 150);
     }
 
-    function hideInputField() {
-      document.getElementById("actionContainer").style.display = "none";
+    function runBruteForceAnimation(maxAttempts, callback) {
+      var attempts = 0;
+      var interval = setInterval(function() {
+        attempts++;
+        printChat('<span style="color:#ef4444;">[BRUTE_FORCE]: Code [' + Math.floor(100000 + Math.random() * 900000) + '] -> FAIL!</span>');
+        if (attempts >= maxAttempts) { clearInterval(interval); callback(); }
+      }, 150);
     }
 
-    function selectStartFaction(faction) {
-      startFaction = faction;
-      document.getElementById('cardEvil').className = 'faction-card' + (faction === 'evil' ? ' active-evil' : '');
-      document.getElementById('cardGood').className = 'faction-card' + (faction === 'good' ? ' active-good' : '');
+    function runMultiKeyPhase(successMsg, nextFunc, retryFunc) {
+      var timeLeft = 6;
+      setPlaceholder("Tippe Taste: " + requiredKeys.join(" oder "));
+      qteInterval = setInterval(function() {
+        var remaining = requiredKeys.slice(currentKeyIndex).join("-");
+        printChat('<span style="color:var(--accent-yellow);">[COMBO]: Zeit: ' + timeLeft + 's | Noch: [' + remaining + ']</span>');
+        if (currentKeyIndex >= requiredKeys.length) {
+          clearInterval(qteInterval);
+          printChat('<span style="color:var(--accent-main); font-weight:bold;">[OK]: ' + successMsg + '</span>');
+          setTimeout(nextFunc, 800);
+          return;
+        }
+        timeLeft--;
+        if (timeLeft < 0) {
+          clearInterval(qteInterval);
+          printChat('<span style="color:#ef4444; font-weight:bold;">[ZEIT ABGELAUFEN]: NEUSTART...</span>');
+          setTimeout(retryFunc, 1000);
+        }
+      }, 1000);
+    }
+
+    function triggerSystemDestructionAndReboot() {
+      userBalance += selectedLevel === 2 ? 15000 : 10000;
+      updateBalance();
+      printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:14px;">\n>>> LEVEL 15 ERFOLGREICH! GROSSE BEUTE GUTGESCHRIEBEN! <<<</span>');
+
+      setTimeout(function() {
+        var blackOverlay = document.getElementById("blackscreenOverlay");
+        var blackText = document.getElementById("blackscreenText");
+        
+        blackOverlay.style.display = "flex";
+        blackText.innerHTML = "CRITICAL SYSTEM OVERRIDE... SHUTTING DOWN...<br>";
+
+        var lines = ["DELETING LOGS...", "PURGING DATABASE...", "SYSTEM OFFLINE."];
+        var idx = 0;
+        var printInterval = setInterval(function() {
+          if (idx < lines.length) {
+            blackText.innerHTML += lines[idx] + "<br>";
+            idx++;
+          } else {
+            clearInterval(printInterval);
+            setTimeout(function() {
+              blackOverlay.classList.add("flash-white");
+              setTimeout(function() {
+                blackOverlay.classList.remove("flash-white");
+                blackOverlay.style.display = "none";
+                blackText.innerHTML = "";
+
+                currentPhase = 1; currentBlockCount = 0; isProcessingHack = false;
+                document.getElementById("wordCounter").innerText = "0 / 60";
+                setPlaceholder("Tippen zum Hacken...");
+                printChat('<span style="color:var(--accent-main); font-weight:bold;">\n[REBOOT]: System bereit! Tippe auf den Button oder in das Feld...</span>');
+              }, 500);
+            }, 800);
+          }
+        }, 600);
+      }, 800);
+    }
+
+    function setPlaceholder(txt) {
+      document.getElementById("actionInput").placeholder = txt;
     }
 
     function launchTerminal() {
-      var body = document.getElementById('bodyTag');
-      var title = document.getElementById('terminalTitle');
+      document.getElementById('currentLevelName').innerText = selectedLevel === 1 ? "LEVEL 1: TRESOR" : "LEVEL 2: KRANKENHAUS";
 
       if (startFaction === 'good') {
-        body.className = 'theme-good';
-        title.innerText = 'CYBER_UNIVERSE [POLIZEI 15-PHASEN SYSTEM v31.0]';
+        document.getElementById('bodyTag').className = 'theme-good';
+        document.getElementById('terminalTitle').innerText = 'CYBER_UNIVERSE [ABWEHR]';
       } else {
-        body.className = '';
-        title.innerText = 'CYBER_UNIVERSE [HACKER 15-PHASEN HEIST v31.0]';
+        document.getElementById('bodyTag').className = '';
+        document.getElementById('terminalTitle').innerText = 'CYBER_UNIVERSE [ANGRIFF]';
       }
 
       document.getElementById('hackerOverlay').style.display = 'flex';
       startMatrix();
       updateBalance();
-      printChat('[SYSTEM]: Terminal v31.0 gestartet! Tippe beliebige Tasten...');
+      updateAdminSelectOptions();
+      
+      currentPhase = 1; currentBlockCount = 0; isProcessingHack = false; isAwaitingEnter = false;
+      document.getElementById("wordCounter").innerText = "0 / 60";
+      setPlaceholder("Tippen zum Hacken...");
+      
+      printChat('[SYSTEM v33.0]: Bereit! Tippe auf das Feld oder den "TIPPEN"-Button...');
     }
 
     function closeTerminal() {
@@ -823,6 +747,7 @@
     }
 
     function updateBalance() {
+      localStorage.setItem('cyber_balance', userBalance);
       document.getElementById('userBalance').innerText = userBalance.toFixed(2) + " $";
     }
 
@@ -837,17 +762,15 @@
     function startMatrix() {
       var canvas = document.getElementById('matrixCanvas');
       var mCtx = canvas.getContext('2d');
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+      var chars = selectedLevel === 2 ? 'MEDICINE0123456789' : '0123456789ABCDEF';
       var drops = Array(Math.floor(canvas.width / 14)).fill(1);
 
       if (matrixInterval) clearInterval(matrixInterval);
-
       matrixInterval = setInterval(function() {
         mCtx.fillStyle = startFaction === 'good' ? 'rgba(248, 250, 252, 0.1)' : 'rgba(0, 0, 0, 0.05)';
         mCtx.fillRect(0, 0, canvas.width, canvas.height);
-        mCtx.fillStyle = startFaction === 'good' ? '#2563eb' : '#10b981';
+        mCtx.fillStyle = selectedLevel === 2 ? '#06b6d4' : (startFaction === 'good' ? '#2563eb' : '#10b981');
         mCtx.font = '14px monospace';
         for (var i = 0; i < drops.length; i++) {
           mCtx.fillText(chars[Math.floor(Math.random() * chars.length)], i * 14, drops[i] * 14);
@@ -856,6 +779,8 @@
         }
       }, 33);
     }
+
+    updateAdminSelectOptions();
   </script>
 </body>
 </html>
