@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Mind Engine – Gedanken Werkstatt</title>
+    <style>
+        :root {
+            --bg-body: #0a0d14;
+            --card-bg: #141923;
+            --accent: #38bdf8;
+            --accent-glow: rgba(56, 189, 248, 0.15);
+            --text-main: #f1f5f9;
+            --text-sub: #94a3b8;
+            --border: #222d3d;
+            --success: #34d399;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            max-width: 600px;
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            color: var(--accent);
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: var(--text-sub);
+            font-size: 1rem;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .card h2 {
+            font-size: 1.1rem;
+            color: var(--text-main);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 120px;
+            background: var(--bg-body);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-main);
+            padding: 12px;
+            font-size: 0.95rem;
+            resize: vertical;
+            outline: none;
+            margin-bottom: 16px;
+        }
+
+        textarea:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            flex: 1;
+            background: var(--accent);
+            color: #040914;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        button:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .output-box {
+            background: var(--bg-body);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            min-height: 180px;
+            font-size: 0.9rem;
+            color: var(--text-sub);
+            white-space: pre-wrap;
+        }
+
+        .tag-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .tag {
+            background: var(--accent-glow);
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            padding: 4px 10px;
+            border-radius: 16px;
+            font-size: 0.8rem;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .stat-item {
+            background: var(--bg-body);
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-sub);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Mind Engine v2.0</h1>
+        <p>Eingabe &rarr; Analyse &rarr; Struktur. Wie eine KI aus ungeordneten Gedanken klare Daten baut.</p>
+    </header>
+
+    <div class="container">
+        
+        <!-- Eingabe Bereich -->
+        <div class="card">
+            <h2>🧠 Gedanken & Notizen Eingeben</h2>
+            <textarea id="inputText" placeholder="Schreib hier deine Stichpunkte, Gedanken oder ein Chaos an Begriffen rein..."></textarea>
+            <div class="btn-group">
+                <button onclick="analyzeText()">Strukturieren</button>
+            </div>
+        </div>
+
+        <!-- Ausgabe Bereich -->
+        <div class="card">
+            <h2>⚡ KI-Strukturierung</h2>
+            <div id="outputContent" class="output-box">Noch keine Daten verarbeitet. Gib links deinen Text ein.</div>
+        </div>
+
+    </div>
+
+    <script>
+        function analyzeText() {
+            const input = document.getElementById('inputText').value.trim();
+            const output = document.getElementById('outputContent');
+
+            if (!input) {
+                output.innerHTML = '<span style="color: #ef4444;">Bitte erst einen Text eingeben!</span>';
+                return;
+            }
+
+            // Text verarbeiten
+            const words = input.split(/\s+/);
+            const wordCount = words.length;
+            const charCount = input.length;
+            
+            // Extrahiere unique Begriffe (Tags)
+            const uniqueWords = [...new Set(words.map(w => w.replace(/[^a-zA-ZäöüÄÖÜß0-9]/g, '')))]
+                .filter(w => w.length > 3)
+                .slice(0, 6);
+
+            let tagsHtml = uniqueWords.map(w => `<span class="tag">#${w}</span>`).join('');
+
+            // HTML Struktur für Ausgabe bauen
+            output.innerHTML = `
+                <strong style="color: var(--success)">✓ Analyse abgeschlossen</strong><br><br>
+                <strong>Zusammenfassung:</strong><br>
+                "${input.substring(0, 80)}${input.length > 80 ? '...' : ''}"<br><br>
+                
+                <strong>Extrahierte Kernbegriffe:</strong>
+                <div class="tag-list">${tagsHtml || '<span style="color:var(--text-sub)">Keine Kernbegriffe gefunden</span>'}</div>
+                
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-value">${wordCount}</div>
+                        <div class="stat-label">Wörter</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${charCount}</div>
+                        <div class="stat-label">Zeichen</div>
+                    </div>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
