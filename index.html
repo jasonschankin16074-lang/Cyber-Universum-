@@ -157,24 +157,14 @@
     var isProcessingHack = false;
     var activeTypingLine = null;
 
-    // Phasen-Steuerung (1 bis 9)
     var currentPhase = 1;
 
-    // Phase 3 Data
     var secretCode = [];
     var currentDigitIndex = 0;
-
-    // Phase 4 Data
     var targetLaserAngle = 0;
-
-    // Phase 5 Data (FIXIERT AUF AAAA)
     var targetDnaSequence = "AAAA";
-
-    // Phase 6 Data
     var masterVaultCode = 0;
 
-    // Quick-Time Event Steuerung (Phasen 7-9)
-    var qteTimer = null;
     var qteInterval = null;
     var qteKeyPressed = false;
 
@@ -194,11 +184,9 @@
       }
     }
 
-    // TASTATUR ENGINE
     document.addEventListener("keydown", function(e) {
       if (document.getElementById("hackerOverlay").style.display !== "flex") return;
 
-      // QTE TASTENDRUCK FÜR PHASE 7, 8 UND 9
       if (currentPhase >= 7 && currentPhase <= 9) {
         if (e.key.toLowerCase() === 'e') {
           qteKeyPressed = true;
@@ -240,7 +228,6 @@
       }
     });
 
-    // PHASE 1: UNSICHTBARER 20s ZAHLENSTREAM
     function startPhase1Stream() {
       isAwaitingEnter = false;
       isProcessingHack = true;
@@ -269,7 +256,6 @@
       }, 100); 
     }
 
-    // PHASE 2: BRUTE-FORCE PASSWORT-CRACKER
     function startPhase2VaultPasswordCrack() {
       currentPhase = 2;
       document.getElementById("typeStatus").innerText = "PHASE 2: BRUTE-FORCE CRACKER LÄUFT...";
@@ -293,7 +279,6 @@
       }, 100);
     }
 
-    // PHASE 3: PIN-PAD (EINFACH: 1 BIS 10)
     function startPhase3ManualGuessing() {
       currentPhase = 3;
       secretCode = [
@@ -311,7 +296,6 @@
       showInputField("Zahl eingeben (1-10)...", "number");
     }
 
-    // PHASE 4: LASER-NETZWERK WINKEL
     function startPhase4LaserBypass() {
       currentPhase = 4;
       targetLaserAngle = Math.floor(Math.random() * 180) + 1;
@@ -325,7 +309,6 @@
       showInputField("Winkel eingeben (1-180)...", "number");
     }
 
-    // PHASE 5: DNA-CODE (FIXIERT AUF AAAA)
     function startPhase5DnaBypass() {
       currentPhase = 5;
 
@@ -338,7 +321,6 @@
       showInputField("Tippe AAAA...", "text");
     }
 
-    // PHASE 6: MASTER-TRESOR CODE (EINFACH: 1 BIS 50)
     function startPhase6MasterVault() {
       currentPhase = 6;
       masterVaultCode = Math.floor(Math.random() * 50) + 1;
@@ -352,7 +334,6 @@
       showInputField("Mastercode (1-50)...", "number");
     }
 
-    // PHASE 7: AUTOMATISCHER WLAN JAMMER MIT QUICK-TIME EVENT [E]
     function startPhase7WlanJammer() {
       currentPhase = 7;
       hideInputField();
@@ -370,7 +351,6 @@
       );
     }
 
-    // PHASE 8: AUTOMATISCHER SECURITY BYPASS MIT QUICK-TIME EVENT [E]
     function startPhase8SecurityOverride() {
       currentPhase = 8;
       qteKeyPressed = false;
@@ -387,7 +367,6 @@
       );
     }
 
-    // PHASE 9: AUTOMATISCHER ANTI-STANDORT VIRUS MIT QUICK-TIME EVENT [E]
     function startPhase9AntiLocationVirus() {
       currentPhase = 9;
       qteKeyPressed = false;
@@ -404,7 +383,6 @@
       );
     }
 
-    // QUICK-TIME EVENT ENGINE FÜR PHASEN 7-9
     function runQuickTimePhase(successMessage, nextPhaseFunc, retryPhaseFunc) {
       var timeLeft = 5;
       
@@ -428,7 +406,6 @@
       }, 1000);
     }
 
-    // HEIST ABSCHLUSS
     function finishHeist() {
       isProcessingHack = false;
 
@@ -438,7 +415,6 @@
 
       printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:15px;">\n========================================\n>>> HEIST ERFOLGREICH ABGESCHLOSSEN! <<<\n>>> ALLE SPUREN VERWISCHT & GEBÄUDE VERLASSEN! <<<\n>>> TOTAL BEUTE: +2.500.00 $ GUTGESCHRIEBEN! <<<\n========================================</span>');
 
-      // Reset
       currentPhase = 1;
       currentBlockCount = 0;
       activeTypingLine = null;
@@ -447,7 +423,6 @@
       document.getElementById("typeStatus").style.color = "var(--accent-yellow)";
     }
 
-    // HANDLER FÜR MANUELLE INPUTS (PHASEN 3-6)
     function handlePhaseInput() {
       var inputEl = document.getElementById("actionInput");
       var val = inputEl.value.trim();
@@ -456,7 +431,6 @@
       if (!val) return;
 
       if (currentPhase === 3) {
-        // PIN PAD LOGIK
         var guess = parseInt(val);
         var targetNum = secretCode[currentDigitIndex];
 
@@ -477,7 +451,6 @@
         }
 
       } else if (currentPhase === 4) {
-        // LASER LOGIK
         var angle = parseInt(val);
 
         if (angle === targetLaserAngle) {
@@ -491,7 +464,6 @@
         }
 
       } else if (currentPhase === 5) {
-        // DNA LOGIK (VEREINFACHT: AAAA)
         var dnaGuess = val.toUpperCase();
 
         if (dnaGuess === targetDnaSequence) {
@@ -503,7 +475,6 @@
         }
 
       } else if (currentPhase === 6) {
-        // MASTERCODE LOGIK
         var masterGuess = parseInt(val);
 
         if (masterGuess === masterVaultCode) {
