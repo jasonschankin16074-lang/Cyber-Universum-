@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cyber Universe v15.0 - Pure Chat Edition</title>
+  <title>Cyber Universe v16.0 - Full Chat Combat Edition</title>
   <style>
     :root {
       --bg: #030508;
@@ -73,19 +73,11 @@
       display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: bold;
     }
 
-    .dash-body { flex: 1; display: grid; grid-template-columns: 1fr 280px; overflow: hidden; }
-    .sidebar-right { background: rgba(0, 0, 0, 0.02); padding: 10px; display: flex; flex-direction: column; gap: 6px; overflow-y: auto; border-left: 1px solid var(--border); }
-    .sidebar-title { font-size: 10px; color: var(--text-muted); text-transform: uppercase; margin-top: 6px; }
+    .dash-body { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 
-    .action-btn {
-      background: rgba(0, 0, 0, 0.04); border: 1px solid var(--accent-main); color: var(--text);
-      padding: 7px 9px; border-radius: 4px; text-align: left; font-size: 11px; cursor: pointer; transition: 0.15s;
-    }
-    .action-btn:hover { background: var(--accent-main); color: #fff; }
-
-    .content-area { padding: 10px; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; height: 100%; }
+    .content-area { padding: 10px; display: flex; flex-direction: column; gap: 10px; height: 100%; width: 100%; }
     .chat-box { flex: 1; border: 1px solid var(--border); background: var(--card-bg); border-radius: 6px; padding: 12px; display: flex; flex-direction: column; overflow: hidden; }
-    .chat-messages { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-family: monospace; white-space: pre-wrap; word-break: break-all; }
+    .chat-messages { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-family: monospace; white-space: pre-wrap; word-break: break-all; }
 
     .close-btn { background: transparent; border: 1px solid var(--accent-red); color: var(--accent-red); padding: 2px 8px; cursor: pointer; border-radius: 4px; }
   </style>
@@ -93,18 +85,18 @@
 <body id="bodyTag">
 
   <div class="start-dashboard">
-    <h2 class="rainbow-text">// CYBER UNIVERSE v15.0 - PURE TERMINAL</h2>
-    <p style="color: var(--text-muted); margin-top: 4px;">Wähle deine Seite für das Kontrollzentrum:</p>
+    <h2 class="rainbow-text">// CYBER UNIVERSE v16.0 - ACTION TERMINAL</h2>
+    <p style="color: var(--text-muted); margin-top: 4px;">Wähle deine Seite für das System:</p>
 
     <div class="faction-selector">
       <div class="faction-card active-evil" id="cardEvil" onclick="selectStartFaction('evil')">
-        <h3 style="color: var(--accent-red);">😈 BÖSE SEITE</h3>
-        <p style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">Tippe 60 Wörter im Chat -> Enter drücken -> 20s Hack -> 70$ Cash!</p>
+        <h3 style="color: var(--accent-red);">🥊 BÖSE SEITE (ÜBERFALL & COMBAT)</h3>
+        <p style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">Tippe 60 Wörter im Chat -> Enter drücken -> 20s Hack -> 70$ Beute!</p>
       </div>
 
       <div class="faction-card" id="cardGood" onclick="selectStartFaction('good')">
-        <h3 style="color: #2563eb;">😇 GUTE SEITE</h3>
-        <p style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">Tippe 60 Wörter im Chat -> Enter drücken -> 20s Scan -> 70$ Gehalt!</p>
+        <h3 style="color: #2563eb;">🚨 GUTE SEITE (POLIZEI EINSATZ)</h3>
+        <p style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">Tippe 60 Wörter im Chat -> Enter drücken -> 20s Einsatz -> 70$ Gehalt!</p>
       </div>
     </div>
 
@@ -120,9 +112,8 @@
       </div>
       
       <div class="dash-body">
-        <!-- MITTE (CHAT + TYPING TERMINAL) -->
         <div class="content-area">
-          <div style="font-size: 11px; color: var(--text-muted); display:flex; justify-content:space-between; background: rgba(0,0,0,0.2); padding: 6px; border-radius:4px; border:1px solid var(--border);">
+          <div style="font-size: 11px; color: var(--text-muted); display:flex; justify-content:space-between; background: rgba(0,0,0,0.2); padding: 8px 12px; border-radius:4px; border:1px solid var(--border);">
             <span>STATUS: <b id="typeStatus" style="color:var(--accent-yellow);">Tippe Tasten auf deiner Tastatur...</b></span>
             <span>Konto: <b id="userBalance" style="color:var(--accent-main);">0.00 $</b></span>
             <span>Wörter: <b id="wordCounter" style="color:var(--accent-main);">0 / 60</b></span>
@@ -130,16 +121,10 @@
 
           <div class="chat-box">
             <div style="font-weight:bold; margin-bottom:8px; border-bottom:1px dashed var(--border); padding-bottom:4px; font-size:11px;">
-              // LIVE TERMINAL & FACTION CHAT
+              // LIVE COMBAT & TERMINAL LOGS
             </div>
             <div class="chat-messages" id="chatOutput"></div>
           </div>
-        </div>
-
-        <!-- RECHTS (10 FAHRZEUGE/ZIELE) -->
-        <div class="sidebar-right">
-          <div class="sidebar-title" id="rightTitle">🚨 STATUS & FAHRZEUGE (10)</div>
-          <div id="prisonersContainer" style="display:flex; flex-direction:column; gap:6px;"></div>
         </div>
       </div>
     </div>
@@ -150,11 +135,12 @@
     var userBalance = parseFloat(localStorage.getItem('cyber_balance')) || 0;
     var matrixInterval = null;
 
+    // Wörter angepasst auf Überfall, Karate, Polizei & Action
     const codeWords = [
-      "function", "init_can_bus()", "bypass_security", "override_ecu", "injection", "crypto_hash",
-      "connect_server", "send_payload", "decrypt_key", "firewall_disable", "root_access", "status_ok",
-      "intercept_signal", "proxy_route", "hex_dump", "memory_allocate", "zero_day", "spoof_ip",
-      "buffer_overflow", "quantum_encryption", "neural_link", "database_crack", "auth_bypass", "sys_override"
+      "karate_kick", "ueberfall", "polizei_alarm", "schlag", "tresor_knacken",
+      "handschellen", "ausweichen", "sirene_an", "kick_combo", "flucht_wagen",
+      "pfefferspray", "takedown", "blocken", "panik_knopf", "blitz_angriff",
+      "polizei_einsatz", "bank_alarm", "high_kick", "zugriff", "schuss_sicher"
     ];
 
     var currentWordCount = 0;
@@ -182,7 +168,7 @@
           if (currentWordCount === 0 || !activeTypingLine) {
             activeTypingLine = document.createElement('div');
             activeTypingLine.style.color = 'var(--accent-main)';
-            activeTypingLine.innerHTML = '<b>[TYPING]:</b> ';
+            activeTypingLine.innerHTML = '<b>[ACTION_LOG]:</b> ';
             chatOutput.appendChild(activeTypingLine);
           }
 
@@ -198,7 +184,7 @@
             document.getElementById("typeStatus").innerText = "60 WÖRTER ERREICHT! DRÜCKE ENTER!";
             document.getElementById("typeStatus").style.color = "#ef4444";
             
-            printChat('<span style="color:#ef4444; font-weight:bold;">\n>>> 60 WÖRTER BEREIT! DRÜCKE JETZT [ENTER] UM DIE ZAHLEN-ÜBERTRAGUNG ZU STARTEN! <<<</span>');
+            printChat('<span style="color:#ef4444; font-weight:bold;">\n>>> 60 WÖRTER ERREICHT! DRÜCKE JETZT [ENTER] UM DIE AKTION ABZUSCHLIESSEN! <<<</span>');
           }
         }
       }
@@ -208,20 +194,20 @@
     function start20SecondHack() {
       isAwaitingEnter = false;
       isProcessingHack = true;
-      document.getElementById("typeStatus").innerText = "ÜBERTRAGUNG LÄUFT (20 SEKUNDEN)...";
+      document.getElementById("typeStatus").innerText = "ÜBERTRAGUNG / EINSATZ LÄUFT (20 SEKUNDEN)...";
       document.getElementById("typeStatus").style.color = "#f59e0b";
 
       var timeLeft = 20;
-      printChat('<span style="color:var(--accent-yellow); font-weight:bold;">>>> DATENÜBERTRAGUNG GESTARTET (20s restlich)...</span>');
+      printChat('<span style="color:var(--accent-yellow); font-weight:bold;">>>> ACTION-DATENÜBERTRAGUNG GESTARTET (20s restlich)...</span>');
 
       var interval = setInterval(function() {
         timeLeft--;
         
         var randomNumberLine = "";
-        for (var i = 0; i < 35; i++) {
+        for (var i = 0; i < 40; i++) {
           randomNumberLine += Math.floor(Math.random() * 10);
         }
-        printChat('<span style="color:var(--text-muted); font-size:10px;">[PACKET ' + timeLeft + 's]: ' + randomNumberLine + '</span>');
+        printChat('<span style="color:var(--text-muted); font-size:11px;">[PACKET ' + timeLeft + 's]: ' + randomNumberLine + '</span>');
 
         if (timeLeft <= 0) {
           clearInterval(interval);
@@ -231,7 +217,7 @@
           updateBalance();
           saveData();
 
-          printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:13px;">\n========================================\n>>> ERFOLG! +70.00 $ Cash Gutgeschrieben! <<<\n========================================</span>');
+          printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:13px;">\n========================================\n>>> ERFOLG! +70.00 $ Belohnung/Beute erhalten! <<<\n========================================</span>');
           
           // Reset
           currentWordCount = 0;
@@ -255,17 +241,16 @@
 
       if (startFaction === 'good') {
         body.className = 'theme-good';
-        title.innerText = 'CYBER_UNIVERSE [POLIZEI WEISS-SYSTEM v15.0]';
+        title.innerText = 'CYBER_UNIVERSE [POLIZEI WEISS-SYSTEM v16.0]';
       } else {
         body.className = '';
-        title.innerText = 'CYBER_UNIVERSE [HACKER GRÜN-SYSTEM v15.0]';
+        title.innerText = 'CYBER_UNIVERSE [HACKER & COMBAT GRÜN-SYSTEM v16.0]';
       }
 
       document.getElementById('hackerOverlay').style.display = 'flex';
       startMatrix();
       updateBalance();
-      printChat('[SYSTEM]: Terminal gestartet! Speicherdaten geladen. Tippe auf der Tastatur...');
-      renderPrisoners();
+      printChat('[SYSTEM]: Terminal gestartet! Tippe auf deiner Tastatur...');
     }
 
     function closeTerminal() {
@@ -275,36 +260,6 @@
 
     function updateBalance() {
       document.getElementById('userBalance').innerText = userBalance.toFixed(2) + " $";
-    }
-
-    // 10 FAHRZEUGE/ZIELE RECHTS
-    function renderPrisoners() {
-      var container = document.getElementById('prisonersContainer');
-      container.innerHTML = '';
-      
-      for (var i = 1; i <= 10; i++) {
-        var card = document.createElement('div');
-        card.style.border = '1px solid var(--border)';
-        card.style.padding = '6px';
-        card.style.borderRadius = '4px';
-        card.style.fontSize = '11px';
-        
-        if (startFaction === 'good') {
-          card.innerHTML = '<b>Gesuchtes Auto #' + i + '</b><br>Status: <span style="color:red;">Gestohlen</span><br><button class="action-btn" style="margin-top:3px; width:100%;" onclick="doAction(\'Auto #' + i + ' sichergestellt\')">🚔 Sicherstellen</button>';
-        } else {
-          card.innerHTML = '<b>Sportwagen #' + i + '</b><br>Status: <span style="color:orange;">Abgeschlossen</span><br><button class="action-btn" style="margin-top:3px; width:100%;" onclick="doAction(\'Sportwagen #' + i + ' geknackt\')">🏎️ Knacken & Verkaufen</button>';
-        }
-        
-        container.appendChild(card);
-      }
-    }
-
-    function doAction(name) {
-      var reward = Math.floor(Math.random() * 25) + 10;
-      userBalance += reward;
-      updateBalance();
-      saveData();
-      printChat('<span style="color:var(--accent-main); font-weight:bold;">[AKTION]: ' + name + '! +' + reward + '.00 $ erhalten!</span>');
     }
 
     function printChat(msg) {
@@ -320,7 +275,7 @@
       var mCtx = canvas.getContext('2d');
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-      var chars = '01ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
       var drops = Array(Math.floor(canvas.width / 14)).fill(1);
 
       if (matrixInterval) clearInterval(matrixInterval);
