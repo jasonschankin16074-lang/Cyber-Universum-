@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Cyber Universe v35.0 - Endgame Edition</title>
+  <title>Cyber Universe v36.0 - Boss & Endgame Edition</title>
   <style>
     :root {
       --bg: #030508;
@@ -15,6 +15,7 @@
       --accent-red: #ef4444;
       --accent-yellow: #f59e0b;
       --accent-orange: #f97316;
+      --accent-purple: #a855f7;
       --dash-bg: #020407;
     }
 
@@ -42,7 +43,7 @@
       border: 2px solid var(--accent-main); border-radius: 12px; padding: 15px;
     }
 
-    .level-selector { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin: 10px 0; }
+    .level-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0; }
     .faction-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; }
     
     .select-card {
@@ -51,6 +52,7 @@
     }
     .select-card.active { border-color: var(--accent-main); background: rgba(16, 185, 129, 0.15); }
     .select-card.active-fire { border-color: var(--accent-orange); background: rgba(249, 115, 22, 0.15); }
+    .select-card.active-boss { border-color: var(--accent-purple); background: rgba(168, 85, 247, 0.2); box-shadow: 0 0 10px rgba(168, 85, 247, 0.4); }
     .select-card.active-evil { border-color: var(--accent-red); background: rgba(239, 68, 68, 0.15); }
     .select-card.active-good { border-color: #2563eb; background: rgba(37, 99, 235, 0.15); }
 
@@ -135,7 +137,7 @@
 <body id="bodyTag">
 
   <div class="start-dashboard">
-    <h2 class="rainbow-text">// CYBER UNIVERSE v35.0</h2>
+    <h2 class="rainbow-text">// CYBER UNIVERSE v36.0</h2>
 
     <label style="font-size: 11px; font-weight: bold; color: var(--text-muted); margin-top:8px; display:block;">1. SZENARIO WÄHLEN:</label>
     <div class="level-selector">
@@ -152,6 +154,11 @@
       <div class="select-card" id="levelCard3" onclick="selectLevel(3)">
         <h3 style="color: var(--accent-orange); font-size:12px;">🚒 LEVEL 3: FEUERWEHR</h3>
         <p style="font-size: 9px; color: var(--text-muted); margin-top: 3px;">Einfach (15 Phasen)</p>
+      </div>
+
+      <div class="select-card" id="levelCard4" onclick="selectLevel(4)">
+        <h3 style="color: var(--accent-purple); font-size:12px;">👑 LEVEL 4: ENDBOSS</h3>
+        <p style="font-size: 9px; color: var(--text-muted); margin-top: 3px;">Extrem (15 Phasen)</p>
       </div>
     </div>
 
@@ -180,7 +187,7 @@
       </div>
 
       <div class="dash-header">
-        <span id="terminalTitle" class="rainbow-text">CYBER_UNIVERSE v35.0</span>
+        <span id="terminalTitle" class="rainbow-text">CYBER_UNIVERSE v36.0</span>
         <div class="header-controls">
           <button class="admin-burger-btn" onclick="toggleAdminPanel()">☰</button>
           <button class="close-btn" onclick="closeTerminal()">[X]</button>
@@ -247,7 +254,6 @@
     var currentKeyIndex = 0;
     var adminPassword = "123";
 
-    // ENDGAME VARIABLES
     var isEndgameActive = false;
     var endgameAttackTimer = null;
     var currentDefenseCommand = "";
@@ -258,6 +264,7 @@
       document.getElementById('levelCard1').className = 'select-card' + (lvl === 1 ? ' active' : '');
       document.getElementById('levelCard2').className = 'select-card' + (lvl === 2 ? ' active' : '');
       document.getElementById('levelCard3').className = 'select-card' + (lvl === 3 ? ' active-fire' : '');
+      document.getElementById('levelCard4').className = 'select-card' + (lvl === 4 ? ' active-boss' : '');
       updateAdminSelectOptions();
     }
 
@@ -275,8 +282,10 @@
         names = ["Zahlen-Stream", "Brute-Force", "Pin-Pad", "Laser-Schutz", "DNA-Scan", "Master-Tresor", "WLAN-Jammer", "Kamera-Bypass", "Anti-Standort", "KI-Feuerwall", "Satellit", "Quanten-Code", "Augenscan", "Stromnetz", "Finaler Kern-Hack"];
       } else if (selectedLevel === 2) {
         names = ["Klinik-Stream", "Brute-Force Meds", "Intensiv PIN", "OP-Laser", "Blutgruppen-Scan", "Gift-Schrank", "Defibrillator-Jammer", "Akten-Override", "Krankenwagen GPS", "Klinik KI", "Satellit", "Labor-Code", "Chirurgen-Scan", "Generator Off", "Krankenhaus Kern-Hack"];
-      } else {
+      } else if (selectedLevel === 3) {
         names = ["Funk-Stream", "Notruf-Code", "Siren-Pin", "Wasser-Druck", "Leitstellen-Scan", "Einsatz-Vault", "Funk-Jammer", "Tor-Override", "GPS-Tracker", "Feuerwehr KI", "Satellit", "Hydranten-Code", "Chief-Scan", "Strom-Aus", "Feuerwehr Kern-Hack"];
+      } else {
+        names = ["Boss-Stream", "Core-BruteForce", "Omega-PIN", "Anomalie-Laser", "Genome-Scan", "Boss-Vault", "Quantum-Jammer", "Global-Override", "GPS-Blackout", "Omega-KI Firewall", "Orbital-Satellit", "Ultra-Code", "Chef-Biometrie", "Global-Power", "Götter-Kern-Hack"];
       }
       
       for(var i=0; i<15; i++) select.innerHTML += '<option value="' + (i+1) + '">Phase ' + (i+1) + ': ' + names[i] + '</option>';
@@ -342,7 +351,7 @@
           case 14: startHosp14GeneratorShutdown(); break;
           case 15: startPhase15FinalCoreHack(); break;
         }
-      } else { // LEVEL 3 FEUERWEHR
+      } else if (selectedLevel === 3) {
         switch(phaseNum) {
           case 1: isProcessingHack = false; startFire1Stream(); break;
           case 2: startFire2EasyCrack(); break;
@@ -360,11 +369,29 @@
           case 14: startFire14Power(); break;
           case 15: startPhase15FinalCoreHack(); break;
         }
+      } else { // LEVEL 4 ENDBOSS
+        switch(phaseNum) {
+          case 1: isProcessingHack = false; startBoss1Stream(); break;
+          case 2: startBoss2BruteForce(); break;
+          case 3: startBoss3Pin(); break;
+          case 4: startBoss4Laser(); break;
+          case 5: startBoss5Scan(); break;
+          case 6: startBoss6Vault(); break;
+          case 7: startBoss7Jammer(); break;
+          case 8: startBoss8Override(); break;
+          case 9: startBoss9Gps(); break;
+          case 10: promptContinueBoss(); break;
+          case 11: startBoss11Sat(); break;
+          case 12: startBoss12Code(); break;
+          case 13: startBoss13Scan(); break;
+          case 14: startBoss14Power(); break;
+          case 15: startPhase15FinalCoreHack(); break;
+        }
       }
     }
 
     function generateNumberBlock() {
-      var chars = selectedLevel === 3 ? "FEUER112SOS" : (selectedLevel === 2 ? "MED0123456789HOSP" : "0123456789ABCDEF");
+      var chars = selectedLevel === 4 ? "OMEGA999BOSS" : (selectedLevel === 3 ? "FEUER112SOS" : (selectedLevel === 2 ? "MED0123456789HOSP" : "0123456789ABCDEF"));
       var b = "";
       for (var i = 0; i < 12; i++) b += chars[Math.floor(Math.random() * chars.length)];
       return b;
@@ -377,7 +404,7 @@
           if (currentBlockCount > 60) currentBlockCount = 60;
           document.getElementById("wordCounter").innerText = currentBlockCount + " / 60";
           
-          printChat('<span style="color:' + (selectedLevel === 3 ? 'var(--accent-orange)' : (selectedLevel === 2 ? '#06b6d4' : 'var(--accent-main)')) + ';">' + generateNumberBlock() + ' ' + generateNumberBlock() + ' ' + generateNumberBlock() + '</span>');
+          printChat('<span style="color:' + (selectedLevel === 4 ? 'var(--accent-purple)' : (selectedLevel === 3 ? 'var(--accent-orange)' : (selectedLevel === 2 ? '#06b6d4' : 'var(--accent-main)'))) + ';">' + generateNumberBlock() + ' ' + generateNumberBlock() + ' ' + generateNumberBlock() + '</span>');
           
           if (currentBlockCount >= 60) {
             isAwaitingEnter = true;
@@ -386,7 +413,8 @@
         } else {
           if (selectedLevel === 1) startPhase1Stream();
           else if (selectedLevel === 2) startHosp1Stream();
-          else startFire1Stream();
+          else if (selectedLevel === 3) startFire1Stream();
+          else startBoss1Stream();
         }
       }
     }
@@ -429,181 +457,61 @@
       }
     });
 
-    // LEVEL 1 FUNCTIONS
-    function startPhase1Stream() {
-      isAwaitingEnter = false; isProcessingHack = true;
-      printChat('<span style="color:var(--accent-yellow); font-weight:bold;">>>> LEVEL 1 - PHASE 1/15: TRESOR-NETZWERK <<<</span>');
-      runStreamAnimation(10, startPhase2VaultPasswordCrack);
-    }
-    function startPhase2VaultPasswordCrack() {
-      currentPhase = 2;
-      printChat('<span style="color:#ef4444; font-weight:bold;">\n>>> PHASE 2/15: BRUTE-FORCE PASSWORT <<<</span>');
-      runBruteForceAnimation(8, startPhase3ManualGuessing);
-    }
-    function startPhase3ManualGuessing() {
-      currentPhase = 3; secretCode = [Math.floor(Math.random() * 10) + 1, Math.floor(Math.random() * 10) + 1]; currentDigitIndex = 0;
-      printChat('<span style="color:var(--accent-main); font-weight:bold;">\n>>> PHASE 3/15: PIN-PAD (2 ZAHLEN 1-10) <<<</span>');
-      setPlaceholder("Errate Zahl 1 (1-10)...");
-    }
-    function startPhase4LaserBypass() {
-      currentPhase = 4; targetLaserAngle = Math.floor(Math.random() * 180) + 1;
-      printChat('<span style="color:#f59e0b; font-weight:bold;">\n>>> PHASE 4/15: LASER-SCHUTZ (1-180°) <<<</span>');
-      setPlaceholder("Winkel (1-180)...");
-    }
-    function startPhase5DnaBypass() {
-      currentPhase = 5;
-      printChat('<span style="color:#ef4444; font-weight:bold;">\n>>> PHASE 5/15: DNA-SCAN (Code: AAAA) <<<</span>');
-      setPlaceholder("Tippe AAAA...");
-    }
-    function startPhase6MasterVault() {
-      currentPhase = 6; masterVaultCode = Math.floor(Math.random() * 50) + 1;
-      printChat('<span style="color:var(--accent-main); font-weight:bold;">\n>>> PHASE 6/15: MASTER-TRESOR (1-50) <<<</span>');
-      setPlaceholder("Mastercode (1-50)...");
-    }
-    function startPhase7WlanJammer() {
-      currentPhase = 7; requiredKeys = ['E', 'A', 'S']; currentKeyIndex = 0;
-      printChat('<span style="color:#f59e0b; font-weight:bold;">\n>>> PHASE 7/15: WLAN JAMMER (Combo: E - A - S) <<<</span>');
-      runMultiKeyPhase("WLAN aus!", startPhase8SecurityOverride, startPhase7WlanJammer);
-    }
-    function startPhase8SecurityOverride() {
-      currentPhase = 8; requiredKeys = ['D', 'F', 'E']; currentKeyIndex = 0;
-      printChat('<span style="color:#ef4444; font-weight:bold;">\n>>> PHASE 8/15: KAMERA BYPASS (Combo: D - F - E) <<<</span>');
-      runMultiKeyPhase("Kameras aus!", startPhase9AntiLocationVirus, startPhase8SecurityOverride);
-    }
-    function startPhase9AntiLocationVirus() {
-      currentPhase = 9; requiredKeys = ['E', 'S', 'D', 'F']; currentKeyIndex = 0;
-      printChat('<span style="color:var(--accent-main); font-weight:bold;">\n>>> PHASE 9/15: ANTI-STANDORT (Combo: E - S - D - F) <<<</span>');
-      runMultiKeyPhase("GPS aus!", promptContinueLevel1, startPhase9AntiLocationVirus);
-    }
-    function promptContinueLevel1() {
-      userBalance += 2500; updateBalance();
-      printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:13px;">\n>>> PHASE 9 ERFOLGREICH! +2.500$! <<<\nWEITERMACHEN BIS PHASE 15? (Tippe JA oder NEIN)</span>');
-      setPlaceholder("JA oder NEIN...");
-    }
+    // LEVEL 1
+    function startPhase1Stream() { isAwaitingEnter = false; isProcessingHack = true; printChat('<span style="color:var(--accent-yellow); font-weight:bold;">>>> LEVEL 1 - PHASE 1/15: TRESOR-NETZWERK <<<</span>'); runStreamAnimation(10, startPhase2VaultPasswordCrack); }
+    function startPhase2VaultPasswordCrack() { currentPhase = 2; printChat('<span style="color:#ef4444; font-weight:bold;">\n>>> PHASE 2/15: BRUTE-FORCE PASSWORT <<<</span>'); runBruteForceAnimation(8, startPhase3ManualGuessing); }
+    function startPhase3ManualGuessing() { currentPhase = 3; secretCode = [Math.floor(Math.random() * 10) + 1, Math.floor(Math.random() * 10) + 1]; currentDigitIndex = 0; printChat('<span style="color:var(--accent-main); font-weight:bold;">\n>>> PHASE 3/15: PIN-PAD (2 ZAHLEN 1-10) <<<</span>'); setPlaceholder("Errate Zahl 1 (1-10)..."); }
+    function startPhase4LaserBypass() { currentPhase = 4; targetLaserAngle = Math.floor(Math.random() * 180) + 1; printChat('<span style="color:#f59e0b; font-weight:bold;">\n>>> PHASE 4/15: LASER-SCHUTZ (1-180°) <<<</span>'); setPlaceholder("Winkel (1-180)..."); }
+    function startPhase5DnaBypass() { currentPhase = 5; printChat('<span style="color:#ef4444; font-weight:bold;">\n>>> PHASE 5/15: DNA-SCAN (Code: AAAA) <<<</span>'); setPlaceholder("Tippe AAAA..."); }
+    function startPhase6MasterVault() { currentPhase = 6; masterVaultCode = Math.floor(Math.random() * 50) + 1; printChat('<span style="color:var(--accent-main); font-weight:bold;">\n>>> PHASE 6/15: MASTER-TRESOR (1-50) <<<</span>'); setPlaceholder("Mastercode (1-50)..."); }
+    function startPhase7WlanJammer() { currentPhase = 7; requiredKeys = ['E', 'A', 'S']; currentKeyIndex = 0; printChat('<span style="color:#f59e0b; font-weight:bold;">\n>>> PHASE 7/15: WLAN JAMMER (Combo: E - A - S) <<<</span>'); runMultiKeyPhase("WLAN aus!", startPhase8SecurityOverride, startPhase7WlanJammer); }
+    function startPhase8SecurityOverride() { currentPhase = 8; requiredKeys = ['D', 'F', 'E']; currentKeyIndex = 0; printChat('<span style="color:#ef4444; font-weight:bold;">\n>>> PHASE 8/15: KAMERA BYPASS (Combo: D - F - E) <<<</span>'); runMultiKeyPhase("Kameras aus!", startPhase9AntiLocationVirus, startPhase8SecurityOverride); }
+    function startPhase9AntiLocationVirus() { currentPhase = 9; requiredKeys = ['E', 'S', 'D', 'F']; currentKeyIndex = 0; printChat('<span style="color:var(--accent-main); font-weight:bold;">\n>>> PHASE 9/15: ANTI-STANDORT (Combo: E - S - D - F) <<<</span>'); runMultiKeyPhase("GPS aus!", promptContinueLevel1, startPhase9AntiLocationVirus); }
+    function promptContinueLevel1() { userBalance += 2500; updateBalance(); printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:13px;">\n>>> PHASE 9 ERFOLGREICH! +2.500$! <<<\nWEITERMACHEN BIS PHASE 15? (JA / NEIN)</span>'); setPlaceholder("JA oder NEIN..."); }
 
-    // LEVEL 2 FUNCTIONS
-    function startHosp1Stream() {
-      isAwaitingEnter = false; isProcessingHack = true;
-      printChat('<span style="color:#06b6d4; font-weight:bold;">>>> LEVEL 2 - PHASE 1/15: KLINIK-NETZWERK BYPASS <<<</span>');
-      runStreamAnimation(10, startHosp2MedsCrack);
-    }
-    function startHosp2MedsCrack() {
-      currentPhase = 2;
-      printChat('<span style="color:#ef4444; font-weight:bold;">\n>>> PHASE 2/15: BRUTE-FORCE APOTHEKE <<<</span>');
-      runBruteForceAnimation(8, startHosp3IcuPin);
-    }
-    function startHosp3IcuPin() {
-      currentPhase = 3; secretCode = [Math.floor(Math.random() * 10) + 1, Math.floor(Math.random() * 10) + 1]; currentDigitIndex = 0;
-      printChat('<span style="color:#06b6d4; font-weight:bold;">\n>>> PHASE 3/15: INTENSIVSTATION PIN (2 ZAHLEN 1-10) <<<</span>');
-      setPlaceholder("Errate Zahl 1 (1-10)...");
-    }
-    function startHosp4OpLaser() {
-      currentPhase = 4; targetLaserAngle = Math.floor(Math.random() * 180) + 1;
-      printChat('<span style="color:#f59e0b; font-weight:bold;">\n>>> PHASE 4/15: CHIRURGIE-LASER (1-180°) <<<</span>');
-      setPlaceholder("Laser-Winkel (1-180)...");
-    }
-    function startHosp5BloodDna() {
-      currentPhase = 5;
-      printChat('<span style="color:#ef4444; font-weight:bold;">\n>>> PHASE 5/15: BLUT-SCANNER (Code: MED1) <<<</span>');
-      setPlaceholder("Tippe MED1...");
-    }
-    function startHosp6PharmaVault() {
-      currentPhase = 6; masterVaultCode = Math.floor(Math.random() * 50) + 1;
-      printChat('<span style="color:#06b6d4; font-weight:bold;">\n>>> PHASE 6/15: GIFT-SCHRANK TRESORCODE (1-50) <<<</span>');
-      setPlaceholder("Code (1-50)...");
-    }
-    function startHosp7DefibrillatorJammer() {
-      currentPhase = 7; requiredKeys = ['M', 'E', 'D']; currentKeyIndex = 0;
-      printChat('<span style="color:#f59e0b; font-weight:bold;">\n>>> PHASE 7/15: DEFIBRILLATOR JAMMER (Combo: M - E - D) <<<</span>');
-      runMultiKeyPhase("Signal gekoppelt!", startHosp8RecordsOverride, startHosp7DefibrillatorJammer);
-    }
-    function startHosp8RecordsOverride() {
-      currentPhase = 8; requiredKeys = ['H', 'O', 'S']; currentKeyIndex = 0;
-      printChat('<span style="color:#ef4444; font-weight:bold;">\n>>> PHASE 8/15: PATIENTENAKTEN OVERRIDE (Combo: H - O - S) <<<</span>');
-      runMultiKeyPhase("Akten gehackt!", startHosp9AmbulanceGps, startHosp8RecordsOverride);
-    }
-    function startHosp9AmbulanceGps() {
-      currentPhase = 9; requiredKeys = ['N', 'O', 'T']; currentKeyIndex = 0;
-      printChat('<span style="color:#06b6d4; font-weight:bold;">\n>>> PHASE 9/15: KRANKENWAGEN GPS (Combo: N - O - T) <<<</span>');
-      runMultiKeyPhase("GPS gespooft!", promptContinueHospital, startHosp9AmbulanceGps);
-    }
-    function promptContinueHospital() {
-      userBalance += 3500; updateBalance();
-      printChat('<span style="color:#06b6d4; font-weight:bold; font-size:13px;">\n>>> PHASE 10/15 ERREICHT! +3.500$ BELOHNUNG! <<<\nCHIEF MEDICAL KI GEWARNT! WEITERMACHEN BIS PHASE 15? (JA / NEIN)</span>');
-      setPlaceholder("Tippe JA oder NEIN...");
-    }
+    // LEVEL 2
+    function startHosp1Stream() { isAwaitingEnter = false; isProcessingHack = true; printChat('<span style="color:#06b6d4; font-weight:bold;">>>> LEVEL 2 - PHASE 1/15: KLINIK-NETZWERK BYPASS <<<</span>'); runStreamAnimation(10, startHosp2MedsCrack); }
+    function startHosp2MedsCrack() { currentPhase = 2; printChat('<span style="color:#ef4444; font-weight:bold;">\n>>> PHASE 2/15: BRUTE-FORCE APOTHEKE <<<</span>'); runBruteForceAnimation(8, startHosp3IcuPin); }
+    function startHosp3IcuPin() { currentPhase = 3; secretCode = [Math.floor(Math.random() * 10) + 1, Math.floor(Math.random() * 10) + 1]; currentDigitIndex = 0; printChat('<span style="color:#06b6d4; font-weight:bold;">\n>>> PHASE 3/15: INTENSIVSTATION PIN (2 ZAHLEN 1-10) <<<</span>'); setPlaceholder("Errate Zahl 1 (1-10)..."); }
+    function startHosp4OpLaser() { currentPhase = 4; targetLaserAngle = Math.floor(Math.random() * 180) + 1; printChat('<span style="color:#f59e0b; font-weight:bold;">\n>>> PHASE 4/15: CHIRURGIE-LASER (1-180°) <<<</span>'); setPlaceholder("Laser-Winkel (1-180)..."); }
+    function startHosp5BloodDna() { currentPhase = 5; printChat('<span style="color:#ef4444; font-weight:bold;">\n>>> PHASE 5/15: BLUT-SCANNER (Code: MED1) <<<</span>'); setPlaceholder("Tippe MED1..."); }
+    function startHosp6PharmaVault() { currentPhase = 6; masterVaultCode = Math.floor(Math.random() * 50) + 1; printChat('<span style="color:#06b6d4; font-weight:bold;">\n>>> PHASE 6/15: GIFT-SCHRANK TRESORCODE (1-50) <<<</span>'); setPlaceholder("Code (1-50)..."); }
+    function startHosp7DefibrillatorJammer() { currentPhase = 7; requiredKeys = ['M', 'E', 'D']; currentKeyIndex = 0; printChat('<span style="color:#f59e0b; font-weight:bold;">\n>>> PHASE 7/15: DEFIBRILLATOR JAMMER (Combo: M - E - D) <<<</span>'); runMultiKeyPhase("Signal gekoppelt!", startHosp8RecordsOverride, startHosp7DefibrillatorJammer); }
+    function startHosp8RecordsOverride() { currentPhase = 8; requiredKeys = ['H', 'O', 'S']; currentKeyIndex = 0; printChat('<span style="color:#ef4444; font-weight:bold;">\n>>> PHASE 8/15: PATIENTENAKTEN OVERRIDE (Combo: H - O - S) <<<</span>'); runMultiKeyPhase("Akten gehackt!", startHosp9AmbulanceGps, startHosp8RecordsOverride); }
+    function startHosp9AmbulanceGps() { currentPhase = 9; requiredKeys = ['N', 'O', 'T']; currentKeyIndex = 0; printChat('<span style="color:#06b6d4; font-weight:bold;">\n>>> PHASE 9/15: KRANKENWAGEN GPS (Combo: N - O - T) <<<</span>'); runMultiKeyPhase("GPS gespooft!", promptContinueHospital, startHosp9AmbulanceGps); }
+    function promptContinueHospital() { userBalance += 3500; updateBalance(); printChat('<span style="color:#06b6d4; font-weight:bold; font-size:13px;">\n>>> PHASE 9 ERFOLGREICH! +3.500$! <<<\nWEITERMACHEN BIS PHASE 15? (JA / NEIN)</span>'); setPlaceholder("Tippe JA oder NEIN..."); }
 
-    // LEVEL 3 FEUERWEHR FUNCTIONS (EINFACHER)
-    function startFire1Stream() {
-      isAwaitingEnter = false; isProcessingHack = true;
-      printChat('<span style="color:var(--accent-orange); font-weight:bold;">>>> LEVEL 3 - PHASE 1/15: FEUERWEHR LEITSTELLE (EINFACH) <<<</span>');
-      runStreamAnimation(5, startFire2EasyCrack);
-    }
-    function startFire2EasyCrack() {
-      currentPhase = 2;
-      printChat('<span style="color:var(--accent-orange); font-weight:bold;">\n>>> PHASE 2/15: NOTRUF-SERVER (EINFACHER BRUTE-FORCE) <<<</span>');
-      runBruteForceAnimation(4, startFire3EasyPin);
-    }
-    function startFire3EasyPin() {
-      currentPhase = 3; secretCode = [1, 2]; currentDigitIndex = 0;
-      printChat('<span style="color:var(--accent-orange); font-weight:bold;">\n>>> PHASE 3/15: SIRENEN PIN (Einfach: Zahl 1 & 2) <<<</span>');
-      setPlaceholder("Tippe 1...");
-    }
-    function startFire4EasyPressure() {
-      currentPhase = 4; targetLaserAngle = 100;
-      printChat('<span style="color:var(--accent-orange); font-weight:bold;">\n>>> PHASE 4/15: WASSERDRUCK (Ziel: 100 Bar) <<<</span>');
-      setPlaceholder("Tippe 100...");
-    }
-    function startFire5EasyScan() {
-      currentPhase = 5;
-      printChat('<span style="color:var(--accent-orange); font-weight:bold;">\n>>> PHASE 5/15: LEITSTELLEN SCAN (Code: 112) <<<</span>');
-      setPlaceholder("Tippe 112...");
-    }
-    function startFire6EasyVault() {
-      currentPhase = 6; masterVaultCode = 10;
-      printChat('<span style="color:var(--accent-orange); font-weight:bold;">\n>>> PHASE 6/15: EINSATZ-TRESOR (Code: 10) <<<</span>');
-      setPlaceholder("Tippe 10...");
-    }
-    function startFire7EasyJammer() {
-      currentPhase = 7; requiredKeys = ['F', 'U', 'N']; currentKeyIndex = 0;
-      printChat('<span style="color:var(--accent-orange); font-weight:bold;">\n>>> PHASE 7/15: FUNK JAMMER (Combo: F - U - N) <<<</span>');
-      runMultiKeyPhase("Funk Gehackt!", startFire8EasyGate, startFire7EasyJammer);
-    }
-    function startFire8EasyGate() {
-      currentPhase = 8; requiredKeys = ['T', 'O', 'R']; currentKeyIndex = 0;
-      printChat('<span style="color:var(--accent-orange); font-weight:bold;">\n>>> PHASE 8/15: HALLENTOR OVERRIDE (Combo: T - O - R) <<<</span>');
-      runMultiKeyPhase("Tore offen!", startFire9EasyGps, startFire8EasyGate);
-    }
-    function startFire9EasyGps() {
-      currentPhase = 9; requiredKeys = ['G', 'P', 'S']; currentKeyIndex = 0;
-      printChat('<span style="color:var(--accent-orange); font-weight:bold;">\n>>> PHASE 9/15: WAGEN TRACKER (Combo: G - P - S) <<<</span>');
-      runMultiKeyPhase("Gps umgeleitet!", promptContinueFire, startFire9EasyGps);
-    }
-    function promptContinueFire() {
-      userBalance += 2000; updateBalance();
-      printChat('<span style="color:var(--accent-orange); font-weight:bold; font-size:13px;">\n>>> PHASE 9 ERFOLGREICH! +2.000$! <<<\nWEITERMACHEN BIS PHASE 15? (JA / NEIN)</span>');
-      setPlaceholder("JA oder NEIN...");
-    }
-    function startFire11Sat() {
-      currentPhase = 11; targetLaserAngle = 50;
-      printChat('<span style="color:var(--accent-orange); font-weight:bold;">\n>>> PHASE 11/15: WETTER SATELLIT (Winkel: 50) <<<</span>');
-      setPlaceholder("Tippe 50...");
-    }
-    function startFire12Hydrant() {
-      currentPhase = 12; masterVaultCode = 22;
-      printChat('<span style="color:var(--accent-orange); font-weight:bold;">\n>>> PHASE 12/15: HYDRANTEN NETZ (Code: 22) <<<</span>');
-      setPlaceholder("Tippe 22...");
-    }
-    function startFire13ChiefScan() {
-      currentPhase = 13; requiredKeys = ['S', 'O', 'S']; currentKeyIndex = 0;
-      printChat('<span style="color:var(--accent-orange); font-weight:bold;">\n>>> PHASE 13/15: CHEF SCAN (Combo: S - O - S) <<<</span>');
-      runMultiKeyPhase("Chef Bypass!", startFire14Power, startFire13ChiefScan);
-    }
-    function startFire14Power() {
-      currentPhase = 14; requiredKeys = ['A', 'U', 'S']; currentKeyIndex = 0;
-      printChat('<span style="color:var(--accent-orange); font-weight:bold;">\n>>> PHASE 14/15: STROM AUS (Combo: A - U - S) <<<</span>');
-      runMultiKeyPhase("Strom Aus!", startPhase15FinalCoreHack, startFire14Power);
-    }
+    // LEVEL 3
+    function startFire1Stream() { isAwaitingEnter = false; isProcessingHack = true; printChat('<span style="color:var(--accent-orange); font-weight:bold;">>>> LEVEL 3 - PHASE 1/15: FEUERWEHR LEITSTELLE <<<</span>'); runStreamAnimation(5, startFire2EasyCrack); }
+    function startFire2EasyCrack() { currentPhase = 2; printChat('<span style="color:var(--accent-orange); font-weight:bold;">\n>>> PHASE 2/15: NOTRUF-SERVER BRUTE-FORCE <<<</span>'); runBruteForceAnimation(4, startFire3EasyPin); }
+    function startFire3EasyPin() { currentPhase = 3; secretCode = [1, 2]; currentDigitIndex = 0; printChat('<span style="color:var(--accent-orange); font-weight:bold;">\n>>> PHASE 3/15: SIRENEN PIN (Einfach: Zahl 1 & 2) <<<</span>'); setPlaceholder("Tippe 1..."); }
+    function startFire4EasyPressure() { currentPhase = 4; targetLaserAngle = 100; printChat('<span style="color:var(--accent-orange); font-weight:bold;">\n>>> PHASE 4/15: WASSERDRUCK (Ziel: 100 Bar) <<<</span>'); setPlaceholder("Tippe 100..."); }
+    function startFire5EasyScan() { currentPhase = 5; printChat('<span style="color:var(--accent-orange); font-weight:bold;">\n>>> PHASE 5/15: LEITSTELLEN SCAN (Code: 112) <<<</span>'); setPlaceholder("Tippe 112..."); }
+    function startFire6EasyVault() { currentPhase = 6; masterVaultCode = 10; printChat('<span style="color:var(--accent-orange); font-weight:bold;">\n>>> PHASE 6/15: EINSATZ-TRESOR (Code: 10) <<<</span>'); setPlaceholder("Tippe 10..."); }
+    function startFire7EasyJammer() { currentPhase = 7; requiredKeys = ['F', 'U', 'N']; currentKeyIndex = 0; printChat('<span style="color:var(--accent-orange); font-weight:bold;">\n>>> PHASE 7/15: FUNK JAMMER (Combo: F - U - N) <<<</span>'); runMultiKeyPhase("Funk Gehackt!", startFire8EasyGate, startFire7EasyJammer); }
+    function startFire8EasyGate() { currentPhase = 8; requiredKeys = ['T', 'O', 'R']; currentKeyIndex = 0; printChat('<span style="color:var(--accent-orange); font-weight:bold;">\n>>> PHASE 8/15: HALLENTOR OVERRIDE (Combo: T - O - R) <<<</span>'); runMultiKeyPhase("Tore offen!", startFire9EasyGps, startFire8EasyGate); }
+    function startFire9EasyGps() { currentPhase = 9; requiredKeys = ['G', 'P', 'S']; currentKeyIndex = 0; printChat('<span style="color:var(--accent-orange); font-weight:bold;">\n>>> PHASE 9/15: WAGEN TRACKER (Combo: G - P - S) <<<</span>'); runMultiKeyPhase("Gps umgeleitet!", promptContinueFire, startFire9EasyGps); }
+    function promptContinueFire() { userBalance += 2000; updateBalance(); printChat('<span style="color:var(--accent-orange); font-weight:bold; font-size:13px;">\n>>> PHASE 9 ERFOLGREICH! +2.000$! <<<\nWEITERMACHEN BIS PHASE 15? (JA / NEIN)</span>'); setPlaceholder("JA oder NEIN..."); }
+    function startFire11Sat() { currentPhase = 11; targetLaserAngle = 50; printChat('<span style="color:var(--accent-orange); font-weight:bold;">\n>>> PHASE 11/15: WETTER SATELLIT (Winkel: 50) <<<</span>'); setPlaceholder("Tippe 50..."); }
+    function startFire12Hydrant() { currentPhase = 12; masterVaultCode = 22; printChat('<span style="color:var(--accent-orange); font-weight:bold;">\n>>> PHASE 12/15: HYDRANTEN NETZ (Code: 22) <<<</span>'); setPlaceholder("Tippe 22..."); }
+    function startFire13ChiefScan() { currentPhase = 13; requiredKeys = ['S', 'O', 'S']; currentKeyIndex = 0; printChat('<span style="color:var(--accent-orange); font-weight:bold;">\n>>> PHASE 13/15: CHEF SCAN (Combo: S - O - S) <<<</span>'); runMultiKeyPhase("Chef Bypass!", startFire14Power, startFire13ChiefScan); }
+    function startFire14Power() { currentPhase = 14; requiredKeys = ['A', 'U', 'S']; currentKeyIndex = 0; printChat('<span style="color:var(--accent-orange); font-weight:bold;">\n>>> PHASE 14/15: STROM AUS (Combo: A - U - S) <<<</span>'); runMultiKeyPhase("Strom Aus!", startPhase15FinalCoreHack, startFire14Power); }
+
+    // LEVEL 4 (ENDBOSS)
+    function startBoss1Stream() { isAwaitingEnter = false; isProcessingHack = true; printChat('<span style="color:var(--accent-purple); font-weight:bold;">>>> LEVEL 4 - PHASE 1/15: GLOBAL MAINFRAME ENDBOSS <<<</span>'); runStreamAnimation(12, startBoss2BruteForce); }
+    function startBoss2BruteForce() { currentPhase = 2; printChat('<span style="color:#ef4444; font-weight:bold;">\n>>> PHASE 2/15: OMEGA CORE BRUTE-FORCE <<<</span>'); runBruteForceAnimation(10, startBoss3Pin); }
+    function startBoss3Pin() { currentPhase = 3; secretCode = [Math.floor(Math.random() * 20) + 1, Math.floor(Math.random() * 20) + 1]; currentDigitIndex = 0; printChat('<span style="color:var(--accent-purple); font-weight:bold;">\n>>> PHASE 3/15: OMEGA PIN (2 ZAHLEN 1-20) <<<</span>'); setPlaceholder("Errate Zahl 1 (1-20)..."); }
+    function startBoss4Laser() { currentPhase = 4; targetLaserAngle = Math.floor(Math.random() * 360) + 1; printChat('<span style="color:#f59e0b; font-weight:bold;">\n>>> PHASE 4/15: ANOMALIE-LASER (1-360°) <<<</span>'); setPlaceholder("Winkel (1-360)..."); }
+    function startBoss5Scan() { currentPhase = 5; printChat('<span style="color:#ef4444; font-weight:bold;">\n>>> PHASE 5/15: GENOME SCAN (Code: BOSS99) <<<</span>'); setPlaceholder("Tippe BOSS99..."); }
+    function startBoss6Vault() { currentPhase = 6; masterVaultCode = Math.floor(Math.random() * 100) + 1; printChat('<span style="color:var(--accent-purple); font-weight:bold;">\n>>> PHASE 6/15: ENDBOSS-VAULT (1-100) <<<</span>'); setPlaceholder("Code (1-100)..."); }
+    function startBoss7Jammer() { currentPhase = 7; requiredKeys = ['B', 'O', 'S', 'S']; currentKeyIndex = 0; printChat('<span style="color:#f59e0b; font-weight:bold;">\n>>> PHASE 7/15: QUANTUM JAMMER (Combo: B - O - S - S) <<<</span>'); runMultiKeyPhase("Signal überlagert!", startBoss8Override, startBoss7Jammer); }
+    function startBoss8Override() { currentPhase = 8; requiredKeys = ['K', 'I', 'N', 'G']; currentKeyIndex = 0; printChat('<span style="color:#ef4444; font-weight:bold;">\n>>> PHASE 8/15: GLOBAL OVERRIDE (Combo: K - I - N - G) <<<</span>'); runMultiKeyPhase("System gehackt!", startBoss9Gps, startBoss8Override); }
+    function startBoss9Gps() { currentPhase = 9; requiredKeys = ['O', 'M', 'E', 'G', 'A']; currentKeyIndex = 0; printChat('<span style="color:var(--accent-purple); font-weight:bold;">\n>>> PHASE 9/15: GPS BLACKOUT (Combo: O - M - E - G - A) <<<</span>'); runMultiKeyPhase("Gps Aus!", promptContinueBoss, startBoss9Gps); }
+    function promptContinueBoss() { userBalance += 10000; updateBalance(); printChat('<span style="color:var(--accent-purple); font-weight:bold; font-size:13px;">\n>>> PHASE 9 ERFOLGREICH! +10.000$ BOSS-BELOHNUNG! <<<\nWEITERMACHEN BIS ZUM ABSOLUTEN ENDE? (JA / NEIN)</span>'); setPlaceholder("JA oder NEIN..."); }
+    function startBoss11Sat() { currentPhase = 11; targetLaserAngle = Math.floor(Math.random() * 360) + 1; printChat('<span style="color:#f59e0b; font-weight:bold;">\n>>> PHASE 11/15: ORBITAL SATELLIT (1-360°) <<<</span>'); setPlaceholder("Winkel (1-360)..."); }
+    function startBoss12Code() { currentPhase = 12; masterVaultCode = Math.floor(Math.random() * 150) + 1; printChat('<span style="color:var(--accent-purple); font-weight:bold;">\n>>> PHASE 12/15: ULTRA QUANTUM CODE (1-150) <<<</span>'); setPlaceholder("Code (1-150)..."); }
+    function startBoss13Scan() { currentPhase = 13; requiredKeys = ['X', 'Y', 'Z', '9']; currentKeyIndex = 0; printChat('<span style="color:#ef4444; font-weight:bold;">\n>>> PHASE 13/15: CHEF BIOMETRIE (Combo: X - Y - Z - 9) <<<</span>'); runMultiKeyPhase("Scan OK!", startBoss14Power, startBoss13Scan); }
+    function startBoss14Power() { currentPhase = 14; requiredKeys = ['N', 'U', 'K', 'E']; currentKeyIndex = 0; printChat('<span style="color:#f59e0b; font-weight:bold;">\n>>> PHASE 14/15: GLOBAL POWER SHUTDOWN (Combo: N - U - K - E) <<<</span>'); runMultiKeyPhase("Netz zusammengebrochen!", startPhase15FinalCoreHack, startBoss14Power); }
 
     function startHosp11SatLink() { currentPhase = 11; targetLaserAngle = Math.floor(Math.random() * 360) + 1; printChat('<span style="color:#f59e0b; font-weight:bold;">\n>>> PHASE 11/15: SATELLIT (1-360°) <<<</span>'); setPlaceholder("Ausrichtung (1-360)..."); }
     function startHosp12LabCode() { currentPhase = 12; masterVaultCode = Math.floor(Math.random() * 100) + 1; printChat('<span style="color:#06b6d4; font-weight:bold;">\n>>> PHASE 12/15: LABOR SCHLÜSSEL (1-100) <<<</span>'); setPlaceholder("Code (1-100)..."); }
@@ -662,7 +570,8 @@
           if (currentDigitIndex >= 2) {
             if (selectedLevel === 1) startPhase4LaserBypass(); 
             else if (selectedLevel === 2) startHosp4OpLaser();
-            else startFire4EasyPressure();
+            else if (selectedLevel === 3) startFire4EasyPressure();
+            else startBoss4Laser();
           }
         } else if (g < target) { printChat('<span style="color:#ef4444;">[PIN]: ZU NIEDRIG!</span>'); }
         else { printChat('<span style="color:#ef4444;">[PIN]: ZU HOCH!</span>'); }
@@ -672,16 +581,18 @@
         if (angle === targetLaserAngle) {
           if (selectedLevel === 1) startPhase5DnaBypass(); 
           else if (selectedLevel === 2) startHosp5BloodDna();
-          else startFire5EasyScan();
+          else if (selectedLevel === 3) startFire5EasyScan();
+          else startBoss5Scan();
         } else if (angle < targetLaserAngle) { printChat('<span style="color:#f59e0b;">[WINKEL]: ZU NIEDRIG!</span>'); }
         else { printChat('<span style="color:#f59e0b;">[WINKEL]: ZU HOCH!</span>'); }
 
       } else if (currentPhase === 5) {
-        var req = selectedLevel === 3 ? "112" : (selectedLevel === 2 ? "MED1" : "AAAA");
+        var req = selectedLevel === 4 ? "BOSS99" : (selectedLevel === 3 ? "112" : (selectedLevel === 2 ? "MED1" : "AAAA"));
         if (val.toUpperCase() === req) {
           if (selectedLevel === 1) startPhase6MasterVault(); 
           else if (selectedLevel === 2) startHosp6PharmaVault();
-          else startFire6EasyVault();
+          else if (selectedLevel === 3) startFire6EasyVault();
+          else startBoss6Vault();
         } else { printChat('<span style="color:#ef4444;">[SCAN]: FALSCH! Tippe ' + req + '!</span>'); }
 
       } else if (currentPhase === 6) {
@@ -689,7 +600,8 @@
         if (mG === masterVaultCode) {
           if (selectedLevel === 1) startPhase7WlanJammer(); 
           else if (selectedLevel === 2) startHosp7DefibrillatorJammer();
-          else startFire7EasyJammer();
+          else if (selectedLevel === 3) startFire7EasyJammer();
+          else startBoss7Jammer();
         } else if (mG < masterVaultCode) { printChat('<span style="color:#ef4444;">[TRESOR]: ZU NIEDRIG!</span>'); }
         else { printChat('<span style="color:#ef4444;">[TRESOR]: ZU HOCH!</span>'); }
 
@@ -697,7 +609,8 @@
         if (val.toLowerCase() === "ja") {
           if (selectedLevel === 1) startPhase10AiFirewall(); 
           else if (selectedLevel === 2) startHosp11SatLink();
-          else startFire11Sat();
+          else if (selectedLevel === 3) startFire11Sat();
+          else startBoss11Sat();
         } else {
           printChat('<span style="color:#ef4444;">[SYSTEM]: Beendet mit Beute.</span>');
         }
@@ -713,7 +626,8 @@
         if (sA === targetLaserAngle) {
           if (selectedLevel === 1) startPhase12QuantumDecryption(); 
           else if (selectedLevel === 2) startHosp12LabCode();
-          else startFire12Hydrant();
+          else if (selectedLevel === 3) startFire12Hydrant();
+          else startBoss12Code();
         } else if (sA < targetLaserAngle) { printChat('<span style="color:#f59e0b;">[SATELLIT]: ZU NIEDRIG!</span>'); }
         else { printChat('<span style="color:#f59e0b;">[SATELLIT]: ZU HOCH!</span>'); }
 
@@ -722,7 +636,8 @@
         if (qG === masterVaultCode) {
           if (selectedLevel === 1) startPhase13EyeBiometrics(); 
           else if (selectedLevel === 2) startHosp13SurgeonBiometrics();
-          else startFire13ChiefScan();
+          else if (selectedLevel === 3) startFire13ChiefScan();
+          else startBoss13Scan();
         } else if (qG < masterVaultCode) { printChat('<span style="color:#ef4444;">[CODE]: ZU NIEDRIG!</span>'); }
         else { printChat('<span style="color:#ef4444;">[CODE]: ZU HOCH!</span>'); }
       }
@@ -767,9 +682,9 @@
       }, 1000);
     }
 
-    // FINALE + ENDGAME LAUNCH
+    // FINALE & ENDGAME
     function triggerSystemDestructionAndReboot() {
-      userBalance += selectedLevel === 3 ? 5000 : (selectedLevel === 2 ? 15000 : 10000);
+      userBalance += selectedLevel === 4 ? 25000 : (selectedLevel === 3 ? 5000 : (selectedLevel === 2 ? 15000 : 10000));
       updateBalance();
 
       var blackOverlay = document.getElementById("blackscreenOverlay");
@@ -779,9 +694,9 @@
       blackText.innerHTML = "SYSTEM DURCHGESPIELT! HAUPTSPIEL GEWONNEN...<br>";
 
       var lines = [
-        "DU HAST SYSTEM " + selectedLevel + " VOLLSTÄNDIG GEKNACKT!",
-        "INITIALISIERE PROTOTYPEN ENDGAME MODUS...",
-        "WARNING: ANDERE HACKER VERSUCHEN NUN DICH ZU HACKEN!"
+        "DU HAST LEVEL " + selectedLevel + " VOLLSTÄNDIG GEKNACKT!",
+        "INITIALISIERE ENDGAME VERTEIDIGUNGS-MODUS...",
+        "WARNUNG: FEINDLICHE HACKER GREIFEN DICH JETZT AN!"
       ];
       var idx = 0;
       var printInterval = setInterval(function() {
@@ -804,12 +719,12 @@
       }, 800);
     }
 
-    // ENDGAME ENGINE
+    // ENDGAME
     function startEndgameMode() {
       isEndgameActive = true;
       systemHealth = 100;
       document.getElementById("wordCounter").innerText = "HP: 100%";
-      printChat('<span style="color:#ef4444; font-weight:bold; font-size:14px;">\n=========================================\n🚨 ENDGAME STATUS: VERTEIDIGE DEINE DATING-LOGS! 🚨\nFremde Hacker greifen dein System an!\nVerwende Abwehrbefehle, um Angriffe zu stoppen!\n=========================================</span>');
+      printChat('<span style="color:#ef4444; font-weight:bold; font-size:14px;">\n=========================================\n🚨 ENDGAME STATUS: VERTEIDIGE DICH! 🚨\nFremde Hacker greifen dein System an!\nNutze Abwehrbefehle, um dich zu schützen!\n=========================================</span>');
       
       triggerNextEndgameAttack();
     }
@@ -873,7 +788,8 @@
     function launchTerminal() {
       if (selectedLevel === 1) document.getElementById('currentLevelName').innerText = "LEVEL 1: TRESOR";
       else if (selectedLevel === 2) document.getElementById('currentLevelName').innerText = "LEVEL 2: KRANKENHAUS";
-      else document.getElementById('currentLevelName').innerText = "LEVEL 3: FEUERWEHR";
+      else if (selectedLevel === 3) document.getElementById('currentLevelName').innerText = "LEVEL 3: FEUERWEHR";
+      else document.getElementById('currentLevelName').innerText = "LEVEL 4: ENDBOSS";
 
       if (startFaction === 'good') {
         document.getElementById('bodyTag').className = 'theme-good';
@@ -892,7 +808,7 @@
       document.getElementById("wordCounter").innerText = "0 / 60";
       setPlaceholder("Tippen zum Hacken...");
       
-      printChat('[SYSTEM v35.0]: Bereit! Tippe auf das Feld oder den Button...');
+      printChat('[SYSTEM v36.0]: Bereit! Tippe auf das Feld oder den Button...');
     }
 
     function closeTerminal() {
@@ -919,14 +835,14 @@
       var canvas = document.getElementById('matrixCanvas');
       var mCtx = canvas.getContext('2d');
       canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-      var chars = selectedLevel === 3 ? 'FEUERWEHR112SOS' : (selectedLevel === 2 ? 'MEDICINE0123456789' : '0123456789ABCDEF');
+      var chars = selectedLevel === 4 ? 'OMEGACORE999' : (selectedLevel === 3 ? 'FEUERWEHR112SOS' : (selectedLevel === 2 ? 'MEDICINE0123456789' : '0123456789ABCDEF'));
       var drops = Array(Math.floor(canvas.width / 14)).fill(1);
 
       if (matrixInterval) clearInterval(matrixInterval);
       matrixInterval = setInterval(function() {
         mCtx.fillStyle = startFaction === 'good' ? 'rgba(248, 250, 252, 0.1)' : 'rgba(0, 0, 0, 0.05)';
         mCtx.fillRect(0, 0, canvas.width, canvas.height);
-        mCtx.fillStyle = selectedLevel === 3 ? '#f97316' : (selectedLevel === 2 ? '#06b6d4' : (startFaction === 'good' ? '#2563eb' : '#10b981'));
+        mCtx.fillStyle = selectedLevel === 4 ? '#a855f7' : (selectedLevel === 3 ? '#f97316' : (selectedLevel === 2 ? '#06b6d4' : (startFaction === 'good' ? '#2563eb' : '#10b981')));
         mCtx.font = '14px monospace';
         for (var i = 0; i < drops.length; i++) {
           mCtx.fillText(chars[Math.floor(Math.random() * chars.length)], i * 14, drops[i] * 14);
