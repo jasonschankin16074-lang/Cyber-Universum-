@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Cyber Universe v33.0 - iPad & Touch Ready</title>
+  <title>Cyber Universe v34.0</title>
   <style>
     :root {
       --bg: #030508;
@@ -96,8 +96,8 @@
     .close-btn { background: transparent; border: 1px solid var(--accent-red); color: var(--accent-red); padding: 4px 8px; cursor: pointer; border-radius: 4px; }
     
     .admin-burger-btn {
-      background: rgba(255,255,255,0.1); border: 1px solid var(--border); color: #fff;
-      padding: 4px 12px; cursor: pointer; border-radius: 4px; font-size: 16px; font-weight:bold;
+      background: rgba(255,255,255,0.05); border: 1px solid transparent; color: #fff;
+      padding: 4px 10px; cursor: pointer; border-radius: 4px; font-size: 16px; font-weight:bold;
     }
 
     .admin-modal {
@@ -132,7 +132,7 @@
 <body id="bodyTag">
 
   <div class="start-dashboard">
-    <h2 class="rainbow-text">// CYBER UNIVERSE v33.0 - TOUCH & IPAD OPTIMIZED</h2>
+    <h2 class="rainbow-text">// CYBER UNIVERSE v34.0</h2>
 
     <label style="font-size: 11px; font-weight: bold; color: var(--text-muted); margin-top:8px; display:block;">1. SZENARIO WÄHLEN:</label>
     <div class="level-selector">
@@ -151,7 +151,7 @@
     <div class="faction-selector">
       <div class="select-card active-evil" id="cardEvil" onclick="selectStartFaction('evil')">
         <h3 style="color: var(--accent-red); font-size:14px;">💻 ANGRIFF</h3>
-        <p style="font-size: 10px; color: var(--text-muted); margin-top: 3px;">Inklusive Admin Panel (☰)</p>
+        <p style="font-size: 10px; color: var(--text-muted); margin-top: 3px;">15 Phasen Heist</p>
       </div>
 
       <div class="select-card" id="cardGood" onclick="selectStartFaction('good')">
@@ -172,7 +172,7 @@
       </div>
 
       <div class="dash-header">
-        <span id="terminalTitle" class="rainbow-text">CYBER_UNIVERSE v33.0</span>
+        <span id="terminalTitle" class="rainbow-text">CYBER_UNIVERSE v34.0</span>
         <div class="header-controls">
           <button class="admin-burger-btn" onclick="toggleAdminPanel()">☰</button>
           <button class="close-btn" onclick="closeTerminal()">[X]</button>
@@ -180,10 +180,10 @@
       </div>
       
       <div class="admin-modal" id="adminModal">
-        <h4>🔐 GEHEIMES ADMIN PANEL</h4>
+        <h4>🔐 SYSTEM ADMIN PANEL</h4>
         <div id="adminAuthBox">
-          <input type="password" id="adminPasswordInput" placeholder="Passwort (123)...">
-          <button onclick="verifyAdminPassword()">FREISCHALTEN</button>
+          <input type="password" id="adminPasswordInput" placeholder="Passwort eingeben...">
+          <button onclick="verifyAdminPassword()">ANMELDEN</button>
         </div>
         <div id="adminControlsBox" style="display:none;">
           <label style="font-size: 10px; color: var(--text-muted); display:block; margin-bottom: 4px;">TELEPORT PHASEN:</label>
@@ -272,14 +272,14 @@
       if (input === adminPassword) {
         document.getElementById("adminAuthBox").style.display = "none";
         document.getElementById("adminControlsBox").style.display = "block";
-        printChat('<span style="color:var(--accent-yellow); font-weight:bold;">[ADMIN]: ZUGRIFF GEWÄHRT!</span>');
-      } else { alert("Falsches Passwort!"); }
+        printChat('<span style="color:var(--accent-yellow); font-weight:bold;">[ADMIN ZUGRIFF BEWILLIGT]</span>');
+      } else { alert("Zugriff Verweigert!"); }
     }
 
     function jumpToSelectedPhase() {
       var targetPhase = parseInt(document.getElementById("phaseSelect").value);
       if (qteInterval) clearInterval(qteInterval);
-      printChat('<span style="color:var(--accent-yellow); font-weight:bold;">\n[ADMIN TELEPORT]: Springe zu Phase ' + targetPhase + '...</span>');
+      printChat('<span style="color:var(--accent-yellow); font-weight:bold;">\n[TELEPORT]: Springe zu Phase ' + targetPhase + '...</span>');
       startPhaseDirectly(targetPhase);
       toggleAdminPanel();
     }
@@ -332,7 +332,6 @@
       return b;
     }
 
-    // IPAD & TOUCH HANDLING FÜR PHASE 1
     function doTapHack() {
       if (currentPhase === 1 && !isProcessingHack) {
         if (!isAwaitingEnter) {
@@ -370,7 +369,6 @@
     document.addEventListener("keydown", function(e) {
       if (document.getElementById("hackerOverlay").style.display !== "flex") return;
 
-      // QTE Key handling
       if ((currentPhase >= 7 && currentPhase <= 9) || (currentPhase >= 13 && currentPhase <= 14)) {
         if (requiredKeys.length > 0 && currentKeyIndex < requiredKeys.length) {
           if (e.key.toLowerCase() === requiredKeys[currentKeyIndex].toLowerCase()) {
@@ -386,7 +384,6 @@
       }
     });
 
-    // LEVEL 1 LOGIK
     function startPhase1Stream() {
       isAwaitingEnter = false; isProcessingHack = true;
       printChat('<span style="color:var(--accent-yellow); font-weight:bold;">>>> LEVEL 1 - PHASE 1/15: TRESOR-NETZWERK <<<</span>');
@@ -438,7 +435,6 @@
       setPlaceholder("JA oder NEIN...");
     }
 
-    // LEVEL 2 LOGIK (KRANKENHAUS)
     function startHosp1Stream() {
       isAwaitingEnter = false; isProcessingHack = true;
       printChat('<span style="color:#06b6d4; font-weight:bold;">>>> LEVEL 2 - PHASE 1/15: KLINIK-NETZWERK BYPASS <<<</span>');
@@ -510,7 +506,6 @@
       runMultiKeyPhase("Strom aus!", startPhase15FinalCoreHack, startHosp14GeneratorShutdown);
     }
 
-    // SPÄTE PHASEN & KERN
     function startPhase10AiFirewall() {
       currentPhase = 10; secretCode = [Math.floor(Math.random() * 20) + 1];
       printChat('<span style="color:#ef4444; font-weight:bold;">\n>>> PHASE 10/15: KI-FEUERWALL (1-20) <<<</span>');
@@ -543,7 +538,6 @@
       setPlaceholder("Tippe 'a'...");
     }
 
-    // INTERAKTIONS-VERARBEITUNG
     function handlePhaseInput(val) {
       if (currentPhase === 15) {
         if (awaitingFinalEnter) {
@@ -591,8 +585,8 @@
         var angle = parseInt(val);
         if (angle === targetLaserAngle) {
           if (selectedLevel === 1) startPhase5DnaBypass(); else startHosp5BloodDna();
-        } else if (angle < targetLaserAngle) { printChat('<span style="color:#f59e0b;">[LASER]: ZU NIEDRIG / KLEIN! nach RECHTS drehen!</span>'); }
-        else { printChat('<span style="color:#f59e0b;">[LASER]: ZU HOCH / GROSS! nach LINKS drehen!</span>'); }
+        } else if (angle < targetLaserAngle) { printChat('<span style="color:#f59e0b;">[LASER]: ZU NIEDRIG! Nach RECHTS drehen!</span>'); }
+        else { printChat('<span style="color:#f59e0b;">[LASER]: ZU HOCH! Nach LINKS drehen!</span>'); }
 
       } else if (currentPhase === 5) {
         var req = selectedLevel === 2 ? "MED1" : "AAAA";
@@ -737,7 +731,7 @@
       document.getElementById("wordCounter").innerText = "0 / 60";
       setPlaceholder("Tippen zum Hacken...");
       
-      printChat('[SYSTEM v33.0]: Bereit! Tippe auf das Feld oder den "TIPPEN"-Button...');
+      printChat('[SYSTEM v34.0]: Bereit! Tippe auf das Feld oder den Button...');
     }
 
     function closeTerminal() {
