@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cyber Universe v22.0 - 6-Phase Ultimate Vault Heist</title>
+  <title>Cyber Universe v23.0 - 9-Phase Stealth Heist</title>
   <style>
     :root {
       --bg: #030508;
@@ -97,18 +97,18 @@
 <body id="bodyTag">
 
   <div class="start-dashboard">
-    <h2 class="rainbow-text">// CYBER UNIVERSE v22.0 - 6-PHASEN TRESOR-HEIST</h2>
-    <p style="color: var(--text-muted); margin-top: 4px;">Meistere alle 6 Abschnitte für die ultimative Beute:</p>
+    <h2 class="rainbow-text">// CYBER UNIVERSE v23.0 - 9-PHASEN STEALTH HEIST</h2>
+    <p style="color: var(--text-muted); margin-top: 4px;">Tresor knacken & Spuren verwischen:</p>
 
     <div class="faction-selector">
       <div class="faction-card active-evil" id="cardEvil" onclick="selectStartFaction('evil')">
-        <h3 style="color: var(--accent-red);">💻 BÖSE SEITE (6-PHASEN HEIST)</h3>
-        <p style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">Stream -> Crack -> PIN -> Laser -> DNA -> Mastercode -> 1.000$!</p>
+        <h3 style="color: var(--accent-red);">💻 BÖSE SEITE (9 PHASEN HEIST)</h3>
+        <p style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">Tresor knacken -> WLAN aus -> Security hacken -> Anti-Standort -> 2.500$!</p>
       </div>
 
       <div class="faction-card" id="cardGood" onclick="selectStartFaction('good')">
-        <h3 style="color: #2563eb;">🛡️ GUTE SEITE (6-PHASEN ABWEHR)</h3>
-        <p style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">Schütze den Tresor durch Lösen aller 6 Phasen -> 1.000$ Gehalt!</p>
+        <h3 style="color: #2563eb;">🛡️ GUTE SEITE (9 PHASEN ABWEHR)</h3>
+        <p style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">Schütze das System & die Infrastruktur in allen 9 Phasen -> 2.500$ Gehalt!</p>
       </div>
     </div>
 
@@ -133,7 +133,7 @@
 
           <div class="chat-box">
             <div style="font-weight:bold; margin-bottom:8px; border-bottom:1px dashed var(--border); padding-bottom:4px; font-size:11px;">
-              // LIVE TERMINAL STREAM & 6-PHASE PROTOCOL
+              // LIVE TERMINAL STREAM & 9-PHASE PROTOCOL
             </div>
             <div class="chat-messages" id="chatOutput"></div>
 
@@ -157,7 +157,7 @@
     var isProcessingHack = false;
     var activeTypingLine = null;
 
-    // Phasen-Steuerung (1 bis 6)
+    // Phasen-Steuerung (1 bis 9)
     var currentPhase = 1;
 
     // Phase 3 Data
@@ -172,6 +172,16 @@
 
     // Phase 6 Data
     var masterVaultCode = 0;
+
+    // Phase 7 Data (WLAN Jammer)
+    var targetWlanFreq = 0;
+
+    // Phase 8 Data (Security Override)
+    var securityColors = ["RED", "BLUE", "GREEN", "YELLOW"];
+    var targetSecurityColor = "";
+
+    // Phase 9 Data (Anti-Standort Virus)
+    var targetLocationOffset = 0;
 
     function saveData() {
       localStorage.setItem('cyber_balance', userBalance);
@@ -233,7 +243,7 @@
       document.getElementById("typeStatus").innerText = "PHASE 1: ZAHLEN-STREAM LÄUFT...";
       document.getElementById("typeStatus").style.color = "#f59e0b";
 
-      printChat('<span style="color:var(--accent-yellow); font-weight:bold;">>>> PHASE 1/6: BYPASS TRESOR-NETZWERK <<<</span>');
+      printChat('<span style="color:var(--accent-yellow); font-weight:bold;">>>> PHASE 1/9: BYPASS TRESOR-NETZWERK <<<</span>');
 
       var durationInSeconds = 20;
       var elapsed = 0;
@@ -261,7 +271,7 @@
       document.getElementById("typeStatus").innerText = "PHASE 2: BRUTE-FORCE CRACKER LÄUFT...";
       document.getElementById("typeStatus").style.color = "#ef4444";
 
-      printChat('<span style="color:#ef4444; font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 2/6: BRUTE-FORCE PASSWORT CRACKER <<<\n========================================</span>');
+      printChat('<span style="color:#ef4444; font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 2/9: BRUTE-FORCE PASSWORT CRACKER <<<\n========================================</span>');
 
       var attempts = 0;
       var maxAttempts = 25;
@@ -279,7 +289,7 @@
       }, 100);
     }
 
-    // PHASE 3: MANUELLER PIN-PAD CODE (4 ZAHLEN VON 1-50)
+    // PHASE 3: MANUELLER PIN-PAD CODE
     function startPhase3ManualGuessing() {
       currentPhase = 3;
       secretCode = [
@@ -293,13 +303,13 @@
       document.getElementById("typeStatus").innerText = "PHASE 3: PIN-PAD SPEER-GEKNACKE";
       document.getElementById("typeStatus").style.color = "var(--accent-main)";
 
-      printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 3/6: TRESOR PIN-PAD (4 ZAHLEN 1-50) <<<\n========================================</span>');
+      printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 3/9: TRESOR PIN-PAD (4 ZAHLEN 1-50) <<<\n========================================</span>');
       printChat('<span style="color:var(--accent-yellow);">-> Errate Zahl 1 von 4:</span>');
 
       showInputField("Zahl eingeben (1-50)...", "number");
     }
 
-    // PHASE 4: LASER-NETZWERK WINKEL (1° bis 360°)
+    // PHASE 4: LASER-NETZWERK WINKEL
     function startPhase4LaserBypass() {
       currentPhase = 4;
       targetLaserAngle = Math.floor(Math.random() * 360) + 1;
@@ -307,13 +317,13 @@
       document.getElementById("typeStatus").innerText = "PHASE 4: LASER-NEUTRALISIERUNG";
       document.getElementById("typeStatus").style.color = "#f59e0b";
 
-      printChat('<span style="color:#f59e0b; font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 4/6: LASER-SCHUTZSCHILD AUSRICHTEN <<<\nFinde den exakten Laser-Winkel (1° bis 360°)!\n========================================</span>');
+      printChat('<span style="color:#f59e0b; font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 4/9: LASER-SCHUTZSCHILD AUSRICHTEN <<<\nFinde den exakten Laser-Winkel (1° bis 360°)!\n========================================</span>');
       printChat('<span style="color:var(--accent-yellow);">-> Gib einen Winkel in Grad ein:</span>');
 
       showInputField("Winkel eingeben (1-360)...", "number");
     }
 
-    // PHASE 5: BIOMETRISCHER DNA-CODE (4 BUCHSTABEN A, C, G, T)
+    // PHASE 5: BIOMETRISCHER DNA-CODE
     function startPhase5DnaBypass() {
       currentPhase = 5;
       var bases = ["A", "C", "G", "T"];
@@ -325,13 +335,13 @@
       document.getElementById("typeStatus").innerText = "PHASE 5: DNA-BIOMETRIE OVERRIDE";
       document.getElementById("typeStatus").style.color = "#ef4444";
 
-      printChat('<span style="color:#ef4444; font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 5/6: DNA-BIOMETRIE-SCANNER BYPASS <<<\nErrate den 4-stelligen Gen-Code aus (A, C, G, T) (z.B. ACGT)!\n========================================</span>');
+      printChat('<span style="color:#ef4444; font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 5/9: DNA-BIOMETRIE-SCANNER BYPASS <<<\nErrate den 4-stelligen Gen-Code aus (A, C, G, T)!\n========================================</span>');
       printChat('<span style="color:var(--accent-yellow);">-> Gib deine DNA-Sequenz ein:</span>');
 
       showInputField("z.B. ATGC...", "text");
     }
 
-    // PHASE 6: MASTER-TRESOR CODE (1 bis 1000)
+    // PHASE 6: MASTER-TRESOR CODE
     function startPhase6MasterVault() {
       currentPhase = 6;
       masterVaultCode = Math.floor(Math.random() * 1000) + 1;
@@ -339,10 +349,52 @@
       document.getElementById("typeStatus").innerText = "PHASE 6: MASTER-TRESOR KOMBINATION";
       document.getElementById("typeStatus").style.color = "var(--accent-main)";
 
-      printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 6/6: DER MASTER-TRESOR TÜRCODE <<<\nErrate die finale Master-Zahl (1 bis 1000)!\n========================================</span>');
+      printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 6/9: DER MASTER-TRESOR TÜRCODE <<<\nErrate die finale Master-Zahl (1 bis 1000)!\n========================================</span>');
       printChat('<span style="color:var(--accent-yellow);">-> Gib deine Vermutung ab:</span>');
 
       showInputField("Mastercode (1-1000)...", "number");
+    }
+
+    // PHASE 7: WLAN JAMMER (STÖRFREQUENZ TUNING)
+    function startPhase7WlanJammer() {
+      currentPhase = 7;
+      targetWlanFreq = Math.floor(Math.random() * 900) + 100; // 100 bis 999 MHz
+
+      document.getElementById("typeStatus").innerText = "PHASE 7: WLAN JAMMER AKTIVIERUNG";
+      document.getElementById("typeStatus"].style.color = "#f59e0b";
+
+      printChat('<span style="color:#f59e0b; font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 7/9: GEBÄUDE-WLAN LAHMLEGEN <<<\nTune die Jammer-Frequenz (100 - 999 MHz) um das Netz zu blockieren!\n========================================</span>');
+      printChat('<span style="color:var(--accent-yellow);">-> Gib eine Störfrequenz in MHz ein:</span>');
+
+      showInputField("Frequenz in MHz (100-999)...", "number");
+    }
+
+    // PHASE 8: SECURITY PROTOKOLL OVERRIDE (SCHLÜSSEL-FARBE)
+    function startPhase8SecurityOverride() {
+      currentPhase = 8;
+      targetSecurityColor = securityColors[Math.floor(Math.random() * securityColors.length)];
+
+      document.getElementById("typeStatus").innerText = "PHASE 8: KAMERA SECURITY BYPASS";
+      document.getElementById("typeStatus").style.color = "#ef4444";
+
+      printChat('<span style="color:#ef4444; font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 8/9: SECURITY & KAMERA OVERRIDE <<<\nErrate das Sicherheits-Protokoll (RED, BLUE, GREEN, YELLOW)!\n========================================</span>');
+      printChat('<span style="color:var(--accent-yellow);">-> Gib die richtige Protokoll-Farbe ein:</span>');
+
+      showInputField("Farbe (RED, BLUE, GREEN, YELLOW)...", "text");
+    }
+
+    // PHASE 9: ANTI-STANDORT VIRUS (GPS SPOOFING)
+    function startPhase9AntiLocationVirus() {
+      currentPhase = 9;
+      targetLocationOffset = Math.floor(Math.random() * 100) + 1;
+
+      document.getElementById("typeStatus").innerText = "PHASE 9: ANTI-STANDORT VIRUS DEPLOY";
+      document.getElementById("typeStatus").style.color = "var(--accent-main)";
+
+      printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 9/9: ANTI-STANDORT-ERKENNUNG (VIRUS) <<<\nStelle die GPS-Koordinaten-Verschiebung (1 bis 100) ein!\n========================================</span>');
+      printChat('<span style="color:var(--accent-yellow);">-> Gib den GPS-Offset-Wert ein:</span>');
+
+      showInputField("GPS-Offset (1-100)...", "number");
     }
 
     // HANDLER FÜR ALLE INTERAKTIVEN INPUTS
@@ -359,7 +411,7 @@
         var targetNum = secretCode[currentDigitIndex];
 
         if (guess === targetNum) {
-          printChat('<span style="color:var(--accent-main); font-weight:bold;">[PIN_PAD]: ' + guess + ' IST KORREKT! Digit ' + (currentDigitIndex + 1) + ' entsperrt!</span>');
+          printChat('<span style="color:var(--accent-main); font-weight:bold;">[PIN_PAD]: ' + guess + ' KORREKT! Digit ' + (currentDigitIndex + 1) + ' entsperrt!</span>');
           currentDigitIndex++;
 
           if (currentDigitIndex >= 4) {
@@ -383,9 +435,9 @@
           hideInputField();
           startPhase5DnaBypass();
         } else if (angle < targetLaserAngle) {
-          printChat('<span style="color:#f59e0b;">[LASER]: ' + angle + '° - WINKEL ZU KLEIN! Drehe weiter nach RECHTS!</span>');
+          printChat('<span style="color:#f59e0b;">[LASER]: ' + angle + '° - ZU KLEIN! Drehe weiter nach RECHTS!</span>');
         } else {
-          printChat('<span style="color:#f59e0b;">[LASER]: ' + angle + '° - WINKEL ZU GROSS! Drehe weiter nach LINKS!</span>');
+          printChat('<span style="color:#f59e0b;">[LASER]: ' + angle + '° - ZU GROSS! Drehe weiter nach LINKS!</span>');
         }
 
       } else if (currentPhase === 5) {
@@ -401,7 +453,7 @@
           for (var i = 0; i < Math.min(dnaGuess.length, 4); i++) {
             if (dnaGuess[i] === targetDnaSequence[i]) correctCount++;
           }
-          printChat('<span style="color:#ef4444;">[DNA_SCAN]: ' + dnaGuess + ' -> DENIED! (' + correctCount + ' von 4 Basen an richtiger Position)</span>');
+          printChat('<span style="color:#ef4444;">[DNA_SCAN]: ' + dnaGuess + ' -> DENIED! (' + correctCount + ' von 4 Basen korrekt)</span>');
         }
 
       } else if (currentPhase === 6) {
@@ -409,14 +461,54 @@
         var masterGuess = parseInt(val);
 
         if (masterGuess === masterVaultCode) {
+          printChat('<span style="color:var(--accent-main); font-weight:bold;">[MASTER_VAULT]: TRESOR-TÜR AUSGEHEBELT!</span>');
+          hideInputField();
+          startPhase7WlanJammer();
+        } else if (masterGuess < masterVaultCode) {
+          printChat('<span style="color:#ef4444;">[MASTER_VAULT]: Code ' + masterGuess + ' -> ZU NIEDRIG!</span>');
+        } else {
+          printChat('<span style="color:#ef4444;">[MASTER_VAULT]: Code ' + masterGuess + ' -> ZU HOCH!</span>');
+        }
+
+      } else if (currentPhase === 7) {
+        // WLAN JAMMER LOGIK
+        var freqGuess = parseInt(val);
+
+        if (freqGuess === targetWlanFreq) {
+          printChat('<span style="color:var(--accent-main); font-weight:bold;">[JAMMER]: FREQUENZ ' + freqGuess + ' MHz GEFUNDEN! WLAN TOTALAUSFALL!</span>');
+          hideInputField();
+          startPhase8SecurityOverride();
+        } else if (freqGuess < targetWlanFreq) {
+          printChat('<span style="color:#f59e0b;">[JAMMER]: ' + freqGuess + ' MHz - ZU NIEDRIG! Frequenz erhöhen!</span>');
+        } else {
+          printChat('<span style="color:#f59e0b;">[JAMMER]: ' + freqGuess + ' MHz - ZU HOCH! Frequenz senken!</span>');
+        }
+
+      } else if (currentPhase === 8) {
+        // SECURITY COLOR LOGIK
+        var colorGuess = val.toUpperCase();
+
+        if (colorGuess === targetSecurityColor) {
+          printChat('<span style="color:var(--accent-main); font-weight:bold;">[SECURITY]: PROTOKOLL ' + colorGuess + ' AKZEPTIERT! KAMERAS IN DAUERSCHLEIFE!</span>');
+          hideInputField();
+          startPhase9AntiLocationVirus();
+        } else {
+          printChat('<span style="color:#ef4444;">[SECURITY]: Protokoll ' + colorGuess + ' FALSCH! Versuche RED, BLUE, GREEN oder YELLOW!</span>');
+        }
+
+      } else if (currentPhase === 9) {
+        // ANTI LOCATION VIRUS LOGIK
+        var offsetGuess = parseInt(val);
+
+        if (offsetGuess === targetLocationOffset) {
           hideInputField();
           isProcessingHack = false;
 
-          userBalance += 1000;
+          userBalance += 2500;
           updateBalance();
           saveData();
 
-          printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:15px;">\n========================================\n>>> MASTER-TRESOR VOLLSTÄNDIG GEÖFFNET! <<<\n>>> BEUTE: +1.000.00 $ GUTGESCHRIEBEN! <<<\n========================================</span>');
+          printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:15px;">\n========================================\n>>> ANTI-STANDORT VIRUS ERFOLGREICH DEPLOYED! <<<\n>>> ALLE SPUREN VERWISCHT & ENTLEERT! <<<\n>>> TOTAL BEUTE: +2.500.00 $ GUTGESCHRIEBEN! <<<\n========================================</span>');
 
           // Reset
           currentPhase = 1;
@@ -425,10 +517,10 @@
           document.getElementById("wordCounter").innerText = "0 / 60";
           document.getElementById("typeStatus").innerText = "Tippe Tasten auf deiner Tastatur...";
           document.getElementById("typeStatus").style.color = "var(--accent-yellow)";
-        } else if (masterGuess < masterVaultCode) {
-          printChat('<span style="color:#ef4444;">[MASTER_VAULT]: Code ' + masterGuess + ' -> ZU NIEDRIG! Der Mastercode ist GRÖSSER!</span>');
+        } else if (offsetGuess < targetLocationOffset) {
+          printChat('<span style="color:#ef4444;">[ANTI_LOCATION]: Offset ' + offsetGuess + ' -> ZU NIEDRIG! GPS-Signal noch ortbar!</span>');
         } else {
-          printChat('<span style="color:#ef4444;">[MASTER_VAULT]: Code ' + masterGuess + ' -> ZU HOCH! Der Mastercode ist KLEINER!</span>');
+          printChat('<span style="color:#ef4444;">[ANTI_LOCATION]: Offset ' + offsetGuess + ' -> ZU HOCH! Signal-Abweichung zu unglaubwürdig!</span>');
         }
       }
 
@@ -461,10 +553,10 @@
 
       if (startFaction === 'good') {
         body.className = 'theme-good';
-        title.innerText = 'CYBER_UNIVERSE [POLIZEI 6-PHASEN SYSTEM v22.0]';
+        title.innerText = 'CYBER_UNIVERSE [POLIZEI 9-PHASEN SYSTEM v23.0]';
       } else {
         body.className = '';
-        title.innerText = 'CYBER_UNIVERSE [HACKER 6-PHASEN HEIST v22.0]';
+        title.innerText = 'CYBER_UNIVERSE [HACKER 9-PHASEN HEIST v23.0]';
       }
 
       document.getElementById('hackerOverlay').style.display = 'flex';
