@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cyber Universe v18.0 - Full Stream Matrix Heist</title>
+  <title>Cyber Universe v19.0 - Pure Number Stream</title>
   <style>
     :root {
       --bg: #030508;
@@ -77,7 +77,7 @@
 
     .content-area { padding: 10px; display: flex; flex-direction: column; gap: 10px; height: 100%; width: 100%; }
     .chat-box { flex: 1; border: 1px solid var(--border); background: var(--card-bg); border-radius: 6px; padding: 12px; display: flex; flex-direction: column; overflow: hidden; }
-    .chat-messages { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; font-size: 12px; font-family: monospace; white-space: pre-wrap; word-break: break-all; }
+    .chat-messages { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 2px; font-size: 11px; font-family: monospace; white-space: pre-wrap; word-break: break-all; }
 
     .close-btn { background: transparent; border: 1px solid var(--accent-red); color: var(--accent-red); padding: 2px 8px; cursor: pointer; border-radius: 4px; }
   </style>
@@ -85,18 +85,18 @@
 <body id="bodyTag">
 
   <div class="start-dashboard">
-    <h2 class="rainbow-text">// CYBER UNIVERSE v18.0 - MATRIX OVERRIDE</h2>
-    <p style="color: var(--text-muted); margin-top: 4px;">Wähle deine Seite für das Überfall-Terminal:</p>
+    <h2 class="rainbow-text">// CYBER UNIVERSE v19.0 - RAW NUMBER STREAM</h2>
+    <p style="color: var(--text-muted); margin-top: 4px;">Wähle deine Seite für das Terminal:</p>
 
     <div class="faction-selector">
       <div class="faction-card active-evil" id="cardEvil" onclick="selectStartFaction('evil')">
-        <h3 style="color: var(--accent-red);">💻 BÖSE SEITE (HACKER-ÜBERFALL)</h3>
-        <p style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">Tippe 60 Wörter -> Enter drücken -> 70$ Beute!</p>
+        <h3 style="color: var(--accent-red);">💻 BÖSE SEITE (ZAHLEN-HACK)</h3>
+        <p style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">60 Blöcke tippen -> Enter -> 20s Spam -> 70$ Beute!</p>
       </div>
 
       <div class="faction-card" id="cardGood" onclick="selectStartFaction('good')">
         <h3 style="color: #2563eb;">🛡️ GUTE SEITE (CYBER-ABWEHR)</h3>
-        <p style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">Tippe 60 Wörter -> Enter drücken -> 70$ Gehalt!</p>
+        <p style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">60 Blöcke tippen -> Enter -> 20s Spam -> 70$ Gehalt!</p>
       </div>
     </div>
 
@@ -116,12 +116,12 @@
           <div style="font-size: 11px; color: var(--text-muted); display:flex; justify-content:space-between; background: rgba(0,0,0,0.2); padding: 8px 12px; border-radius:4px; border:1px solid var(--border);">
             <span>STATUS: <b id="typeStatus" style="color:var(--accent-yellow);">Tippe Tasten auf deiner Tastatur...</b></span>
             <span>Konto: <b id="userBalance" style="color:var(--accent-main);">0.00 $</b></span>
-            <span>Wörter: <b id="wordCounter" style="color:var(--accent-main);">0 / 60</b></span>
+            <span>Fortschritt: <b id="wordCounter" style="color:var(--accent-main);">0 / 60</b></span>
           </div>
 
           <div class="chat-box">
             <div style="font-weight:bold; margin-bottom:8px; border-bottom:1px dashed var(--border); padding-bottom:4px; font-size:11px;">
-              // LIVE TERMINAL LOGS
+              // LIVE RAW DATA TERMINAL
             </div>
             <div class="chat-messages" id="chatOutput"></div>
           </div>
@@ -135,15 +135,7 @@
     var userBalance = parseFloat(localStorage.getItem('cyber_balance')) || 0;
     var matrixInterval = null;
 
-    const codeWords = [
-      "bank_server_crack", "tresor_override", "sicherheits_bypass", "payload_inject",
-      "kamera_disable", "cash_grab", "firewall_breach", "root_exploit", "crypto_heist",
-      "alarm_off", "system_takeover", "data_steal", "proxy_chain", "zero_day_heist",
-      "vault_unlock", "police_scrambler", "laser_grid_bypass", "admin_hijack",
-      "karate_kick", "ueberfall", "polizei_alarm", "schlag", "handschellen"
-    ];
-
-    var currentWordCount = 0;
+    var currentBlockCount = 0;
     var isAwaitingEnter = false;
     var isProcessingHack = false;
     var activeTypingLine = null;
@@ -152,86 +144,98 @@
       localStorage.setItem('cyber_balance', userBalance);
     }
 
-    // TASTATUR ENGINE IM CHAT
+    // Erzeugt zufällige Zahlen- oder Binärblöcke
+    function generateNumberBlock() {
+      if (Math.random() > 0.5) {
+        // Generiert Binärblöcke (11001010...)
+        var b = "";
+        for (var i = 0; i < 16; i++) b += Math.floor(Math.random() * 2);
+        return b;
+      } else {
+        // Generiert lange Zahlenketten (93847638...)
+        var n = "";
+        for (var j = 0; j < 12; j++) n += Math.floor(Math.random() * 10);
+        return n;
+      }
+    }
+
+    // TASTATUR ENGINE - GENERIERT NUR ZAHLEN
     document.addEventListener("keydown", function(e) {
       if (document.getElementById("hackerOverlay").style.display !== "flex") return;
       if (isProcessingHack) return;
 
       if (e.key === "Enter") {
         if (isAwaitingEnter) {
-          startHiddenTimerHack();
+          startHiddenSpam();
         }
       } else if (e.key.length === 1 || e.key === "Backspace") {
         if (!isAwaitingEnter) {
           var chatOutput = document.getElementById('chatOutput');
 
-          if (currentWordCount === 0 || !activeTypingLine) {
+          if (currentBlockCount === 0 || !activeTypingLine) {
             activeTypingLine = document.createElement('div');
             activeTypingLine.style.color = 'var(--accent-main)';
-            activeTypingLine.innerHTML = '<b>[ACTION_LOG]:</b> ';
             chatOutput.appendChild(activeTypingLine);
           }
 
-          var randomWord = codeWords[Math.floor(Math.random() * codeWords.length)];
-          activeTypingLine.innerHTML += randomWord + " ";
-          currentWordCount++;
+          var numBlock = generateNumberBlock();
+          activeTypingLine.innerHTML += numBlock + " ";
+          currentBlockCount++;
           
-          document.getElementById("wordCounter").innerText = currentWordCount + " / 60";
+          document.getElementById("wordCounter").innerText = currentBlockCount + " / 60";
           chatOutput.scrollTop = chatOutput.scrollHeight;
 
-          if (currentWordCount >= 60) {
+          if (currentBlockCount >= 60) {
             isAwaitingEnter = true;
-            document.getElementById("typeStatus").innerText = "60 WÖRTER ERREICHT! DRÜCKE ENTER!";
+            document.getElementById("typeStatus").innerText = "DATEN BEREIT! DRÜCKE ENTER!";
             document.getElementById("typeStatus").style.color = "#ef4444";
             
-            printChat('<span style="color:#ef4444; font-weight:bold;">\n>>> 60 WÖRTER ERREICHT! DRÜCKE JETZT [ENTER] UM DEN OVERRIDE ZU STARTEN! <<<</span>');
+            printChat('<span style="color:#ef4444; font-weight:bold;">\n>>> MAXIMUM ERREICHT! DRÜCKE JETZT [ENTER] UM DIE ZAHLEN ZU ÜBERTRAGEN! <<<</span>');
           }
         }
       }
     });
 
-    // UNSICHTBARER TIMER UND MASSIVES ZAHLEN-SPAMMING
-    function startHiddenTimerHack() {
+    // VOLLSTÄNDIGER ZAHLEN-SPAM OHNE SICHTBAREN TIMER (20s DAHINTER)
+    function startHiddenSpam() {
       isAwaitingEnter = false;
       isProcessingHack = true;
-      document.getElementById("typeStatus").innerText = "DATEN_OVERRIDE LÄUFT...";
+      document.getElementById("typeStatus").innerText = "ÜBERTRAGUNG LÄUFT...";
       document.getElementById("typeStatus").style.color = "#f59e0b";
-
-      printChat('<span style="color:var(--accent-yellow); font-weight:bold;">>>> SYSTEM OVERRIDE INITIATED <<<</span>');
 
       var durationInSeconds = 20;
       var elapsed = 0;
 
-      var numberStreamInterval = setInterval(function() {
-        elapsed += 0.2;
+      // Spamt den Chat im 100ms Takt mit massiven Zahlenzeilen voll
+      var spamInterval = setInterval(function() {
+        elapsed += 0.1;
 
-        // Generiert lange Zeilen reiner Zahlen
-        var fullNumberLine = "";
-        for (var i = 0; i < 90; i++) {
-          fullNumberLine += Math.floor(Math.random() * 10);
+        var massiveNumberLine = "";
+        for (var i = 0; i < 110; i++) {
+          massiveNumberLine += Math.floor(Math.random() * 10);
         }
         
-        printChat('<span style="color:var(--text-muted); font-size:11px; opacity:0.8;">' + fullNumberLine + '</span>');
+        printChat('<span style="color:var(--text-muted); opacity:0.85;">' + massiveNumberLine + '</span>');
 
-        // Nach 20 Sekunden ohne sichtbaren Timer stoppen
+        // Nach exakt 20 Sekunden stoppen
         if (elapsed >= durationInSeconds) {
-          clearInterval(numberStreamInterval);
+          clearInterval(spamInterval);
           isProcessingHack = false;
           
           userBalance += 70;
           updateBalance();
           saveData();
 
-          printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:13px;">\n========================================\n>>> ERFOLG! +70.00 $ erhalten! <<<\n========================================</span>');
+          printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:13px;">\n========================================\n>>> ERFOLG! +70.00 $ gutgeschrieben! <<<\n========================================</span>');
           
           // Reset
-          currentWordCount = 0;
+          currentBlockCount = 0;
           activeTypingLine = null;
           document.getElementById("wordCounter").innerText = "0 / 60";
           document.getElementById("typeStatus").innerText = "Tippe Tasten auf deiner Tastatur...";
           document.getElementById("typeStatus").style.color = "var(--accent-yellow)";
         }
-      }, 200); // Sendet alle 200ms riesige Zahlen-Blöcke
+      }, 100); 
     }
 
     function selectStartFaction(faction) {
@@ -246,16 +250,16 @@
 
       if (startFaction === 'good') {
         body.className = 'theme-good';
-        title.innerText = 'CYBER_UNIVERSE [POLIZEI ABWEHR-SYSTEM v18.0]';
+        title.innerText = 'CYBER_UNIVERSE [POLIZEI ABWEHR-SYSTEM v19.0]';
       } else {
         body.className = '';
-        title.innerText = 'CYBER_UNIVERSE [HACKER ÜBERFALL-SYSTEM v18.0]';
+        title.innerText = 'CYBER_UNIVERSE [HACKER ZAHLEN-SYSTEM v19.0]';
       }
 
       document.getElementById('hackerOverlay').style.display = 'flex';
       startMatrix();
       updateBalance();
-      printChat('[SYSTEM]: Terminal gestartet! Tippe auf deiner Tastatur...');
+      printChat('[SYSTEM]: Terminal gestartet! Tippe beliebige Tasten...');
     }
 
     function closeTerminal() {
