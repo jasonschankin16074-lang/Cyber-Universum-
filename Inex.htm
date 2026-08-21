@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cyber Universe v13.0 - Interactive Hacker Terminal & Portal</title>
+  <style>
+    :root {
+      --bg: #030508;
+      --card-bg: #090d14;
+      --border: #1a2333;
+      --text: #e2e8f0;
+      --text-muted: #64748b;
+      --accent-main: #10b981;
+      --accent-red: #ef4444;
+      --accent-yellow: #f59e0b;
+      --accent-purple: #8b5cf6;
+      --accent-blue: #2563eb;
+      --dash-bg: #020407;
+    }
+
+    body.theme-good {
+      --bg: #f1f5f9;
+      --card-bg: #ffffff;
+      --border: #cbd5e1;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --accent-main: #2563eb;
+      --dash-bg: #f8fafc;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: monospace, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); padding: 15px; transition: 0.3s; }
+
+    .start-dashboard {
+      max-width: 1100px; margin: 0 auto; background: var(--card-bg);
+      border: 2px solid var(--accent-main); border-radius: 12px; padding: 20px;
+    }
+
+    .dash-banner {
+      border-bottom: 1px dashed var(--border); padding-bottom: 15px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;
+    }
+
+    .status-badge {
+      font-size: 11px; padding: 4px 8px; border-radius: 4px; background: rgba(16, 185, 129, 0.1); color: var(--accent-main); border: 1px solid var(--accent-main);
+    }
+
+    .edit-btn {
+      background: var(--accent-yellow); color: #000; border: none; padding: 6px 12px; font-weight: bold; font-size: 11px; border-radius: 4px; cursor: pointer; margin-left: 10px;
+    }
+
+    .faction-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
+
+    .faction-card {
+      border: 2px solid var(--border); border-radius: 8px; padding: 15px;
+      text-align: center; cursor: pointer; transition: 0.2s; background: rgba(0,0,0,0.03);
+    }
+    .faction-card.active-evil { border-color: var(--accent-red); background: rgba(239, 68, 68, 0.1); }
+    .faction-card.active-good { border-color: var(--accent-blue); background: rgba(37, 99, 235, 0.1); }
+
+    .tools-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 8px; margin-top: 10px;
+    }
+
+    .dash-tool-btn {
+      background: rgba(255,255,255,0.03); border: 1px solid var(--border); color: var(--text); padding: 8px; border-radius: 4px; font-size: 10px; cursor: pointer; text-align: left; transition: 0.2s;
+    }
+    .dash-tool-btn:hover { border-color: var(--accent-main); background: rgba(16,185,129,0.1); }
+
+    .draggable-item {
+      padding: 8px; margin-bottom: 6px; border: 1px dashed var(--border); border-radius: 4px; background: rgba(0,0,0,0.2); display: flex; justify-content: space-between; align-items: center;
+    }
+
+    .launch-btn {
+      width: 100%; background: var(--accent-main); color: #fff; border: none;
+      padding: 14px; font-size: 16px; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 15px;
+    }
+
+    /* OVERLAY TERMINAL */
+    #hackerOverlay {
+      display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(0, 0, 0, 0.95); z-index: 9999; flex-direction: column; align-items: center; justify-content: center; padding: 10px;
+    }
+
+    body.theme-good #hackerOverlay { background: rgba(248, 250, 252, 0.96); }
+
+    #matrixCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; opacity: 0.15; }
+
+    .dash-window {
+      position: relative; z-index: 2; width: 98vw; height: 96vh;
+      background: var(--dash-bg); border: 2px solid var(--accent-main);
+      border-radius: 8px; display: flex; flex-direction: column; overflow: hidden; color: var(--text);
+    }
+
+    .dash-header {
+      background: rgba(0, 0, 0, 0.05); padding: 8px 14px; border-bottom: 1px solid var(--accent-main);
+      display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: bold;
+    }
+
+    .dash-body { flex: 1; display: grid; grid-template-columns: 320px 1fr 260px; overflow: hidden; }
+
+    .sidebar-left, .sidebar-right {
+      background: rgba(0, 0, 0, 0.02); padding: 10px; display: flex; flex-direction: column; gap: 6px; overflow-y: auto;
+    }
+    .sidebar-left { border-right: 1px solid var(--border); }
+    .sidebar-right { border-left: 1px solid var(--border); }
+
+    .sidebar-title { font-size: 10px; color: var(--text-muted); text-transform: uppercase; margin-top: 6px; }
+
+    .action-btn {
+      background: rgba(0, 0, 0, 0.04); border: 1px solid var(--accent-main); color: var(--text);
+      padding: 7px 9px; border-radius: 4px; text-align: left; font-size: 11px; cursor: pointer; transition: 0.15s;
+    }
+    .action-btn:hover { background: var(--accent-main); color: #fff; }
+
+    .code-box {
+      border: 1px dashed var(--accent-yellow); padding: 8px; border-radius: 4px; margin-top: 6px; background: rgba(245, 158, 11, 0.05);
+    }
+
+    .code-input, .chat-input-field {
+      width: 100%; padding: 8px; border: 1px solid var(--border); background: var(--card-bg); color: var(--text); border-radius: 4px; font-size: 12px;
+    }
+
+    .content-area { padding: 10px; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; height: 100%; }
+
+    .chat-box { flex: 1; border: 1px solid var(--border); background: var(--card-bg); border-radius: 6px; padding: 12px; display: flex; flex-direction: column; }
+    .chat-messages { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; font-size: 12px; margin-bottom: 10px; }
+
+    .chat-controls { display: flex; gap: 6px; }
+
+    .shop-box {
+      margin-top: auto; padding: 10px; background: rgba(139, 92, 246, 0.08);
+      border: 1px solid var(--accent-purple); border-radius: 6px;
+    }
+
+    .close-btn { background: transparent; border: 1px solid var(--accent-red); color: var(--accent-red); padding: 2px 8px; cursor: pointer; border-radius: 4px; }
+  </style>
+</head>
+<body id="bodyTag">
+
+  <!-- START DASHBOARD -->
+  <div class="start-dashboard">
+    <div class="dash-banner">
+      <div>
+        <h2>// CYBER UNIVERSE v13.0</h2>
+        <span style="font-size: 11px; color: var(--text-muted);">Zentrales Hackerportal &amp; Interaktive Konsole</span>
+      </div>
+      <div>
+        <span class="status-badge">● SYSTEM ONLINE</span>
+        <button class="edit-btn" onclick="toggleEditMode()">🔓 Dashboard Bearbeiten (PW: 1234)</button>
+      </div>
+    </div>
+
+    <!-- DRAGGABLE & EDITABLE CONTAINER -->
+    <div id="editableContainer">
+      <div class="draggable-item">
+        <span id="descText">Willkommen im Hackerportal. Nutze Befehle in der Konsole, um Tresore zu knacken oder Systeme zu sichern.</span>
+        <button class="edit-btn" style="display:none;" onclick="changeText(this)">Text Ändern</button>
+      </div>
+    </div>
+
+    <!-- FRAKTIONS-AUSWAHL -->
+    <div class="faction-selector">
+      <div class="faction-card active-evil" id="cardEvil" onclick="selectStartFaction('evil')">
+        <h3 style="color: var(--accent-red);">😈 BÖSE SEITE (HACKER PORTAL)</h3>
+        <p style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">
+          Führe Terminal-Befehle aus, knappe Tresorcodes, starte Cyber-Angriffe und befreie Hacker.
+        </p>
+      </div>
+
+      <div class="faction-card" id="cardGood" onclick="selectStartFaction('good')">
+        <h3 style="color: var(--accent-blue);">😇 GUTE SEITE (POLIZEI / DEFENSE PORTAL)</h3>
+        <p style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">
+          Blocke Hacker-Befehle, setze neue Tresorcodes, starte System-Diagnosen und verhafte Täter.
+        </p>
+      </div>
+    </div>
+
+    <!-- 30 DASHBOARD SCHNELL-FUNKTIONEN -->
+    <div style="margin-top:15px; border-top: 1px dashed var(--border); padding-top:10px;">
+      <h4 style="font-size:12px; color:var(--accent-yellow); margin-bottom:8px;">🛠️ 30 DASHBOARD SCHNELL-FUNKTIONEN</h4>
+      <div class="tools-grid" id="toolsGrid"></div>
+    </div>
+
+    <button class="launch-btn" onclick="launchTerminal()">>_ HACKERPORTAL TERMINAL STARTEN</button>
+  </div>
+
+  <!-- TERMINAL OVERLAY -->
+  <div id="hackerOverlay">
+    <canvas id="matrixCanvas"></canvas>
+    <div class="dash-window">
+      <div class="dash-header">
+        <span id="terminalTitle">CYBER_UNIVERSE [HACKER_PORTAL]</span>
+        <button class="close-btn" onclick="closeTerminal()">[X] BEENDEN</button>
+      </div>
+      
+      <div class="dash-body">
+        
+        <!-- LINKS: SCHNELL-BEFEHLE & CODE -->
+        <div class="sidebar-left">
+          <div class="sidebar-title">⚡ SCHNELL-BEFEHLE</div>
+          <div id="actionContainer" style="display:flex; flex-direction:column; gap:4px;"></div>
+
+          <!-- TRESOR-CODE ZIEL -->
+          <div class="code-box">
+            <div style="font-size:10px; font-weight:bold; color:var(--accent-yellow);" id="codeBoxTitle">🔑 TRESOR-ZIEL</div>
+            <div style="font-size:10px; color:var(--text-muted); margin-top:2px;" id="codeBoxDesc">Sicherheitscode-Ziel:</div>
+            <input type="text" id="codeInput" class="code-input" style="margin-top:4px;" placeholder="Code eingeben..." />
+            <button class="action-btn" style="margin-top:4px; width:100%; text-align:center;" onclick="submitCode()">Code Ausführen</button>
+          </div>
+
+          <div class="sidebar-title">🎒 INTERNE INVENTAR-TOOLS</div>
+          <div id="inventoryContainer" style="display:flex; flex-direction:column; gap:4px;">
+            <span style="font-size:10px; color:var(--text-muted);">Keine Tools erworben.</span>
+          </div>
+
+          <!-- STORE -->
+          <div class="shop-box">
+            <div style="font-size: 11px; font-weight: bold; color: var(--accent-purple); margin-bottom: 5px;" id="shopTitle">🛒 STORE</div>
+            <div style="font-size: 12px; margin-bottom: 6px;">Konto: <b id="userBalance" style="color:var(--accent-main);">0.00 €</b></div>
+            <div id="shopContainer" style="display:flex; flex-direction:column; gap:4px;"></div>
+          </div>
+        </div>
+
+        <!-- MITTE: INTERAKTIVES HACKER-TERMINAL (CHAT) -->
+        <div class="content-area">
+          <div class="chat-box">
+            <div style="font-weight:bold; margin-bottom:8px; border-bottom:1px dashed var(--border); padding-bottom:4px; display:flex; justify-content:space-between;">
+              <span>💻 INTERAKTIVES HACKER-PORTAL / KONSOLE</span>
+              <span style="font-size:10px; color:var(--text-muted);">Tippe 'help' für Befehle</span>
+            </div>
+            
+            <div class="chat-messages" id="chatOutput"></div>
+            
+            <!-- LIVE EINGABE-PORTAL -->
+            <div class="chat-controls">
+              <span style="color:var(--accent-main); font-weight:bold; align-self:center;">>_</span>
+              <input type="text" id="userChatMessage" class="chat-input-field" placeholder="Befehl oder Text eingeben (z.B. help, scan, hack 1234, clear)..." onkeypress="handleChatKeyPress(event)" />
+              <button class="action-btn" onclick="processTerminalCommand()">AUSFÜHREN</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- RECHTS: ZIEL-STATUS & COMPANIONS -->
+        <div class="sidebar-right">
+          <div class="sidebar-title" id="rightTitle">🚨 SYSTEM STATUS</div>
+          <div id="prisonersContainer" style="display:flex; flex-direction:column; gap:6px;"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var startFaction = 'evil';
+    var userBalance = 0;
+    var matrixInterval = null;
+    var purchasedItems = [];
+    var currentTargetCode = '1234';
+    var isEditUnlocked = false;
+
+    // 30 DASHBOARD SCHNELL-FUNKTIONEN
+    var dashTools = [
+      '1. IP-Analyse starten', '2. Port 8080 scannen', '3. Firewall neu starten', '4. DNS Cache leeren',
+      '5. Ping an Server', '6. SSL-Zertifikat prüfen', '7. System-Backup ziehen', '8. RAM Bereinigen',
+      '9. CPU Auslastung testen', '10. Traffic protokollieren', '11. Notfall-Sperre', '12. Verschlüsselung v2',
+      '13. Proxy konfigurieren', '14. VPN Tunnel öffnen', '15. Malware-Detector', '16. Botnet-Abwehr',
+      '17. Protokoll löschen', '18. Darkmode erzwingen', '19. MAC-Filtereinstellungen', '20. Router Neustart',
+      '21. Geolocation orten', '22. Bandbreite drosseln', '23. SSH-Key erzeugen', '24. Admin-Rechte prüfen',
+      '25. Cloud-Sync starten', '26. Datenbank reparieren', '27. Phishing-Warnung', '28. Speedtest ausführen',
+      '29. Honey-Pot aufstellen', '30. Debug-Mode Modus'
+    ];
+
+    window.onload = function() {
+      var grid = document.getElementById('toolsGrid');
+      dashTools.forEach(function(tool) {
+        var btn = document.createElement('button');
+        btn.className = 'dash-tool-btn';
+        btn.innerText = tool;
+        btn.onclick = function() { alert('Funktion ausgeführt: ' + tool); };
+        grid.appendChild(btn);
+      });
+    };
+
+    function toggleEditMode() {
+      if (!isEditUnlocked) {
+        var pw = prompt('Gib das Passwort ein, um das Dashboard zu bearbeiten:');
+        if (pw === '1234') {
+          isEditUnlocked = true;
+          alert('Dashboard-Editor freigeschaltet!');
+          enableEditUI();
+        } else {
+          alert('Falsches Passwort!');
+        }
+      }
+    }
+
+    function enableEditUI() {
+      var btns = document.querySelectorAll('.draggable-item .edit-btn');
+      btns.forEach(function(b) { b.style.display = 'inline-block'; });
+    }
+
+    function changeText(btn) {
+      var newText = prompt('Gib den neuen Text für dieses Element ein:');
+      if (newText) {
+        btn.parentElement.querySelector('#descText').innerText = newText;
+      }
+    }
+
+    function selectStartFaction(faction) {
+      startFaction = faction;
+      document.getElementById('cardEvil').className = 'faction-card' + (faction === 'evil' ? ' active-evil' : '');
+      document.getElementById('cardGood').className = 'faction-card' + (faction === 'good' ? ' active-good' : '');
+    }
+
+    function launchTerminal() {
+      var body = document.getElementById('bodyTag');
+      var title = document.getElementById('terminalTitle');
+      var actionContainer = document.getElementById('actionContainer');
+      var shopContainer = document.getElementById('shopContainer');
+
+      actionContainer.innerHTML = '';
+      shopContainer.innerHTML = '';
+
+      if (startFaction === 'good') {
+        body.className = 'theme-good';
+        title.innerText = 'CYBER_UNIVERSE [GUTE SEITE - POLIZEI & DEFENSE PORTAL]';
+
+        document.getElementById('codeBoxTitle').innerText = '🛡️ TRESOR-SPERRE';
+        document.getElementById('codeBoxDesc').innerText = 'Ziel-Code: ' + currentTargetCode;
+
+        createBtn(actionContainer, '🛡️ Polizeistation Sichern', function() { doGoodAction('Polizeistation gesichert'); });
+        createBtn(actionContainer, '🏥 Krankenhaus Beschützen', function() { doGoodAction('Krankenhaus geschützt'); });
+        createBtn(actionContainer, '🔒 Neuer Tresorcode', function() { generateNewCode(); });
+        createBtn(actionContainer, '📡 WLAN Reparieren', function() { doGoodAction('WLAN repariert'); });
+
+        createShopBtn(shopContainer, '👮 Cyber-Handschellen', 25, 'handcuffs');
+        createShopBtn(shopContainer, '🛡️ Viren-Schild v2', 50, 'shield');
+
+      } else {
+        body.className = '';
+        title.innerText = 'CYBER_UNIVERSE [BÖSE SEITE - HACKER PORTAL]';
+
+        document.getElementById('codeBoxTitle').innerText = '🔓 TRESOR-HACKING';
+        document.getElementById('codeBoxDesc').innerText = 'Ziel-Code: ' + currentTargetCode;
+
+        createBtn(actionContainer, '🚨 Polizeistation Hacken', function() { doEvilAction('Polizeistation gehackt'); });
+        createBtn(actionContainer, '🏥 Krankenhaus Erobern', function() { doEvilAction('Krankenhaus geentert'); });
+        createBtn(actionContainer, '📡 WLAN Maste Zerstören', function() { doEvilAction('WLAN lahmgelegt'); });
+
+        createShopBtn(shopContainer, '📡 WLAN-Jammer 3000', 25, 'jammer');
+        createShopBtn(shopContainer, '☣️ Cyber-Virus v2', 50, 'virus');
+      }
+
+      document.getElementById('hackerOverlay').style.display = 'flex';
+      startMatrix();
+      
+      document.getElementById('chatOutput').innerHTML = '';
+      printChat('[PORTAL-SYSTEM]: Interaktives Terminal initialisiert als <b>' + (startFaction === 'good' ? 'DEFENSE-SYSTEM' : 'HACKER-PORTAL') + '</b>.');
+      printChat('[PORTAL-SYSTEM]: Gib Befehle ein wie <b>help</b>, <b>scan</b>, <b>code [dein-code]</b>, <b>balance</b> oder freien Text.');
+      renderPrisoners();
+    }
+
+    function generateNewCode() {
+      currentTargetCode = Math.floor(1000 + Math.random() * 9000).toString();
+      printChat('<span style="color:#2563eb; font-weight:bold;">[GUTE SEITE]: Neuer Tresorcode gesetzt: ' + currentTargetCode + '! Hacker ausgesperrt. +30.00 € Belohnung!</span>');
+      userBalance += 30;
+      updateBalance();
+      document.getElementById('codeBoxDesc').innerText = 'Ziel-Code: ' + currentTargetCode;
+    }
+
+    function submitCode() {
+      var val = document.getElementById('codeInput').value.trim();
+      executeTresorCode(val);
+      document.getElementById('codeInput').value = '';
+    }
+
+    function executeTresorCode(val) {
+      if (val === currentTargetCode) {
+        if (startFaction === 'good') {
+          printChat('<span style="color:#2563eb; font-weight:bold;">[GUTE SEITE PORTAL]: Code verifiziert! Hacker erfolgreich aus dem Tresor gejagt! +50.00 € Belohnung erhalten!</span>');
+          userBalance += 50;
+        } else {
+          printChat('<span style="color:var(--accent-red); font-weight:bold;">[HACKER PORTAL]: Code geknackt! Tresor geöffnet und Beute erbeutet! +75.00 € Schwarzgeld!</span>');
+          userBalance += 75;
+        }
+        updateBalance();
+      } else {
+        printChat('<span style="color:var(--accent-yellow);">[PORTAL]: Zugriffsfehler! Code "' + val + '" ist ungültig.</span>');
+      }
+    }
+
+    function handleChatKeyPress(e) {
+      if (e.key === 'Enter') processTerminalCommand();
+    }
+
+    /* INTERAKTIVE INTERPRETER-FUNKTION FÜR DAS HACKER-PORTAL */
+    function processTerminalCommand() {
+      var inputEl = document.getElementById('userChatMessage');
+      var rawInput = inputEl.value.trim();
+      if (!rawInput) return;
+
+      inputEl.value = '';
+
+      // Zeige die Eingabe des Nutzers im Terminal an
+      var prefix = startFaction === 'good' ? '👮 user@defense-portal:~$' : '🥷 user@hacker-portal:~$';
+      printChat('<span style="color:var(--accent-main); font-weight:bold;">' + prefix + ' ' + rawInput + '</span>');
+
+      var cmd = rawInput.toLowerCase();
+
+      // BEFEHLS-VERARBEITUNG & SYSTEM-REAKTIONEN
+      if (cmd === 'help') {
+        printChat('<b>=== PORTAL BEFEHLE ===</b>');
+        printChat('• <b>scan</b> - System-Umgebung scannen');
+        printChat('• <b>code [nummer]</b> oder <b>hack [nummer]</b> - Tresor-Code versuchen');
+        printChat('• <b>balance</b> / <b>konto</b> - Aktuellen Kontostand anzeigen');
+        printChat('• <b>clear</b> - Terminal-Fenster leeren');
+        printChat('• <b>status</b> - System- und Netzwerkstatus anzeigen');
+        printChat('• <b>newcode</b> - (Nur Gute Seite) Neuen Tresor-Code generieren');
+        printChat('• <i>Jeder sonstige Text wird vom Portal-System analysiert und ausgeführt!</i>');
+      } 
+      else if (cmd === 'clear') {
+        document.getElementById('chatOutput').innerHTML = '';
+      } 
+      else if (cmd === 'scan') {
+        printChat('<span style="color:var(--accent-yellow);">[PORTAL SCANNER]: Scanne lokales Subnetz...</span>');
+        setTimeout(function() {
+          printChat('[PORTAL SCANNER]: 3 aktive Knoten gefunden. Tresor-Sicherheitsstufe: AKTIV. Ziel-Code verlangt.');
+        }, 600);
+      } 
+      else if (cmd === 'balance' || cmd === 'konto') {
+        printChat('[PORTAL BANK]: Aktueller Kontostand: <b>' + userBalance.toFixed(2) + ' €</b>');
+      } 
+      else if (cmd === 'status') {
+        printChat('[PORTAL STATUS]: System-Integrität: 98% | Fraktion: <b>' + startFaction.toUpperCase() + '</b> | Tresor-Sperre: AKTIV');
+      }
+      else if (cmd.startsWith('code ') || cmd.startsWith('hack ')) {
+        var parts = rawInput.split(' ');
+        if (parts.length > 1) {
+          executeTresorCode(parts[1]);
+        } else {
+          printChat('[PORTAL]: Bitte gib eine Nummer an, z.B. "code 1234".');
+        }
+      }
+      else if (cmd === 'newcode' && startFaction === 'good') {
+        generateNewCode();
+      }
+      else {
+        // DYNAMISCHE DURCHFÜHRUNG / KI-SYSTEM ANTWORT FÜR ANDERE EINGABEN
+        printChat('<span style="color:var(--accent-purple);">[PORTAL EXECUTOR]: Befehl "' + rawInput + '" wird im Portal verarbeitet...</span>');
+        
+        setTimeout(function() {
+          var randReward = Math.floor(Math.random() * 20) + 5;
+          userBalance += randReward;
+          updateBalance();
+
+          if (startFaction === 'evil') {
+            printChat('<span style="color:var(--accent-red);">[HACKER PORTAL]: Aktion "' + rawInput + '" erfolgreich ausgeführt! Server überlistet. +' + randReward + '.00 € erbeutet!</span>');
+          } else {
+            printChat('<span style="color:#2563eb;">[DEFENSE PORTAL]: Aktion "' + rawInput + '" erfolgreich ausgeführt! System abgesichert. +' + randReward + '.00 € Belohnung!</span>');
+          }
+        }, 500);
+      }
+    }
+
+    function createBtn(container, label, onClickFunc) {
+      var btn = document.createElement('button');
+      btn.className = 'action-btn';
+      btn.innerText = label;
+      btn.onclick = onClickFunc;
+      container.appendChild(btn);
+    }
+
+    function createShopBtn(container, name, price, key) {
+      var btn = document.createElement('button');
+      btn.className = 'action-btn';
+      btn.style.width = '100%';
+      btn.innerText = name + ' (' + price + ' €)';
+      btn.onclick = function() { buyItem(name, price, key); };
+      container.appendChild(btn);
+    }
+
+    function closeTerminal() {
+      document.getElementById('hackerOverlay').style.display = 'none';
+      if (matrixInterval) clearInterval(matrixInterval);
+    }
+
+    function doGoodAction(name) {
+      var reward = Math.floor(Math.random() * 25) + 10;
+      userBalance += reward;
+      updateBalance();
+      printChat('<span style="color:#2563eb; font-weight:bold;">[GUTE SEITE]: ' + name + '! +' + reward + '.00 € erhalten!</span>');
+    }
+
+    function doEvilAction(name) {
+      var reward = Math.floor(Math.random() * 35) + 10;
+      userBalance += reward;
+      updateBalance();
+      printChat('<span style="color:var(--accent-red); font-weight:bold;">[BÖSE SEITE]: ' + name + '! +' + reward + '.00 € erbeutet!</span>');
+    }
+
+    function buyItem(name, price, key) {
+      if (purchasedItems.includes(key)) {
+        printChat('<span style="color:var(--accent-yellow);">[SHOP]: Bereits im Inventar!</span>');
+        return;
+      }
+      if (userBalance >= price) {
+        userBalance -= price;
+        updateBalance();
+        purchasedItems.push(key);
+
+        var container = document.getElementById('inventoryContainer');
+        if (purchasedItems.length === 1) container.innerHTML = '';
+        
+        var btn = document.createElement('button');
+        btn.className = 'action-btn';
+        btn.innerText = '⚡ ' + name;
+        container.appendChild(btn);
+
+        printChat('<span style="color:var(--accent-purple); font-weight:bold;">[SHOP]: "' + name + '" freigeschaltet!</span>');
+      } else {
+        printChat('<span style="color:var(--accent-red);">[SHOP]: Nicht genug Guthaben!</span>');
+      }
+    }
+
+    function updateBalance() {
+      document.getElementById('userBalance').innerText = userBalance.toFixed(2) + " €";
+    }
+
+    function renderPrisoners() {
+      var container = document.getElementById('prisonersContainer');
+      container.innerHTML = '';
+      
+      var title = startFaction === 'good' ? 'GESUCHTE VERBRECHER' : 'GEFANGENE COMPANIONS';
+      document.getElementById('rightTitle').innerText = '🚨 ' + title;
+
+      for (var i = 1; i <= 3; i++) {
+        var card = document.createElement('div');
+        card.style.border = '1px solid var(--border)';
+        card.style.padding = '6px';
+        card.style.borderRadius = '4px';
+        card.style.fontSize = '11px';
+        
+        if (startFaction === 'good') {
+          card.innerHTML = '<b>Gangster #' + i + '</b><br>Status: <span style="color:red;">Aktiv</span><br><button class="action-btn" style="margin-top:3px; width:100%;" onclick="doGoodAction(\'Verbrecher #' + i + ' festgenommen\')">🚔 Festnehmen</button>';
+        } else {
+          card.innerHTML = '<b>Hacker #' + i + '</b><br>Status: <span style="color:orange;">In Haft</span><br><button class="action-btn" style="margin-top:3px; width:100%;" onclick="doEvilAction(\'Hacker #' + i + ' befreit\')">💥 Befreien</button>';
+        }
+        
+        container.appendChild(card);
+      }
+    }
+
+    function printChat(msg) {
+      var chatOutput = document.getElementById('chatOutput');
+      var line = document.createElement('div');
+      line.innerHTML = msg;
+      chatOutput.appendChild(line);
+      chatOutput.scrollTop = chatOutput.scrollHeight;
+    }
+
+    function startMatrix() {
+      var canvas = document.getElementById('matrixCanvas');
+      var mCtx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      var chars = '01ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      var drops = Array(Math.floor(canvas.width / 14)).fill(1);
+
+      if (matrixInterval) clearInterval(matrixInterval);
+
+      matrixInterval = setInterval(function() {
+        mCtx.fillStyle = startFaction === 'good' ? 'rgba(248, 250, 252, 0.1)' : 'rgba(0, 0, 0, 0.05)';
+        mCtx.fillRect(0, 0, canvas.width, canvas.height);
+        mCtx.fillStyle = startFaction === 'good' ? '#2563eb' : '#10b981';
+        mCtx.font = '14px monospace';
+        for (var i = 0; i < drops.length; i++) {
+          mCtx.fillText(chars[Math.floor(Math.random() * chars.length)], i * 14, drops[i] * 14);
+          if (drops[i] * 14 > canvas.height && Math.random() > 0.975) drops[i] = 0;
+          drops[i]++;
+        }
+      }, 33);
+    }
+  </script>
+</body>
+</html>
