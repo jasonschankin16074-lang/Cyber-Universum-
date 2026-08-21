@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cyber Universe v12.0 - Mega Expansion</title>
+  <title>Cyber Universe v13.0 - Typing & Save System</title>
   <style>
     :root {
       --bg: #030508;
@@ -103,7 +103,7 @@
 
     .terminal-box {
       background: #000; border: 1px solid var(--accent-main); border-radius: 6px; padding: 10px;
-      height: 180px; overflow-y: auto; font-size: 12px; white-space: pre-wrap; word-break: break-all;
+      height: 200px; overflow-y: auto; font-size: 12px; white-space: pre-wrap; word-break: break-all; color: #10b981;
     }
 
     .chat-box { flex: 1; border: 1px solid var(--border); background: var(--card-bg); border-radius: 6px; padding: 12px; display: flex; flex-direction: column; }
@@ -120,21 +120,21 @@
 <body id="bodyTag">
 
   <div class="start-dashboard">
-    <h2 class="rainbow-text">// CYBER UNIVERSE v12.0 - MEGA FACTION SUITE</h2>
+    <h2 class="rainbow-text">// CYBER UNIVERSE v13.0 - TYPING & AUTOSAVE SYSTEM</h2>
     <p style="color: var(--text-muted); margin-top: 4px;">Wähle deine Seite für das Kontrollzentrum:</p>
 
     <div class="faction-selector">
       <div class="faction-card active-evil" id="cardEvil" onclick="selectStartFaction('evil')">
         <h3 style="color: var(--accent-red);">😈 BÖSE SEITE</h3>
         <p style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">
-          Autoknacker-Terminal, Banküberfälle, Schwarzmarkt & Cyber-Viren.
+          Tippe 60 Wörter, drücke Enter -> 20s Hack -> 70$ Cash erhalten!
         </p>
       </div>
 
       <div class="faction-card" id="cardGood" onclick="selectStartFaction('good')">
         <h3 style="color: #2563eb;">😇 GUTE SEITE</h3>
         <p style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">
-          Polizei-Wegfahrsperren, Fahrzeug-Sicherung, Anti-Virus & Drohnen.
+          Tippe 60 Wörter, drücke Enter -> 20s Polizei-Scan -> 70$ Gehalt!
         </p>
       </div>
     </div>
@@ -154,7 +154,7 @@
         <!-- LINKS -->
         <div class="sidebar-left">
           <div class="sidebar-title" id="actionTitle">⚡ AKTIONEN & HEISTS</div>
-          <div id="actionContainer" style="display:flex; flex-direction:column; gap:4px; max-height: 250px; overflow-y: auto;"></div>
+          <div id="actionContainer" style="display:flex; flex-direction:column; gap:4px; max-height: 220px; overflow-y: auto;"></div>
 
           <div class="sidebar-title">🎒 FREIGESCHALTETE EIGENSCHAFTEN</div>
           <div id="inventoryContainer" style="display:flex; flex-direction:column; gap:4px;">
@@ -162,15 +162,19 @@
           </div>
 
           <div class="shop-box">
-            <div style="font-size: 11px; font-weight: bold; color: var(--accent-purple); margin-bottom: 5px;" id="shopTitle">🛒 STORE (120+ EXPANSION)</div>
-            <div style="font-size: 12px; margin-bottom: 6px;">Konto: <b id="userBalance" style="color:var(--accent-main);">0.00 €</b></div>
-            <div id="shopContainer" style="display:flex; flex-direction:column; gap:4px; max-height: 180px; overflow-y: auto;"></div>
+            <div style="font-size: 11px; font-weight: bold; color: var(--accent-purple); margin-bottom: 5px;" id="shopTitle">🛒 STORE</div>
+            <div style="font-size: 12px; margin-bottom: 6px;">Konto: <b id="userBalance" style="color:var(--accent-main);">0.00 $</b></div>
+            <div id="shopContainer" style="display:flex; flex-direction:column; gap:4px; max-height: 160px; overflow-y: auto;"></div>
           </div>
         </div>
 
         <!-- MITTE -->
         <div class="content-area">
-          <div class="terminal-box rainbow-text" id="terminal">>>> TASTEN TIPPEN FÜR AUTOKNACKER-SKRIPT / POLIZEI-SCANNER...</div>
+          <div style="font-size: 11px; color: var(--text-muted); display:flex; justify-content:space-between;">
+            <span>STATUS: <b id="typeStatus" style="color:var(--accent-yellow);">Tippe Wörter auf der Tastatur...</b></span>
+            <span>Wörter: <b id="wordCounter" style="color:var(--accent-main);">0 / 60</b></span>
+          </div>
+          <div class="terminal-box" id="terminal">>>> TIPPE BELIEBIGE TASTEN UM DEN HACK-CODE ZU GENERIEREN (0/60 WÖRTER)...</div>
           <div class="chat-box">
             <div style="font-weight:bold; margin-bottom:8px; border-bottom:1px dashed var(--border); padding-bottom:4px;">
               // LIVE SYSTEM LOGS
@@ -190,70 +194,101 @@
 
   <script>
     var startFaction = 'evil';
-    var userBalance = 0;
+    var userBalance = parseFloat(localStorage.getItem('cyber_balance')) || 0;
+    var purchasedItems = JSON.parse(localStorage.getItem('cyber_items')) || [];
     var matrixInterval = null;
-    var purchasedItems = [];
 
-    // AUTO-KNACKER & TERMINAL SCRIPT ENGINE
+    // QUOTES/WORDS LIST FOR TYPING ENGINE
+    const codeWords = [
+      "function", "init_can_bus()", "bypass_security", "override_ecu", "injection", "crypto_hash",
+      "connect_server", "send_payload", "decrypt_key", "firewall_disable", "root_access", "status_ok",
+      "intercept_signal", "proxy_route", "hex_dump", "memory_allocate", "zero_day", "spoof_ip",
+      "buffer_overflow", "quantum_encryption", "neural_link", "database_crack", "auth_bypass", "sys_override",
+      "network_scan", "port_8080_open", "extract_tokens", "disable_alarm", "start_engine", "unlock_door"
+    ];
+
+    var currentWordCount = 0;
+    var isAwaitingEnter = false;
+    var isProcessingHack = false;
     const terminal = document.getElementById("terminal");
-    const autoKnackerScript = `// AUTOKNACKER_CAN_BUS_OVERRIDE_v12.0
-#include <can_bus.h>
-#include <ecu_bypass.h>
 
-void unlock_vehicle() {
-    init_obd2_stream();
-    printf("[+] Spoofing Immobilizer Key Transponder...\\n");
-    printf("[+] Bypassing Alarm System via Frequency Jamming...\\n");
-    override_engine_control_unit();
-    printf("[+] Engine Started! Hotwire successful.\\n");
-    inject_crypto_payout(15000000);
-}
+    // SPEICHER-FUNKTION
+    function saveData() {
+      localStorage.setItem('cyber_balance', userBalance);
+      localStorage.setItem('cyber_items', JSON.stringify(purchasedItems));
+    }
 
-int main() { unlock_vehicle(); return 0; }`;
-
-    let codeIndex = 0;
-    let awaitingEnter = false;
-
-    document.addEventListener("keydown", (e) => {
+    // TASTATUR ENGINE
+    document.addEventListener("keydown", function(e) {
       if (document.getElementById("hackerOverlay").style.display !== "flex") return;
+      if (isProcessingHack) return; // Während der 20 Sek Animation Tastatur sperren
 
       if (e.key === "Enter") {
-        if (awaitingEnter) {
-          awaitingEnter = false;
-          executeHackOverride();
+        if (isAwaitingEnter) {
+          start20SecondHack();
         }
-      } else {
-        if (codeIndex < autoKnackerScript.length) {
-          codeIndex += 3;
-          terminal.innerText = autoKnackerScript.substring(0, codeIndex);
+      } else if (e.key.length === 1 || e.key === "Backspace") {
+        if (!isAwaitingEnter) {
+          // Füge Zufallswörter hinzu
+          var randomWord = codeWords[Math.floor(Math.random() * codeWords.length)];
+          if (currentWordCount === 0) terminal.innerText = "";
+          
+          terminal.innerText += randomWord + " ";
+          currentWordCount++;
+          document.getElementById("wordCounter").innerText = currentWordCount + " / 60";
           terminal.scrollTop = terminal.scrollHeight;
-        } else if (!awaitingEnter) {
-          awaitingEnter = true;
-          terminal.innerText += "\n\n>>> Please enter pressed TO START AUTO OVERRIDE & CASH INJECTION <<<";
-          terminal.scrollTop = terminal.scrollHeight;
+
+          if (currentWordCount >= 60) {
+            isAwaitingEnter = true;
+            document.getElementById("typeStatus").innerText = "60 WÖRTER ERREICHT! DRÜCKE ENTER!";
+            document.getElementById("typeStatus").style.color = "#ef4444";
+            terminal.innerText += "\n\n==============================================\n>>> 60 WÖRTER BEREIT! BITTEN DRÜCKE [ENTER] UM DEN TRANSFER ZU STARTEN! <<<\n==============================================";
+            terminal.scrollTop = terminal.scrollHeight;
+          }
         }
       }
     });
 
-    function executeHackOverride() {
-      let count = 0;
-      let interval = setInterval(() => {
-        let binary = "";
-        for (let i = 0; i < 35; i++) binary += Math.floor(Math.random() * 2);
-        terminal.innerText += "\n[OVERRIDE]: " + binary;
-        terminal.scrollTop = terminal.scrollHeight;
-        count++;
+    // 20 SEKUNDEN HACK ANIMATION
+    function start20SecondHack() {
+      isAwaitingEnter = false;
+      isProcessingHack = true;
+      document.getElementById("typeStatus").innerText = "ÜBERTRAGUNG LÄUFT (20 SEKUNDEN)...";
+      document.getElementById("typeStatus").style.color = "#f59e0b";
 
-        if (count >= 30) {
-          clearInterval(interval);
-          let reward = startFaction === 'evil' ? 15000000 : 8000000;
-          userBalance += reward;
-          updateBalance();
-          terminal.innerText += "\n\n========================================\n>>> SYSTEM OVERRIDE SUCCESS! +" + reward.toLocaleString() + " € <<< \n========================================";
-          terminal.scrollTop = terminal.scrollHeight;
-          printChat('<span style="color:var(--accent-main); font-weight:bold;">[TERMINAL]: Hack ausgeführt! +' + reward.toLocaleString() + ' € erhalten!</span>');
+      var timeLeft = 20;
+      terminal.innerText = ">>> DATENÜBERTRAGUNG GESTARTET... BITTE WARTEN [" + timeLeft + "s]\n";
+
+      var interval = setInterval(function() {
+        timeLeft--;
+        
+        // Generiere wilde Zahlenreihen
+        var randomNumberLine = "";
+        for (var i = 0; i < 40; i++) {
+          randomNumberLine += Math.floor(Math.random() * 10);
         }
-      }, 40);
+        terminal.innerText += "\n[PACKET_TRANSFER]: " + randomNumberLine + " (Restzeit: " + timeLeft + "s)";
+        terminal.scrollTop = terminal.scrollHeight;
+
+        if (timeLeft <= 0) {
+          clearInterval(interval);
+          isProcessingHack = false;
+          
+          // Belohnung $70
+          userBalance += 70;
+          updateBalance();
+          saveData();
+
+          printChat('<span style="color:var(--accent-main); font-weight:bold;">[TERMINAL]: Erfolgreich abgeschlossen! +70.00 $ erhalten!</span>');
+          
+          // Reset für die nächste Runde
+          currentWordCount = 0;
+          document.getElementById("wordCounter").innerText = "0 / 60";
+          document.getElementById("typeStatus").innerText = "Tippe Wörter auf der Tastatur...";
+          document.getElementById("typeStatus").style.color = "var(--accent-yellow)";
+          terminal.innerText = "\n\n>>> ERFOLG! +70.00 $ GUTSCHEIN ERHALTEN! <<<\n>>> TIPPE ERNEUT UM WEITERE 60 WÖRTER ZU GENERIEREN... <<<";
+        }
+      }, 1000);
     }
 
     function selectStartFaction(faction) {
@@ -271,32 +306,33 @@ int main() { unlock_vehicle(); return 0; }`;
       actionContainer.innerHTML = '';
       shopContainer.innerHTML = '';
 
-      // Generiere 120+ Aktionen/Items dynamisch
       if (startFaction === 'good') {
         body.className = 'theme-good';
-        title.innerText = 'CYBER_UNIVERSE [POLIZEI WEISS-SYSTEM v12.0]';
+        title.innerText = 'CYBER_UNIVERSE [POLIZEI WEISS-SYSTEM v13.0]';
 
         for (let i = 1; i <= 60; i++) {
-          createBtn(actionContainer, '🛡️ Polizei-Einsatz #' + i + ': Sicherung', function() { doGoodAction('Sicherung-Auftrag #' + i); });
+          createBtn(actionContainer, '🛡️ Polizei-Einsatz #' + i, function() { doGoodAction('Sicherung #' + i); });
         }
         for (let i = 1; i <= 60; i++) {
-          createShopBtn(shopContainer, '👮 Abwehr-Schild v' + i, i * 25000, 'good_' + i);
+          createShopBtn(shopContainer, '👮 Abwehr-Schild v' + i, i * 150, 'good_' + i);
         }
       } else {
         body.className = '';
-        title.innerText = 'CYBER_UNIVERSE [HACKER & AUTOKNACKER GRÜN-SYSTEM v12.0]';
+        title.innerText = 'CYBER_UNIVERSE [HACKER GRÜN-SYSTEM v13.0]';
 
         for (let i = 1; i <= 60; i++) {
-          createBtn(actionContainer, '🚗 Autoknacker Raid #' + i + ': Luxusauto', function() { doEvilAction('Autoknack #' + i); });
+          createBtn(actionContainer, '🚗 Autoknacker Raid #' + i, function() { doEvilAction('Autoknack #' + i); });
         }
         for (let i = 1; i <= 60; i++) {
-          createShopBtn(shopContainer, '📡 Jammer / Tool v' + i, i * 35000, 'evil_' + i);
+          createShopBtn(shopContainer, '📡 Jammer Tool v' + i, i * 150, 'evil_' + i);
         }
       }
 
       document.getElementById('hackerOverlay').style.display = 'flex';
       startMatrix();
-      printChat('[SYSTEM]: Terminal v12.0 gestartet. Tasten tippen für den Autoknacker!');
+      updateBalance();
+      renderInventory();
+      printChat('[SYSTEM]: Terminal gestartet! Speicherdaten geladen.');
       renderPrisoners();
     }
 
@@ -312,7 +348,7 @@ int main() { unlock_vehicle(); return 0; }`;
       var btn = document.createElement('button');
       btn.className = 'action-btn';
       btn.style.width = '100%';
-      btn.innerText = name + ' (' + price.toLocaleString() + ' €)';
+      btn.innerText = name + ' (' + price + ' $)';
       btn.onclick = function() { buyItem(name, price, key); };
       container.appendChild(btn);
     }
@@ -323,17 +359,19 @@ int main() { unlock_vehicle(); return 0; }`;
     }
 
     function doGoodAction(name) {
-      var reward = Math.floor(Math.random() * 50000) + 20000;
+      var reward = Math.floor(Math.random() * 25) + 10;
       userBalance += reward;
       updateBalance();
-      printChat('<span style="color:#2563eb; font-weight:bold;">[GUTE SEITE]: ' + name + '! +' + reward.toLocaleString() + ' € Belohnung!</span>');
+      saveData();
+      printChat('<span style="color:#2563eb; font-weight:bold;">[GUTE SEITE]: ' + name + '! +' + reward + '.00 $ Belohnung!</span>');
     }
 
     function doEvilAction(name) {
-      var reward = Math.floor(Math.random() * 85000) + 30000;
+      var reward = Math.floor(Math.random() * 35) + 15;
       userBalance += reward;
       updateBalance();
-      printChat('<span style="color:var(--accent-red); font-weight:bold;">[BÖSE SEITE]: ' + name + '! +' + reward.toLocaleString() + ' € Beute!</span>');
+      saveData();
+      printChat('<span style="color:var(--accent-red); font-weight:bold;">[BÖSE SEITE]: ' + name + '! +' + reward + '.00 $ Beute!</span>');
     }
 
     function buyItem(name, price, key) {
@@ -343,16 +381,10 @@ int main() { unlock_vehicle(); return 0; }`;
       }
       if (userBalance >= price) {
         userBalance -= price;
-        updateBalance();
         purchasedItems.push(key);
-
-        var container = document.getElementById('inventoryContainer');
-        if (purchasedItems.length === 1) container.innerHTML = '';
-        
-        var btn = document.createElement('button');
-        btn.className = 'action-btn';
-        btn.innerText = '⚡ ' + name;
-        container.appendChild(btn);
+        updateBalance();
+        saveData();
+        renderInventory();
 
         printChat('<span style="color:var(--accent-purple); font-weight:bold;">[SHOP]: "' + name + '" freigeschaltet!</span>');
       } else {
@@ -360,15 +392,30 @@ int main() { unlock_vehicle(); return 0; }`;
       }
     }
 
+    function renderInventory() {
+      var container = document.getElementById('inventoryContainer');
+      container.innerHTML = '';
+      if (purchasedItems.length === 0) {
+        container.innerHTML = '<span style="font-size:10px; color:var(--text-muted);">Keine Upgrades aktiv.</span>';
+        return;
+      }
+      purchasedItems.forEach(function(itemKey) {
+        var btn = document.createElement('button');
+        btn.className = 'action-btn';
+        btn.innerText = '⚡ Item: ' + itemKey;
+        container.appendChild(btn);
+      });
+    }
+
     function updateBalance() {
-      document.getElementById('userBalance').innerText = userBalance.toLocaleString() + " €";
+      document.getElementById('userBalance').innerText = userBalance.toFixed(2) + " $";
     }
 
     function renderPrisoners() {
       var container = document.getElementById('prisonersContainer');
       container.innerHTML = '';
       
-      for (var i = 1; i <= 6; i++) {
+      for (var i = 1; i <= 5; i++) {
         var card = document.createElement('div');
         card.style.border = '1px solid var(--border)';
         card.style.padding = '6px';
