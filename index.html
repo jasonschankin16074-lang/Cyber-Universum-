@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cyber Universe v13.0 - Typing & Save System</title>
+  <title>Cyber Universe v14.0 - Clean Chat Edition</title>
   <style>
     :root {
       --bg: #030508;
@@ -83,7 +83,7 @@
       display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: bold;
     }
 
-    .dash-body { flex: 1; display: grid; grid-template-columns: 340px 1fr 300px; overflow: hidden; }
+    .dash-body { flex: 1; display: grid; grid-template-columns: 320px 1fr 280px; overflow: hidden; }
 
     .sidebar-left, .sidebar-right {
       background: rgba(0, 0, 0, 0.02); padding: 10px; display: flex; flex-direction: column; gap: 6px; overflow-y: auto;
@@ -101,13 +101,8 @@
 
     .content-area { padding: 10px; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; height: 100%; }
 
-    .terminal-box {
-      background: #000; border: 1px solid var(--accent-main); border-radius: 6px; padding: 10px;
-      height: 200px; overflow-y: auto; font-size: 12px; white-space: pre-wrap; word-break: break-all; color: #10b981;
-    }
-
-    .chat-box { flex: 1; border: 1px solid var(--border); background: var(--card-bg); border-radius: 6px; padding: 12px; display: flex; flex-direction: column; }
-    .chat-messages { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; font-size: 12px; }
+    .chat-box { flex: 1; border: 1px solid var(--border); background: var(--card-bg); border-radius: 6px; padding: 12px; display: flex; flex-direction: column; overflow: hidden; }
+    .chat-messages { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-family: monospace; white-space: pre-wrap; word-break: break-all; }
 
     .shop-box {
       margin-top: auto; padding: 10px; background: rgba(139, 92, 246, 0.08);
@@ -120,21 +115,21 @@
 <body id="bodyTag">
 
   <div class="start-dashboard">
-    <h2 class="rainbow-text">// CYBER UNIVERSE v13.0 - TYPING & AUTOSAVE SYSTEM</h2>
+    <h2 class="rainbow-text">// CYBER UNIVERSE v14.0 - TYPING TERMINAL</h2>
     <p style="color: var(--text-muted); margin-top: 4px;">Wähle deine Seite für das Kontrollzentrum:</p>
 
     <div class="faction-selector">
       <div class="faction-card active-evil" id="cardEvil" onclick="selectStartFaction('evil')">
         <h3 style="color: var(--accent-red);">😈 BÖSE SEITE</h3>
         <p style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">
-          Tippe 60 Wörter, drücke Enter -> 20s Hack -> 70$ Cash erhalten!
+          Tippe 60 Wörter im Chat -> Enter drücken -> 20s Hack -> 70$ Cash erhalten!
         </p>
       </div>
 
       <div class="faction-card" id="cardGood" onclick="selectStartFaction('good')">
         <h3 style="color: #2563eb;">😇 GUTE SEITE</h3>
         <p style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">
-          Tippe 60 Wörter, drücke Enter -> 20s Polizei-Scan -> 70$ Gehalt!
+          Tippe 60 Wörter im Chat -> Enter drücken -> 20s Scan -> 70$ Gehalt!
         </p>
       </div>
     </div>
@@ -153,8 +148,8 @@
       <div class="dash-body">
         <!-- LINKS -->
         <div class="sidebar-left">
-          <div class="sidebar-title" id="actionTitle">⚡ AKTIONEN & HEISTS</div>
-          <div id="actionContainer" style="display:flex; flex-direction:column; gap:4px; max-height: 220px; overflow-y: auto;"></div>
+          <div class="sidebar-title" id="actionTitle">⚡ AKTIONEN & HEISTS (10)</div>
+          <div id="actionContainer" style="display:flex; flex-direction:column; gap:4px;"></div>
 
           <div class="sidebar-title">🎒 FREIGESCHALTETE EIGENSCHAFTEN</div>
           <div id="inventoryContainer" style="display:flex; flex-direction:column; gap:4px;">
@@ -162,22 +157,22 @@
           </div>
 
           <div class="shop-box">
-            <div style="font-size: 11px; font-weight: bold; color: var(--accent-purple); margin-bottom: 5px;" id="shopTitle">🛒 STORE</div>
+            <div style="font-size: 11px; font-weight: bold; color: var(--accent-purple); margin-bottom: 5px;" id="shopTitle">🛒 STORE (10 ITEMS)</div>
             <div style="font-size: 12px; margin-bottom: 6px;">Konto: <b id="userBalance" style="color:var(--accent-main);">0.00 $</b></div>
-            <div id="shopContainer" style="display:flex; flex-direction:column; gap:4px; max-height: 160px; overflow-y: auto;"></div>
+            <div id="shopContainer" style="display:flex; flex-direction:column; gap:4px; max-height: 180px; overflow-y: auto;"></div>
           </div>
         </div>
 
-        <!-- MITTE -->
+        <!-- MITTE (CHAT + TYPING TERMINAL) -->
         <div class="content-area">
-          <div style="font-size: 11px; color: var(--text-muted); display:flex; justify-content:space-between;">
-            <span>STATUS: <b id="typeStatus" style="color:var(--accent-yellow);">Tippe Wörter auf der Tastatur...</b></span>
+          <div style="font-size: 11px; color: var(--text-muted); display:flex; justify-content:space-between; background: rgba(0,0,0,0.2); padding: 6px; border-radius:4px; border:1px solid var(--border);">
+            <span>STATUS: <b id="typeStatus" style="color:var(--accent-yellow);">Tippe Tasten auf deiner Tastatur...</b></span>
             <span>Wörter: <b id="wordCounter" style="color:var(--accent-main);">0 / 60</b></span>
           </div>
-          <div class="terminal-box" id="terminal">>>> TIPPE BELIEBIGE TASTEN UM DEN HACK-CODE ZU GENERIEREN (0/60 WÖRTER)...</div>
+
           <div class="chat-box">
-            <div style="font-weight:bold; margin-bottom:8px; border-bottom:1px dashed var(--border); padding-bottom:4px;">
-              // LIVE SYSTEM LOGS
+            <div style="font-weight:bold; margin-bottom:8px; border-bottom:1px dashed var(--border); padding-bottom:4px; font-size:11px;">
+              // LIVE TERMINAL & FACTION CHAT
             </div>
             <div class="chat-messages" id="chatOutput"></div>
           </div>
@@ -185,7 +180,7 @@
 
         <!-- RECHTS -->
         <div class="sidebar-right">
-          <div class="sidebar-title" id="rightTitle">🚨 STATUS & FAHRZEUGE</div>
+          <div class="sidebar-title" id="rightTitle">🚨 STATUS & FAHRZEUGE (10)</div>
           <div id="prisonersContainer" style="display:flex; flex-direction:column; gap:6px;"></div>
         </div>
       </div>
@@ -198,30 +193,27 @@
     var purchasedItems = JSON.parse(localStorage.getItem('cyber_items')) || [];
     var matrixInterval = null;
 
-    // QUOTES/WORDS LIST FOR TYPING ENGINE
     const codeWords = [
       "function", "init_can_bus()", "bypass_security", "override_ecu", "injection", "crypto_hash",
       "connect_server", "send_payload", "decrypt_key", "firewall_disable", "root_access", "status_ok",
       "intercept_signal", "proxy_route", "hex_dump", "memory_allocate", "zero_day", "spoof_ip",
-      "buffer_overflow", "quantum_encryption", "neural_link", "database_crack", "auth_bypass", "sys_override",
-      "network_scan", "port_8080_open", "extract_tokens", "disable_alarm", "start_engine", "unlock_door"
+      "buffer_overflow", "quantum_encryption", "neural_link", "database_crack", "auth_bypass", "sys_override"
     ];
 
     var currentWordCount = 0;
     var isAwaitingEnter = false;
     var isProcessingHack = false;
-    const terminal = document.getElementById("terminal");
+    var activeTypingLine = null;
 
-    // SPEICHER-FUNKTION
     function saveData() {
       localStorage.setItem('cyber_balance', userBalance);
       localStorage.setItem('cyber_items', JSON.stringify(purchasedItems));
     }
 
-    // TASTATUR ENGINE
+    // TASTATUR ENGINE DIREKT IM CHAT
     document.addEventListener("keydown", function(e) {
       if (document.getElementById("hackerOverlay").style.display !== "flex") return;
-      if (isProcessingHack) return; // Während der 20 Sek Animation Tastatur sperren
+      if (isProcessingHack) return;
 
       if (e.key === "Enter") {
         if (isAwaitingEnter) {
@@ -229,27 +221,34 @@
         }
       } else if (e.key.length === 1 || e.key === "Backspace") {
         if (!isAwaitingEnter) {
-          // Füge Zufallswörter hinzu
+          var chatOutput = document.getElementById('chatOutput');
+
+          if (currentWordCount === 0 || !activeTypingLine) {
+            activeTypingLine = document.createElement('div');
+            activeTypingLine.style.color = 'var(--accent-main)';
+            activeTypingLine.innerHTML = '<b>[TYPING]:</b> ';
+            chatOutput.appendChild(activeTypingLine);
+          }
+
           var randomWord = codeWords[Math.floor(Math.random() * codeWords.length)];
-          if (currentWordCount === 0) terminal.innerText = "";
-          
-          terminal.innerText += randomWord + " ";
+          activeTypingLine.innerHTML += randomWord + " ";
           currentWordCount++;
+          
           document.getElementById("wordCounter").innerText = currentWordCount + " / 60";
-          terminal.scrollTop = terminal.scrollHeight;
+          chatOutput.scrollTop = chatOutput.scrollHeight;
 
           if (currentWordCount >= 60) {
             isAwaitingEnter = true;
             document.getElementById("typeStatus").innerText = "60 WÖRTER ERREICHT! DRÜCKE ENTER!";
             document.getElementById("typeStatus").style.color = "#ef4444";
-            terminal.innerText += "\n\n==============================================\n>>> 60 WÖRTER BEREIT! BITTEN DRÜCKE [ENTER] UM DEN TRANSFER ZU STARTEN! <<<\n==============================================";
-            terminal.scrollTop = terminal.scrollHeight;
+            
+            printChat('<span style="color:#ef4444; font-weight:bold;">\n>>> 60 WÖRTER BEREIT! DRÜCKE JETZT [ENTER] UM DIE ZAHLEN-ÜBERTRAGUNG ZU STARTEN! <<<</span>');
           }
         }
       }
     });
 
-    // 20 SEKUNDEN HACK ANIMATION
+    // 20 SEKUNDEN MATRIX/ZAHLEN OVERRIDE IM CHAT
     function start20SecondHack() {
       isAwaitingEnter = false;
       isProcessingHack = true;
@@ -257,36 +256,33 @@
       document.getElementById("typeStatus").style.color = "#f59e0b";
 
       var timeLeft = 20;
-      terminal.innerText = ">>> DATENÜBERTRAGUNG GESTARTET... BITTE WARTEN [" + timeLeft + "s]\n";
+      printChat('<span style="color:var(--accent-yellow); font-weight:bold;">>>> DATENÜBERTRAGUNG GESTARTET (20s restlich)...</span>');
 
       var interval = setInterval(function() {
         timeLeft--;
         
-        // Generiere wilde Zahlenreihen
         var randomNumberLine = "";
-        for (var i = 0; i < 40; i++) {
+        for (var i = 0; i < 35; i++) {
           randomNumberLine += Math.floor(Math.random() * 10);
         }
-        terminal.innerText += "\n[PACKET_TRANSFER]: " + randomNumberLine + " (Restzeit: " + timeLeft + "s)";
-        terminal.scrollTop = terminal.scrollHeight;
+        printChat('<span style="color:var(--text-muted); font-size:10px;">[PACKET ' + timeLeft + 's]: ' + randomNumberLine + '</span>');
 
         if (timeLeft <= 0) {
           clearInterval(interval);
           isProcessingHack = false;
           
-          // Belohnung $70
           userBalance += 70;
           updateBalance();
           saveData();
 
-          printChat('<span style="color:var(--accent-main); font-weight:bold;">[TERMINAL]: Erfolgreich abgeschlossen! +70.00 $ erhalten!</span>');
+          printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:13px;">\n========================================\n>>> ERFOLG! +70.00 $ Cash Gutgeschrieben! <<<\n========================================</span>');
           
-          // Reset für die nächste Runde
+          // Reset
           currentWordCount = 0;
+          activeTypingLine = null;
           document.getElementById("wordCounter").innerText = "0 / 60";
-          document.getElementById("typeStatus").innerText = "Tippe Wörter auf der Tastatur...";
+          document.getElementById("typeStatus").innerText = "Tippe Tasten auf deiner Tastatur...";
           document.getElementById("typeStatus").style.color = "var(--accent-yellow)";
-          terminal.innerText = "\n\n>>> ERFOLG! +70.00 $ GUTSCHEIN ERHALTEN! <<<\n>>> TIPPE ERNEUT UM WEITERE 60 WÖRTER ZU GENERIEREN... <<<";
         }
       }, 1000);
     }
@@ -306,25 +302,22 @@
       actionContainer.innerHTML = '';
       shopContainer.innerHTML = '';
 
+      // GENAU 10 ITEMS UND AKTIONEN
       if (startFaction === 'good') {
         body.className = 'theme-good';
-        title.innerText = 'CYBER_UNIVERSE [POLIZEI WEISS-SYSTEM v13.0]';
+        title.innerText = 'CYBER_UNIVERSE [POLIZEI WEISS-SYSTEM v14.0]';
 
-        for (let i = 1; i <= 60; i++) {
+        for (let i = 1; i <= 10; i++) {
           createBtn(actionContainer, '🛡️ Polizei-Einsatz #' + i, function() { doGoodAction('Sicherung #' + i); });
-        }
-        for (let i = 1; i <= 60; i++) {
-          createShopBtn(shopContainer, '👮 Abwehr-Schild v' + i, i * 150, 'good_' + i);
+          createShopBtn(shopContainer, '👮 Abwehr-Schild v' + i, i * 50, 'good_' + i);
         }
       } else {
         body.className = '';
-        title.innerText = 'CYBER_UNIVERSE [HACKER GRÜN-SYSTEM v13.0]';
+        title.innerText = 'CYBER_UNIVERSE [HACKER GRÜN-SYSTEM v14.0]';
 
-        for (let i = 1; i <= 60; i++) {
+        for (let i = 1; i <= 10; i++) {
           createBtn(actionContainer, '🚗 Autoknacker Raid #' + i, function() { doEvilAction('Autoknack #' + i); });
-        }
-        for (let i = 1; i <= 60; i++) {
-          createShopBtn(shopContainer, '📡 Jammer Tool v' + i, i * 150, 'evil_' + i);
+          createShopBtn(shopContainer, '📡 Jammer Tool v' + i, i * 50, 'evil_' + i);
         }
       }
 
@@ -332,7 +325,7 @@
       startMatrix();
       updateBalance();
       renderInventory();
-      printChat('[SYSTEM]: Terminal gestartet! Speicherdaten geladen.');
+      printChat('[SYSTEM]: Terminal gestartet! Speicherstand geladen. Tippe auf der Tastatur...');
       renderPrisoners();
     }
 
@@ -411,11 +404,12 @@
       document.getElementById('userBalance').innerText = userBalance.toFixed(2) + " $";
     }
 
+    // GENAU 10 FAHRZEUGE/ZIELE RECHTS
     function renderPrisoners() {
       var container = document.getElementById('prisonersContainer');
       container.innerHTML = '';
       
-      for (var i = 1; i <= 5; i++) {
+      for (var i = 1; i <= 10; i++) {
         var card = document.createElement('div');
         card.style.border = '1px solid var(--border)';
         card.style.padding = '6px';
