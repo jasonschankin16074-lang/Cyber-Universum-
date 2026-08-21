@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cyber Universe v29.0 - 15-Phasen Heist mit Admin Panel</title>
+  <title>Cyber Universe v30.0 - 15-Phasen Heist mit Admin Panel</title>
   <style>
     :root {
       --bg: #030508;
@@ -69,8 +69,12 @@
     }
 
     .dash-header {
-      background: rgba(0, 0, 0, 0.05); padding: 8px 14px; border-bottom: 1px solid var(--accent-main);
+      background: rgba(0, 0, 0, 0.2); padding: 8px 14px; border-bottom: 1px solid var(--accent-main);
       display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: bold;
+    }
+
+    .header-controls {
+      display: flex; align-items: center; gap: 8px;
     }
 
     .dash-body { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
@@ -95,8 +99,8 @@
     
     /* SECRET ADMIN PANEL STYLES */
     .admin-burger-btn {
-      background: transparent; border: 1px solid var(--text-muted); color: var(--text-muted);
-      padding: 2px 8px; cursor: pointer; border-radius: 4px; font-size: 14px; margin-right: 8px; transition: 0.2s;
+      background: transparent; border: 1px solid var(--border); color: var(--text-muted);
+      padding: 2px 10px; cursor: pointer; border-radius: 4px; font-size: 14px; transition: 0.2s;
     }
     .admin-burger-btn:hover { color: var(--accent-yellow); border-color: var(--accent-yellow); }
 
@@ -119,7 +123,7 @@
 <body id="bodyTag">
 
   <div class="start-dashboard">
-    <h2 class="rainbow-text">// CYBER UNIVERSE v29.0 - 15 PHASEN HEIST</h2>
+    <h2 class="rainbow-text">// CYBER UNIVERSE v30.0 - 15 PHASEN HEIST</h2>
 
     <div class="faction-selector">
       <div class="faction-card active-evil" id="cardEvil" onclick="selectStartFaction('evil')">
@@ -140,9 +144,9 @@
     <canvas id="matrixCanvas"></canvas>
     <div class="dash-window">
       <div class="dash-header">
-        <span id="terminalTitle" class="rainbow-text">CYBER_UNIVERSE [SYSTEM v29.0]</span>
-        <div>
-          <!-- Der 3-Striche Button für das Admin-Panel -->
+        <span id="terminalTitle" class="rainbow-text">CYBER_UNIVERSE [SYSTEM v30.0]</span>
+        <div class="header-controls">
+          <!-- ☰ Admin Button exakt links neben Schließen -->
           <button class="admin-burger-btn" onclick="toggleAdminPanel()" title="Geheim-Menü">☰</button>
           <button class="close-btn" onclick="closeTerminal()">[X] SCHLIESSEN</button>
         </div>
@@ -757,16 +761,16 @@
 
       if (startFaction === 'good') {
         body.className = 'theme-good';
-        title.innerText = 'CYBER_UNIVERSE [POLIZEI 15-PHASEN SYSTEM v29.0]';
+        title.innerText = 'CYBER_UNIVERSE [POLIZEI 15-PHASEN SYSTEM v30.0]';
       } else {
         body.className = '';
-        title.innerText = 'CYBER_UNIVERSE [HACKER 15-PHASEN HEIST v29.0]';
+        title.innerText = 'CYBER_UNIVERSE [HACKER 15-PHASEN HEIST v30.0]';
       }
 
       document.getElementById('hackerOverlay').style.display = 'flex';
       startMatrix();
       updateBalance();
-      printChat('[SYSTEM]: Terminal v29.0 gestartet! Tippe beliebige Tasten...');
+      printChat('[SYSTEM]: Terminal v30.0 gestartet! Tippe beliebige Tasten...');
     }
 
     function closeTerminal() {
