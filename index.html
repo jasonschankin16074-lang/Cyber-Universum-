@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cyber Universe v21.0 - Manual Vault Pin Guessing</title>
+  <title>Cyber Universe v22.0 - 6-Phase Ultimate Vault Heist</title>
   <style>
     :root {
       --bg: #030508;
@@ -79,14 +79,14 @@
     .chat-box { flex: 1; border: 1px solid var(--border); background: var(--card-bg); border-radius: 6px; padding: 12px; display: flex; flex-direction: column; overflow: hidden; }
     .chat-messages { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 2px; font-size: 11px; font-family: monospace; white-space: pre-wrap; word-break: break-all; }
 
-    .guess-input-container {
+    .interactive-container {
       display: none; gap: 8px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border);
     }
-    .guess-input {
+    .action-input {
       flex: 1; background: rgba(0,0,0,0.3); border: 1px solid var(--accent-main);
       color: var(--text); padding: 8px; border-radius: 4px; font-size: 14px; outline: none;
     }
-    .guess-btn {
+    .action-btn {
       background: var(--accent-main); color: #fff; border: none; padding: 8px 16px;
       font-weight: bold; border-radius: 4px; cursor: pointer;
     }
@@ -97,18 +97,18 @@
 <body id="bodyTag">
 
   <div class="start-dashboard">
-    <h2 class="rainbow-text">// CYBER UNIVERSE v21.0 - VAULT GUESSING ENGINE</h2>
-    <p style="color: var(--text-muted); margin-top: 4px;">Wähle deine Seite für den Tresor-Überfall:</p>
+    <h2 class="rainbow-text">// CYBER UNIVERSE v22.0 - 6-PHASEN TRESOR-HEIST</h2>
+    <p style="color: var(--text-muted); margin-top: 4px;">Meistere alle 6 Abschnitte für die ultimative Beute:</p>
 
     <div class="faction-selector">
       <div class="faction-card active-evil" id="cardEvil" onclick="selectStartFaction('evil')">
-        <h3 style="color: var(--accent-red);">💻 BÖSE SEITE (TRESOR-OVERRIDE)</h3>
-        <p style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">Tippen -> Stream -> Auto-Crack -> 4 Zahlen Erraten -> 300$ Beute!</p>
+        <h3 style="color: var(--accent-red);">💻 BÖSE SEITE (6-PHASEN HEIST)</h3>
+        <p style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">Stream -> Crack -> PIN -> Laser -> DNA -> Mastercode -> 1.000$!</p>
       </div>
 
       <div class="faction-card" id="cardGood" onclick="selectStartFaction('good')">
-        <h3 style="color: #2563eb;">🛡️ GUTE SEITE (DEFENSE OVERRIDE)</h3>
-        <p style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">Tippen -> Stream -> Auto-Crack -> 4 Zahlen Erraten -> 300$ Gehalt!</p>
+        <h3 style="color: #2563eb;">🛡️ GUTE SEITE (6-PHASEN ABWEHR)</h3>
+        <p style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">Schütze den Tresor durch Lösen aller 6 Phasen -> 1.000$ Gehalt!</p>
       </div>
     </div>
 
@@ -133,13 +133,13 @@
 
           <div class="chat-box">
             <div style="font-weight:bold; margin-bottom:8px; border-bottom:1px dashed var(--border); padding-bottom:4px; font-size:11px;">
-              // LIVE TERMINAL STREAM & PIN GUESSER
+              // LIVE TERMINAL STREAM & 6-PHASE PROTOCOL
             </div>
             <div class="chat-messages" id="chatOutput"></div>
 
-            <div class="guess-input-container" id="guessContainer">
-              <input type="number" id="guessInput" class="guess-input" placeholder="Zahl eingeben (0-99)..." onkeydown="if(e.key==='Enter') submitGuess()">
-              <button class="guess-btn" onclick="submitGuess()">BESTÄTIGEN</button>
+            <div class="interactive-container" id="actionContainer">
+              <input type="text" id="actionInput" class="action-input" placeholder="Eingabe..." onkeydown="if(event.key==='Enter') handlePhaseInput()">
+              <button class="action-btn" onclick="handlePhaseInput()">EINGABE</button>
             </div>
           </div>
         </div>
@@ -157,9 +157,21 @@
     var isProcessingHack = false;
     var activeTypingLine = null;
 
-    // Phase 3: Zahlen-Raten Variablen
+    // Phasen-Steuerung (1 bis 6)
+    var currentPhase = 1;
+
+    // Phase 3 Data
     var secretCode = [];
     var currentDigitIndex = 0;
+
+    // Phase 4 Data
+    var targetLaserAngle = 0;
+
+    // Phase 5 Data
+    var targetDnaSequence = "";
+
+    // Phase 6 Data
+    var masterVaultCode = 0;
 
     function saveData() {
       localStorage.setItem('cyber_balance', userBalance);
@@ -177,7 +189,7 @@
       }
     }
 
-    // TASTATUR ENGINE
+    // TASTATUR ENGINE (PHASE 1 START)
     document.addEventListener("keydown", function(e) {
       if (document.getElementById("hackerOverlay").style.display !== "flex") return;
       if (isProcessingHack) return;
@@ -187,7 +199,7 @@
           startPhase1Stream();
         }
       } else if (e.key.length === 1 || e.key === "Backspace") {
-        if (!isAwaitingEnter) {
+        if (!isAwaitingEnter && currentPhase === 1) {
           var chatOutput = document.getElementById('chatOutput');
 
           if (currentBlockCount === 0 || !activeTypingLine) {
@@ -208,7 +220,7 @@
             document.getElementById("typeStatus").innerText = "DATEN BEREIT! DRÜCKE ENTER!";
             document.getElementById("typeStatus").style.color = "#ef4444";
             
-            printChat('<span style="color:#ef4444; font-weight:bold;">\n>>> INITIALISIERUNG BEREIT! DRÜCKE [ENTER] UM DEN TRESOR-OVERRIDE ZU STARTEN! <<<</span>');
+            printChat('<span style="color:#ef4444; font-weight:bold;">\n>>> INITIALISIERUNG BEREIT! DRÜCKE [ENTER] UM DEN OVERRIDE ZU STARTEN! <<<</span>');
           }
         }
       }
@@ -218,10 +230,10 @@
     function startPhase1Stream() {
       isAwaitingEnter = false;
       isProcessingHack = true;
-      document.getElementById("typeStatus").innerText = "PHASE 1: DATEN-OVERRIDE LÄUFT...";
+      document.getElementById("typeStatus").innerText = "PHASE 1: ZAHLEN-STREAM LÄUFT...";
       document.getElementById("typeStatus").style.color = "#f59e0b";
 
-      printChat('<span style="color:var(--accent-yellow); font-weight:bold;">>>> PHASE 1: BYPASS TRESOR-NETZWERK <<<</span>');
+      printChat('<span style="color:var(--accent-yellow); font-weight:bold;">>>> PHASE 1/6: BYPASS TRESOR-NETZWERK <<<</span>');
 
       var durationInSeconds = 20;
       var elapsed = 0;
@@ -243,12 +255,13 @@
       }, 100); 
     }
 
-    // PHASE 2: AUTOMATISCHER PASSWORT-CRACKER
+    // PHASE 2: BRUTE-FORCE PASSWORT-CRACKER
     function startPhase2VaultPasswordCrack() {
-      document.getElementById("typeStatus").innerText = "PHASE 2: BRUTE-FORCE LÄUFT...";
+      currentPhase = 2;
+      document.getElementById("typeStatus").innerText = "PHASE 2: BRUTE-FORCE CRACKER LÄUFT...";
       document.getElementById("typeStatus").style.color = "#ef4444";
 
-      printChat('<span style="color:#ef4444; font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 2: TRESOR AUTO-CRACKER GESTARTET <<<\n========================================</span>');
+      printChat('<span style="color:#ef4444; font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 2/6: BRUTE-FORCE PASSWORT CRACKER <<<\n========================================</span>');
 
       var attempts = 0;
       var maxAttempts = 25;
@@ -256,19 +269,19 @@
       var crackInterval = setInterval(function() {
         attempts++;
         var randomPass = Math.floor(100000 + Math.random() * 900000);
-        printChat('<span style="color:#ef4444;">[AUTO_CRACK]: Versuche Code [' + randomPass + '] -> ACCESS DENIED!</span>');
+        printChat('<span style="color:#ef4444;">[BRUTE_FORCE]: Versuche Code [' + randomPass + '] -> ACCESS DENIED!</span>');
 
         if (attempts >= maxAttempts) {
           clearInterval(crackInterval);
-          printChat('<span style="color:var(--accent-yellow); font-weight:bold;">[AUTO_CRACK]: HUPT-SYSTEM WEICHGEKOCHT!</span>');
-          startPhase3ManualGuessing(); // Startet Phase 3
+          printChat('<span style="color:var(--accent-yellow); font-weight:bold;">[BRUTE_FORCE]: VOR-SYSTEM DEAKTIVIERT!</span>');
+          startPhase3ManualGuessing();
         }
       }, 100);
     }
 
-    // PHASE 3: MANUELLES ZAHLEN RATEN (4 ZIFFERN VON 0-99)
+    // PHASE 3: MANUELLER PIN-PAD CODE (4 ZAHLEN VON 1-50)
     function startPhase3ManualGuessing() {
-      // Erzeugt 4 Zufallszahlen zwischen 1 und 50
+      currentPhase = 3;
       secretCode = [
         Math.floor(Math.random() * 50) + 1,
         Math.floor(Math.random() * 50) + 1,
@@ -277,57 +290,163 @@
       ];
       currentDigitIndex = 0;
 
-      document.getElementById("typeStatus").innerText = "PHASE 3: PIN-PAD SPEER-GEKNACKE AKTIV";
+      document.getElementById("typeStatus").innerText = "PHASE 3: PIN-PAD SPEER-GEKNACKE";
       document.getElementById("typeStatus").style.color = "var(--accent-main)";
 
-      printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 3: SICHERHEITS-PIN ERRATEN <<<\nErrate nacheinander 4 Zahlen (1 - 50)!\n========================================</span>');
+      printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 3/6: TRESOR PIN-PAD (4 ZAHLEN 1-50) <<<\n========================================</span>');
       printChat('<span style="color:var(--accent-yellow);">-> Errate Zahl 1 von 4:</span>');
 
-      document.getElementById("guessContainer").style.display = "flex";
-      document.getElementById("guessInput").focus();
+      showInputField("Zahl eingeben (1-50)...", "number");
     }
 
-    function submitGuess() {
-      var inputEl = document.getElementById("guessInput");
-      var guess = parseInt(inputEl.value);
+    // PHASE 4: LASER-NETZWERK WINKEL (1° bis 360°)
+    function startPhase4LaserBypass() {
+      currentPhase = 4;
+      targetLaserAngle = Math.floor(Math.random() * 360) + 1;
+
+      document.getElementById("typeStatus").innerText = "PHASE 4: LASER-NEUTRALISIERUNG";
+      document.getElementById("typeStatus").style.color = "#f59e0b";
+
+      printChat('<span style="color:#f59e0b; font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 4/6: LASER-SCHUTZSCHILD AUSRICHTEN <<<\nFinde den exakten Laser-Winkel (1° bis 360°)!\n========================================</span>');
+      printChat('<span style="color:var(--accent-yellow);">-> Gib einen Winkel in Grad ein:</span>');
+
+      showInputField("Winkel eingeben (1-360)...", "number");
+    }
+
+    // PHASE 5: BIOMETRISCHER DNA-CODE (4 BUCHSTABEN A, C, G, T)
+    function startPhase5DnaBypass() {
+      currentPhase = 5;
+      var bases = ["A", "C", "G", "T"];
+      targetDnaSequence = "";
+      for (var i = 0; i < 4; i++) {
+        targetDnaSequence += bases[Math.floor(Math.random() * 4)];
+      }
+
+      document.getElementById("typeStatus").innerText = "PHASE 5: DNA-BIOMETRIE OVERRIDE";
+      document.getElementById("typeStatus").style.color = "#ef4444";
+
+      printChat('<span style="color:#ef4444; font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 5/6: DNA-BIOMETRIE-SCANNER BYPASS <<<\nErrate den 4-stelligen Gen-Code aus (A, C, G, T) (z.B. ACGT)!\n========================================</span>');
+      printChat('<span style="color:var(--accent-yellow);">-> Gib deine DNA-Sequenz ein:</span>');
+
+      showInputField("z.B. ATGC...", "text");
+    }
+
+    // PHASE 6: MASTER-TRESOR CODE (1 bis 1000)
+    function startPhase6MasterVault() {
+      currentPhase = 6;
+      masterVaultCode = Math.floor(Math.random() * 1000) + 1;
+
+      document.getElementById("typeStatus").innerText = "PHASE 6: MASTER-TRESOR KOMBINATION";
+      document.getElementById("typeStatus").style.color = "var(--accent-main)";
+
+      printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 6/6: DER MASTER-TRESOR TÜRCODE <<<\nErrate die finale Master-Zahl (1 bis 1000)!\n========================================</span>');
+      printChat('<span style="color:var(--accent-yellow);">-> Gib deine Vermutung ab:</span>');
+
+      showInputField("Mastercode (1-1000)...", "number");
+    }
+
+    // HANDLER FÜR ALLE INTERAKTIVEN INPUTS
+    function handlePhaseInput() {
+      var inputEl = document.getElementById("actionInput");
+      var val = inputEl.value.trim();
       inputEl.value = "";
 
-      if (isNaN(guess)) return;
+      if (!val) return;
 
-      var targetNum = secretCode[currentDigitIndex];
+      if (currentPhase === 3) {
+        // PIN PAD LOGIK
+        var guess = parseInt(val);
+        var targetNum = secretCode[currentDigitIndex];
 
-      if (guess === targetNum) {
-        printChat('<span style="color:var(--accent-main); font-weight:bold;">[PIN_PAD]: ' + guess + ' IST KORREKT! Zahl ' + (currentDigitIndex + 1) + ' freigeschaltet!</span>');
-        currentDigitIndex++;
+        if (guess === targetNum) {
+          printChat('<span style="color:var(--accent-main); font-weight:bold;">[PIN_PAD]: ' + guess + ' IST KORREKT! Digit ' + (currentDigitIndex + 1) + ' entsperrt!</span>');
+          currentDigitIndex++;
 
-        if (currentDigitIndex >= 4) {
-          // ALLE 4 ZAHLEN ERRATEN
-          document.getElementById("guessContainer").style.display = "none";
+          if (currentDigitIndex >= 4) {
+            hideInputField();
+            startPhase4LaserBypass();
+          } else {
+            printChat('<span style="color:var(--accent-yellow);">-> Errate Zahl ' + (currentDigitIndex + 1) + ' von 4:</span>');
+          }
+        } else if (guess < targetNum) {
+          printChat('<span style="color:#ef4444;">[PIN_PAD]: ' + guess + ' ist ZU NIEDRIG!</span>');
+        } else {
+          printChat('<span style="color:#ef4444;">[PIN_PAD]: ' + guess + ' ist ZU HOCH!</span>');
+        }
+
+      } else if (currentPhase === 4) {
+        // LASER LOGIK
+        var angle = parseInt(val);
+
+        if (angle === targetLaserAngle) {
+          printChat('<span style="color:var(--accent-main); font-weight:bold;">[LASER]: ' + angle + '° ERREICHT! SCHILD AUSGESCHALTET!</span>');
+          hideInputField();
+          startPhase5DnaBypass();
+        } else if (angle < targetLaserAngle) {
+          printChat('<span style="color:#f59e0b;">[LASER]: ' + angle + '° - WINKEL ZU KLEIN! Drehe weiter nach RECHTS!</span>');
+        } else {
+          printChat('<span style="color:#f59e0b;">[LASER]: ' + angle + '° - WINKEL ZU GROSS! Drehe weiter nach LINKS!</span>');
+        }
+
+      } else if (currentPhase === 5) {
+        // DNA LOGIK
+        var dnaGuess = val.toUpperCase();
+
+        if (dnaGuess === targetDnaSequence) {
+          printChat('<span style="color:var(--accent-main); font-weight:bold;">[DNA_SCAN]: ' + dnaGuess + ' KORREKT! BIOMETRIE GEKNACKT!</span>');
+          hideInputField();
+          startPhase6MasterVault();
+        } else {
+          var correctCount = 0;
+          for (var i = 0; i < Math.min(dnaGuess.length, 4); i++) {
+            if (dnaGuess[i] === targetDnaSequence[i]) correctCount++;
+          }
+          printChat('<span style="color:#ef4444;">[DNA_SCAN]: ' + dnaGuess + ' -> DENIED! (' + correctCount + ' von 4 Basen an richtiger Position)</span>');
+        }
+
+      } else if (currentPhase === 6) {
+        // MASTERCODE LOGIK
+        var masterGuess = parseInt(val);
+
+        if (masterGuess === masterVaultCode) {
+          hideInputField();
           isProcessingHack = false;
-          
-          userBalance += 300;
+
+          userBalance += 1000;
           updateBalance();
           saveData();
 
-          printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:14px;">\n========================================\n>>> TRESOR GEÖFFNET! +300.00 $ BEUTE ERHALTEN! <<<\n========================================</span>');
+          printChat('<span style="color:var(--accent-main); font-weight:bold; font-size:15px;">\n========================================\n>>> MASTER-TRESOR VOLLSTÄNDIG GEÖFFNET! <<<\n>>> BEUTE: +1.000.00 $ GUTGESCHRIEBEN! <<<\n========================================</span>');
 
           // Reset
+          currentPhase = 1;
           currentBlockCount = 0;
           activeTypingLine = null;
           document.getElementById("wordCounter").innerText = "0 / 60";
           document.getElementById("typeStatus").innerText = "Tippe Tasten auf deiner Tastatur...";
           document.getElementById("typeStatus").style.color = "var(--accent-yellow)";
+        } else if (masterGuess < masterVaultCode) {
+          printChat('<span style="color:#ef4444;">[MASTER_VAULT]: Code ' + masterGuess + ' -> ZU NIEDRIG! Der Mastercode ist GRÖSSER!</span>');
         } else {
-          printChat('<span style="color:var(--accent-yellow);">-> Errate Zahl ' + (currentDigitIndex + 1) + ' von 4:</span>');
+          printChat('<span style="color:#ef4444;">[MASTER_VAULT]: Code ' + masterGuess + ' -> ZU HOCH! Der Mastercode ist KLEINER!</span>');
         }
-      } else if (guess < targetNum) {
-        printChat('<span style="color:#ef4444;">[PIN_PAD]: ' + guess + ' ist ZU NIEDRIG! Die Zahl ist GRÖSSER!</span>');
-      } else {
-        printChat('<span style="color:#ef4444;">[PIN_PAD]: ' + guess + ' ist ZU HOCH! Die Zahl ist KLEINER!</span>');
       }
 
       document.getElementById("chatOutput").scrollTop = document.getElementById("chatOutput").scrollHeight;
       inputEl.focus();
+    }
+
+    function showInputField(placeholderText, inputType) {
+      var container = document.getElementById("actionContainer");
+      var input = document.getElementById("actionInput");
+      input.type = inputType || "text";
+      input.placeholder = placeholderText;
+      container.style.display = "flex";
+      input.focus();
+    }
+
+    function hideInputField() {
+      document.getElementById("actionContainer").style.display = "none";
     }
 
     function selectStartFaction(faction) {
@@ -342,10 +461,10 @@
 
       if (startFaction === 'good') {
         body.className = 'theme-good';
-        title.innerText = 'CYBER_UNIVERSE [POLIZEI PIN-OVERRIDE v21.0]';
+        title.innerText = 'CYBER_UNIVERSE [POLIZEI 6-PHASEN SYSTEM v22.0]';
       } else {
         body.className = '';
-        title.innerText = 'CYBER_UNIVERSE [HACKER TRESOR-GUESSER v21.0]';
+        title.innerText = 'CYBER_UNIVERSE [HACKER 6-PHASEN HEIST v22.0]';
       }
 
       document.getElementById('hackerOverlay').style.display = 'flex';
