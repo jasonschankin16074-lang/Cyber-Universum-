@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cyber Universe v26.0 - 15-Phasen Heist & Reboot</title>
+  <title>Cyber Universe v27.0 - 15-Phasen Heist mit Hinweisen</title>
   <style>
     :root {
       --bg: #030508;
@@ -97,17 +97,17 @@
 <body id="bodyTag">
 
   <div class="start-dashboard">
-    <h2 class="rainbow-text">// CYBER UNIVERSE v26.0 - 15 PHASEN HEIST & REBOOT</h2>
+    <h2 class="rainbow-text">// CYBER UNIVERSE v27.0 - 15 PHASEN HEIST</h2>
 
     <div class="faction-selector">
       <div class="faction-card active-evil" id="cardEvil" onclick="selectStartFaction('evil')">
         <h3 style="color: var(--accent-red);">💻 BÖSE SEITE (15 PHASEN HEIST)</h3>
-        <p style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">Mehrere Tasten -> Abfrage -> 3x 'a' -> Reboot Animation</p>
+        <p style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">Phase 11 mit Hinweisen (Zu hoch / Zu niedrig)!</p>
       </div>
 
       <div class="faction-card" id="cardGood" onclick="selectStartFaction('good')">
         <h3 style="color: #2563eb;">🛡️ GUTE SEITE (15 PHASEN ABWEHR)</h3>
-        <p style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">Verhindere den 15-Phasen Großangriff!</p>
+        <p style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">Verhindere den Großangriff!</p>
       </div>
     </div>
 
@@ -118,7 +118,7 @@
     <canvas id="matrixCanvas"></canvas>
     <div class="dash-window">
       <div class="dash-header">
-        <span id="terminalTitle" class="rainbow-text">CYBER_UNIVERSE [SYSTEM v26.0]</span>
+        <span id="terminalTitle" class="rainbow-text">CYBER_UNIVERSE [SYSTEM v27.0]</span>
         <button class="close-btn" onclick="closeTerminal()">[X] SCHLIESSEN</button>
       </div>
       
@@ -358,7 +358,6 @@
       runMultiKeyPhase("GPS Spoofing abgeschlossen!", promptContinueToLevel15, startPhase9AntiLocationVirus);
     }
 
-    // FORTSETZEN-ABFRAGE
     function promptContinueToLevel15() {
       userBalance += 2500;
       updateBalance();
@@ -380,6 +379,7 @@
       showInputField("Pin (1-20)...", "number");
     }
 
+    // PHASE 11 MIT DEUTLICHEN HINWEISEN (ZU HOCH / ZU NIEDRIG)
     function startPhase11SatelliteLink() {
       currentPhase = 11;
       targetLaserAngle = Math.floor(Math.random() * 360) + 1;
@@ -388,6 +388,7 @@
       document.getElementById("typeStatus").style.color = "#f59e0b";
 
       printChat('<span style="color:#f59e0b; font-weight:bold; font-size:13px;">\n========================================\n>>> PHASE 11/15: SATELLITEN-UMLAUFBAHN <<<\nRichte die Parabolantenne aus (1° bis 360°)!\n========================================</span>');
+      printChat('<span style="color:var(--accent-yellow);">-> Gib einen Winkel in Grad ein (1-360):</span>');
       showInputField("Winkel (1-360)...", "number");
     }
 
@@ -428,7 +429,6 @@
       runMultiKeyPhase("Stromnetz komplett lahmgelegt!", startPhase15FinalCoreHack, startPhase14PowerGridShutdown);
     }
 
-    // PHASE 15: 3x 'a' + ENTER
     function startPhase15FinalCoreHack() {
       currentPhase = 15;
       phase15Count = 0;
@@ -465,7 +465,6 @@
       }, 1000);
     }
 
-    // DEINE FANTASIE: LOESCHUNGS-ANIMATION + 10s COUNTDOWN + SYSTEM REBOOT
     function triggerSystemDestructionAndReboot() {
       hideInputField();
       userBalance += 10000;
@@ -576,24 +575,35 @@
         }
 
       } else if (currentPhase === 10) {
-        if (parseInt(val) === secretCode[0]) {
+        var p10Guess = parseInt(val);
+        if (p10Guess === secretCode[0]) {
           hideInputField(); startPhase11SatelliteLink();
+        } else if (p10Guess < secretCode[0]) {
+          printChat('<span style="color:#ef4444;">[KI-FIREWALL]: ZU NIEDRIG!</span>');
         } else {
-          printChat('<span style="color:#ef4444;">[KI-FIREWALL]: FALSCHER PIN!</span>');
+          printChat('<span style="color:#ef4444;">[KI-FIREWALL]: ZU HOCH!</span>');
         }
 
+      // HIER BEI PHASE 11 SIND NUN DIE KLAREN HINWEISE
       } else if (currentPhase === 11) {
-        if (parseInt(val) === targetLaserAngle) {
+        var satAngle = parseInt(val);
+        if (satAngle === targetLaserAngle) {
+          printChat('<span style="color:var(--accent-main); font-weight:bold;">[SATELLIT]: VERBINDUNG HERGESTELLT (' + satAngle + '°)!</span>');
           hideInputField(); startPhase12QuantumDecryption();
+        } else if (satAngle < targetLaserAngle) {
+          printChat('<span style="color:#f59e0b;">[SATELLIT]: ZU NIEDRIG! Richte nach OBEN aus! (Versuche größere Zahl als ' + satAngle + ')</span>');
         } else {
-          printChat('<span style="color:#f59e0b;">[SATELLIT]: Ausrichtung falsch!</span>');
+          printChat('<span style="color:#f59e0b;">[SATELLIT]: ZU HOCH! Richte nach UNTEN aus! (Versuche kleinere Zahl als ' + satAngle + ')</span>');
         }
 
       } else if (currentPhase === 12) {
-        if (parseInt(val) === masterVaultCode) {
+        var qGuess = parseInt(val);
+        if (qGuess === masterVaultCode) {
           hideInputField(); startPhase13EyeBiometrics();
+        } else if (qGuess < masterVaultCode) {
+          printChat('<span style="color:#ef4444;">[QUANTEN]: ZU NIEDRIG!</span>');
         } else {
-          printChat('<span style="color:#ef4444;">[QUANTEN]: Code falsch!</span>');
+          printChat('<span style="color:#ef4444;">[QUANTEN]: ZU HOCH!</span>');
         }
 
       } else if (currentPhase === 15) {
@@ -639,16 +649,16 @@
 
       if (startFaction === 'good') {
         body.className = 'theme-good';
-        title.innerText = 'CYBER_UNIVERSE [POLIZEI 15-PHASEN SYSTEM v26.0]';
+        title.innerText = 'CYBER_UNIVERSE [POLIZEI 15-PHASEN SYSTEM v27.0]';
       } else {
         body.className = '';
-        title.innerText = 'CYBER_UNIVERSE [HACKER 15-PHASEN HEIST v26.0]';
+        title.innerText = 'CYBER_UNIVERSE [HACKER 15-PHASEN HEIST v27.0]';
       }
 
       document.getElementById('hackerOverlay').style.display = 'flex';
       startMatrix();
       updateBalance();
-      printChat('[SYSTEM]: Terminal v26.0 gestartet! Tippe beliebige Tasten...');
+      printChat('[SYSTEM]: Terminal v27.0 gestartet! Tippe beliebige Tasten...');
     }
 
     function closeTerminal() {
